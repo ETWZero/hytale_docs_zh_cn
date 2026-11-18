@@ -1,0 +1,176 @@
+---
+title: 如何编辑和创建生物群系
+description: 探讨在哪里可以找到世界生成资源，以及如何编辑它们。
+---
+
+### 资源在哪里
+
+世界生成资源保存在资源中的 HytaleGenerator 目录内。
+
+```
+/Server/HytaleGenerator/
+```
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-1/2 border-r pr-4">
+    ```
+    /Biomes
+    ```
+
+    生物群系资源，包含内容配置。
+
+  </div>
+  <div className="flex-1/2 pl-4">
+    ```
+    /WorldStructure
+    ```
+
+    定义哪些生物群系一起生成的生成器文件。
+
+  </div>
+</div>
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-1/2 border-r pr-4">
+    ```
+    /Density
+    ```
+
+    可被任何其他资源引用的密度资源。
+
+  </div>
+  <div className="flex-1/2 pl-4">
+    ```
+    /Assignments
+    ```
+
+    可被任何生物群系资源引用的物件资源。
+
+  </div>
+</div>
+
+---
+
+这种结构的一个示例可以在下面找到，它被打包进了一个带有实例配置的资源包中。
+
+https://drive.google.com/file/d/1W3llGUxdi5yuVV4Xjxg0nYEXksEKamwQ/view?usp=sharing
+
+<Callout>
+  请确保将你的资源包放在正确的目录中，即 Mods 之下。
+</Callout>
+
+### 如何访问我们的世界
+
+https://drive.google.com/file/d/1GMJao4t_G92MGZewPErLILZWGK0G1Wd6/view?usp=sharing
+
+#### 要求
+
+- 你必须在该世界中拥有**管理员**权限。
+  - 为此，请运行 `/op self`
+- 你必须处于**创造模式**。
+  - 按 `O` 键，O 代表 Orange。&#x20;
+
+生成资源定义了一组生成器，但仅凭它们你无法访问这些内容。目前你需要一个带有生成器的实例，才能访问你的作品。
+
+```
+/Server/Instances/
+```
+
+实例是独立的世界，玩家可以使用 `/instances` 命令加入。每个实例都有一个 `Instance.bson` 配置资源，用于指定要使用哪个生成器，以及其他与世界相关的设置。
+
+```json
+{
+  "WorldGen": {
+    "Type": "HytaleGenerator",
+    "WorldStructure": "Basic",
+    "playerSpawn": {
+      "X": 123,
+      "Y": 480,
+      "Z": 10000,
+      "Pitch": 0,
+      "Yaw": 0,
+      "Roll": 0
+    }
+  }
+}
+```
+
+<Callout>
+  你可以根据需要为不同的世界结构和生物群系创建自定义实例。
+</Callout>
+
+### 如何编辑生物群系
+
+<video>
+  <source
+    src="https://cdn.internal.hytalemodding.dev/guides/official/How-to-edit-Biomes.mp4"
+    type="video/mp4"
+  ></source>
+</video>
+
+我们目前在编辑世界生成资源时使用 Hytale Node Editor。你可以在游戏内按 B 打开「内容创作」菜单来访问它。节点编辑器位于左上角的资源编辑器下拉菜单中。&#x20;
+
+![Node Editor 1](/assets/official-documentation/worldgen/worldgen-tutorial/biomes/node-editor-1.png)
+
+打开 Hytale Node Editor 后，你可以通过文件菜单打开生物群系：导航到 Biomes 目录，然后从你的资源包中选择一个。&#x20;
+
+```
+/Server/HytaleGenerator/Biomes/
+```
+
+### 生物群系资源结构
+
+每个生物群系都有一个根 Biome 节点，该节点分为 5 个结构。这里只做简要介绍，每个字段的更多信息可以在「世界生成概念」页面中找到。
+
+![Node Editor 2](/assets/official-documentation/worldgen/worldgen-tutorial/biomes/node-editor-2.png)
+
+<Callout>
+  每个生物群系在很大程度上是自包含的，这意味着它控制着该生物群系中出现的内容。唯一的例外是 Base Heights。
+</Callout>
+
+<Tabs>
+<Tab value="地形">
+计算生物群系地形物理形状的数学函数节点。
+</Tab>
+
+<Tab value="材质">
+  决定哪些材质（方块）构成生物群系地形的逻辑节点。
+</Tab>
+
+<Tab value="物件">
+  向地形添加预制件和装饰物等对象的函数节点。
+</Tab>
+
+<Tab value="环境">
+  决定生物群系内给定坐标处环境资源的逻辑节点。该资源决定天气、NPC 生成和声音等内容。
+</Tab>
+
+<Tab value="色调">
+决定世界中某些方块可使用的颜色代码的逻辑函数节点。通常用于草和土壤。
+</Tab>
+</Tabs>
+
+### 如何预览你的作品
+
+<video>
+  <source
+    src="https://cdn.internal.hytalemodding.dev/guides/official/How-to-preview-your-work.mp4"
+    type="video/mp4"
+  ></source>
+</video>
+
+一旦你进入启用了 Hytale Generator 的实例世界，只有生成新的区块才能看到你的作品。有几种方法可以做到这一点。
+
+viewport 命令会选中玩家周围的一块区域，当你对生成器做出修改时，该区域会实时重新加载。&#x20;
+
+```
+/viewport --radius 5
+```
+
+你也可以创建一个新世界来展示你的改动。&#x20;
+
+```
+/instances spawn <instance>
+```
+
+最后一种方法是直接向南飞行，新的区块会以你所做的改动生成。

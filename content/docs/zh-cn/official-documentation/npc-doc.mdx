@@ -1,0 +1,8299 @@
+---
+title: NPC 元数据
+description: NPC 创建与配置的官方文档。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 目录 [#top]
+
+1. [构建器列表](#builders)
+2. [角色列表](#roles)
+   1. [Abstract](#role_abstract)
+   2. [Generic](#role_generic)
+   3. [Variant](#role_variant)
+3. [运动控制器列表](#motioncontrollers)
+   1. [Dive](#motioncontroller_dive)
+   2. [Fly](#motioncontroller_fly)
+   3. [Walk](#motioncontroller_walk)
+4. [其他部件](#miscparts)
+   1. [ActionList](#actionlist_actionlist)
+   2. [Aim](#headmotion_aim)
+   3. [AimCharge](#bodymotion_aimcharge)
+   4. [Altitude](#ientityfilter_altitude)
+   5. [And (IEntityFilter)](#ientityfilter_and)
+   6. [Attitude (ISensorEntityPrioritiser)](#isensorentityprioritiser_attitude)
+   7. [Attitude (IEntityFilter)](#ientityfilter_attitude)
+   8. [Combat](#ientityfilter_combat)
+   9. [CombatTargets](#isensorentitycollector_combattargets)
+   10. [Flee](#bodymotion_flee)
+   11. [Flock (BodyMotion)](#bodymotion_flock)
+   12. [Flock (IEntityFilter)](#ientityfilter_flock)
+   13. [HashMap](#hashmap_hashmap)
+   14. [HeightDifference](#ientityfilter_heightdifference)
+   15. [InsideBlock](#ientityfilter_insideblock)
+   16. [Instruction](#instruction_instruction)
+   17. [Inventory](#ientityfilter_inventory)
+   18. [ItemInHand](#ientityfilter_iteminhand)
+   19. [Land](#bodymotion_land)
+   20. [Leave](#bodymotion_leave)
+   21. [LineOfSight](#ientityfilter_lineofsight)
+   22. [MaintainDistance](#bodymotion_maintaindistance)
+   23. [MatchLook](#bodymotion_matchlook)
+   24. [MovementState](#ientityfilter_movementstate)
+   25. [NPCGroup](#ientityfilter_npcgroup)
+   26. [Not](#ientityfilter_not)
+   27. [Nothing (BodyMotion)](#bodymotion_nothing)
+   28. [Nothing (HeadMotion)](#headmotion_nothing)
+   29. [Observe](#headmotion_observe)
+   30. [Or](#ientityfilter_or)
+   31. [Path (Path)](#path_path)
+   32. [Path (BodyMotion)](#bodymotion_path)
+   33. [Random (Instruction)](#instruction_random)
+   34. [Reference](#instruction_reference)
+   35. [RelativeWaypointDefinition](#relativewaypointdefinition_relativewaypointdefinition)
+   36. [Seek](#bodymotion_seek)
+   37. [Sequence (BodyMotion)](#bodymotion_sequence)
+   38. [Sequence (HeadMotion)](#headmotion_sequence)
+   39. [SpotsMe](#ientityfilter_spotsme)
+   40. [StandingOnBlock](#ientityfilter_standingonblock)
+   41. [Stat](#ientityfilter_stat)
+   42. [StateTransition](#statetransition_statetransition)
+   43. [StateTransitionController](#statetransitioncontroller_statetransitioncontroller)
+   44. [StateTransitionEdges](#statetransitionedges_statetransitionedges)
+   45. [TakeOff](#bodymotion_takeoff)
+   46. [Teleport](#bodymotion_teleport)
+   47. [TestProbe](#bodymotion_testprobe)
+   48. [Timer (BodyMotion)](#bodymotion_timer)
+   49. [Timer (HeadMotion)](#headmotion_timer)
+   50. [ValueToParameterMapping](#valuetoparametermapping_valuetoparametermapping)
+   51. [ViewSector](#ientityfilter_viewsector)
+   52. [Wander](#bodymotion_wander)
+   53. [WanderInCircle](#bodymotion_wanderincircle)
+   54. [WanderInRect](#bodymotion_wanderinrect)
+   55. [Watch](#headmotion_watch)
+   56. [WeightedAction](#weightedaction_weightedaction)
+5. [核心组件列表（AudioVisual）](#corecomponents_audiovisual)
+   1. [Animation (Sensor)](#sensor_animation)
+   2. [Appearance](#action_appearance)
+   3. [DisplayName](#action_displayname)
+   4. [ModelAttachment](#action_modelattachment)
+   5. [PlayAnimation](#action_playanimation)
+   6. [PlaySound](#action_playsound)
+   7. [SpawnParticles](#action_spawnparticles)
+6. [核心组件列表（Combat）](#corecomponents_combat)
+   1. [ApplyEntityEffect](#action_applyentityeffect)
+   2. [Attack](#action_attack)
+   3. [Damage (Sensor)](#sensor_damage)
+   4. [IsBackingAway (Sensor)](#sensor_isbackingaway)
+7. [核心组件列表（CoreComponents）](#corecomponents_corecomponents)
+   1. [AddToHostileTargetMemory](#action_addtohostiletargetmemory)
+   2. [CombatAbility](#action_compatability)
+   3. [CombatActionEvaluator (Sensor)](#sensor_combatactionevaluator)
+   4. [FlockBeacon](#action_flockbeacon)
+   5. [FlockCombatDamage (Sensor)](#sensor_flockcombatdamage)
+   6. [FlockLeader (Sensor)](#sensor_flockleader)
+   7. [FlockState](#action_flockstate)
+   8. [FlockTarget](#action_flocktarget)
+   9. [HasHostileTargetMemory (Sensor)](#sensor_hashostiletargetmemory)
+   10. [InflictedDamage (Sensor)](#sensor_inflicteddamage)
+   11. [JoinFlock](#action_joinflock)
+   12. [LeaveFlock](#action_leaveflock)
+   13. [TriggerSpawnBeacon](#action_triggerspawnbeacon)
+8. [核心组件列表（Debug）](#corecomponents_debug)
+   1. [Log](#action_log)
+   2. [Test (DO NOT USE)](#action_test)
+9. [核心组件列表（Entity）](#corecomponents_entity)
+   1. [Beacon (Sensor)](#sensor_beacon)
+   2. [Count (Sensor)](#sensor_count)
+   3. [IgnoreForAvoidance](#action_ignoreforavoidance)
+   4. [Kill (Sensor)](#sensor_kill)
+   5. [Mob (Sensor)](#sensor_mob)
+   6. [OverrideAttitude](#action_overrideattitude)
+   7. [Player (Sensor)](#sensor_player)
+   8. [ReleaseTarget](#action_releasetarget)
+   9. [Self (Sensor)](#sensor_self)
+   10. [SetMarkedTarget](#action_setmarkedtarget)
+   11. [SetStat](#action_setstat)
+   12. [Target (Sensor)](#sensor_target)
+10. [核心组件列表（Interaction）](#corecomponents_interaction)
+    1. [CanInteract (Sensor)](#sensor_caninteract)
+    2. [HasInteracted (Sensor)](#sensor_hasinteracted)
+    3. [InteractionContext (Sensor)](#sensor_interactioncontext)
+    4. [LockOnInteractionTarget](#action_lockoninteractiontarget)
+    5. [SetInteractable](#action_setinteractable)
+11. [核心组件列表（Items）](#corecomponents_items)
+    1. [DropItem](#action_dropitem)
+    2. [DroppedItem (Sensor)](#sensor_droppeditem)
+    3. [Inventory](#action_inventory)
+    4. [PickUpItem](#action_pickupitem)
+12. [核心组件列表（Lifecycle）](#corecomponents_lifecycle)
+    1. [Age (Sensor)](#sensor_age)
+    2. [DelayDespawn](#action_delaydespawn)
+    3. [Despawn](#action_despawn)
+    4. [Die](#action_die)
+    5. [Remove](#action_remove)
+    6. [Role](#action_role)
+    7. [Spawn](#action_spawn)
+13. [核心组件列表（Message）](#corecomponents_message)
+    1. [Beacon](#action_beacon)
+    2. [Notify](#action_notify)
+14. [核心组件列表（Movement）](#corecomponents_movement)
+    1. [Crouch](#action_crouch)
+    2. [InAir (Sensor)](#sensor_inair)
+    3. [MotionController (Sensor)](#sensor_motioncontroller)
+    4. [Nav (Sensor)](#sensor_nav)
+    5. [OnGround (Sensor)](#sensor_onground)
+    6. [OverrideAltitude](#action_overridealtitude)
+    7. [RecomputePath](#action_recomputepath)
+15. [核心组件列表（NPC）](#corecomponents_npc)
+    1. [CompleteTask](#action_completetask)
+    2. [HasTask (Sensor)](#sensor_hastask)
+    3. [Mount](#action_mount)
+    4. [OpenBarterShop](#action_openbartershop)
+    5. [OpenShop](#action_openshop)
+    6. [StartObjective](#action_startobjective)
+16. [核心组件列表（Path）](#corecomponents_path)
+    1. [MakePath](#action_makepath)
+    2. [Path (Sensor)](#sensor_path)
+17. [核心组件列表（StateMachine）](#corecomponents_statemachine)
+    1. [IsBusy (Sensor)](#sensor_isbusy)
+    2. [ParentState](#action_parentstate)
+    3. [State](#action_state)
+    4. [State (Sensor)](#sensor_state)
+    5. [ToggleStateEvaluator](#action_togglestateevaluator)
+18. [核心组件列表（Timer）](#corecomponents_timer)
+    1. [Alarm (Sensor)](#sensor_alarm)
+    2. [SetAlarm](#action_setalarm)
+    3. [Timer (Sensor)](#sensor_timer)
+    4. [TimerContinue](#action_timercontinue)
+    5. [TimerModify](#action_timermodify)
+    6. [TimerPause](#action_timerpause)
+    7. [TimerRestart](#action_timerrestart)
+    8. [TimerStart](#action_timerstart)
+    9. [TimerStop](#action_timerstop)
+19. [核心组件列表（Utility](#corecomponents_utility)
+    1. [AdjustPosition (Sensor)](#sensor_adjustposition)
+    2. [And (Sensor)](#sensor_and)
+    3. [Any (Sensor)](#sensor_any)
+    4. [Eval (Sensor)](#sensor_eval)
+    5. [Flag (Sensor)](#sensor_flag)
+    6. [Not (Sensor)](#sensor_not)
+    7. [Nothing (Action)](#action_nothing)
+    8. [Or (Sensor)](#sensor_or)
+    9. [Random (Action)](#action_random)
+    10. [Random (Sensor)](#sensor_random)
+    11. [ResetInstructions](#action_resetinstructions)
+    12. [Sequence](#action_sequence)
+    13. [SetFlag](#action_setflag)
+    14. [Switch (Sensor)](#sensor_switch)
+    15. [Timeout](#action_timeout)
+    16. [ValueProviderWrapper (Sensor)](#sensor_valueproviderwrapper)
+20. [核心组件列表（World）](#corecomponents_world)
+    1. [Block (Sensor)](#sensor_block)
+    2. [BlockChange (Sensor)](#sensor_blockchange)
+    3. [BlockType (Sensor)](#sensor_blocktype)
+    4. [CanPlaceBlock (Sensor)](#sensor_canplaceblock)
+    5. [EntityEvent (Sensor)](#sensor_entityevent)
+    6. [InWater (Sensor)](#sensor_inwater)
+    7. [Leash (Sensor)](#sensor_leash)
+    8. [Light (Sensor)](#sensor_light)
+    9. [PlaceBlock](#action_placeblock)
+    10. [ReadPosition (Sensor)](#sensor_readposition)
+    11. [ResetBlockSensors](#action_resetblocksensors)
+    12. [ResetPath](#action_resetpath)
+    13. [ResetSearchRays](#action_resetsearchrays)
+    14. [SearchRay (Sensor)](#sensor_searchray)
+    15. [SetBlockToPlace](#action_setblocktoplace)
+    16. [SetLeashPosition](#action_setleashposition)
+    17. [StorePosition](#action_storeposition)
+    18. [Time (Sensor)](#sensor_time)
+    19. [TriggerSpawners](#action_triggerspawners)
+    20. [Weather (Sensor)](#sensor_weather)
+
+# 构建器列表 [#builders]
+
+| | 名称 | 类型 | 描述 |
+| --- | --- | --- | --- |
+| 1 | [Abstract](#role_abstract) | Role | NPC 的通用角色 |
+| 2 | [ActionList](#actionlist_actionlist) | ActionList | 要执行的动作数组 |
+| 3 | [AddToHostileTargetMemory](#action_addtohostiletargetmemory) | Action | 将传感器传入的目标添加到敌对目标记忆 |
+| 4 | [AdjustPosition](#sensor_adjustposition) | Sensor | 对所包装传感器返回的位置进行调整 |
+| 5 | [Age](#sensor_age) | Sensor | 当 NPC 的年龄落在特定范围内时触发 |
+| 6 | [Aim](#headmotion_aim) | HeadMotion | 瞄准目标 |
+| 7 | [AimCharge](#bodymotion_aimcharge) | BodyMotion | 根据瞄准信息让 NPC 面向用于执行冲锋的目标位置，并在执行前确保该冲锋可行。 |
+| 8 | [Alarm](#sensor_alarm) | Sensor | 检查具名警报的状态 |
+| 9 | [Altitude](#ientityfilter_altitude) | IEntityFilter | 如果目标位于地面上方指定范围内则匹配该目标 |
+| 10 | [And](#sensor_and) | Sensor | 传感器列表的逻辑与 |
+| 11 | [And](#ientityfilter_and) | IEntityFilter | 过滤器列表的逻辑与 |
+| 12 | [Animation](#sensor_animation) | Sensor | 检查指定动画是否正在播放 |
+| 13 | [Any](#sensor_any) | Sensor | 始终返回 true |
+| 14 | [Appearance](#action_appearance) | Action | 设置 NPC 显示的模型 |
+| 15 | [ApplyEntityEffect](#action_applyentityeffect) | Action | 对目标或自身施加实体效果 |
+| 16 | [Attack](#action_attack) | Action | 开始攻击 |
+| 17 | [Attitude](#isensorentityprioritiser_attitude) | ISensorEntityPrioritiser | 按态度对返回的实体进行优先级排序 |
+| 18 | [Attitude](#ientityfilter_attitude) | IEntityFilter | 匹配对锁定目标的态度 |
+| 19 | [Beacon](#action_beacon) | Action | 发送信标消息 |
+| 20 | [Beacon](#sensor_beacon) | Sensor | 检查附近 NPC 是否广播了任何消息 |
+| 21 | [Block](#sensor_block) | Sensor | 检查附近区域内是否存在一组方块中的某个方块 |
+| 22 | [BlockChange](#sensor_blockchange) | Sensor | 当特定范围内的方块集中的方块被更改或被交互时匹配 |
+| 23 | [BlockType](#sensor_blocktype) | Sensor | 检查给定位置的方块是否与提供的方块集匹配 |
+| 24 | [CanInteract](#sensor_caninteract) | Sensor | 检查交互指令当前迭代到的玩家是否可以与此 NPC 交互 |
+| 25 | [CanPlaceBlock](#sensor_canplaceblock) | Sensor | 测试当前设置的方块能否放置在由方向和偏移给出的相对位置 |
+| 26 | [Combat](#ientityfilter_combat) | IEntityFilter | 检查目标的战斗状态 |
+| 27 | [CombatAbility](#action_combatability) | Action | 启动由战斗动作评估器选定的战斗能力。 |
+| 28 | [CombatActionEvaluator](#sensor_combatactionevaluator) | Sensor | 一种传感器，负责将战斗动作评估器的信息输送给动作和运动。 |
+| 29 | [CombatTargets](#isensorentitycollector_combattargets) | ISensorEntityCollector | 一种收集器，处理匹配到的友方和敌对目标，并将其添加到 NPC 的短期战斗记忆。 |
+| 30 | [CompleteTask](#action_completetask) | Action | 完成任务 |
+| 31 | [Count](#sensor_count) | Sensor | 检查特定范围内是否有一定数量的 NPC 或玩家 |
+| 32 | [Crouch](#action_crouch) | Action | 设置 NPC 的蹲伏状态 |
+| 33 | [Damage](#sensor_damage) | Sensor | 测试 NPC 是否受到伤害 |
+| 34 | [DelayDespawn](#action_delaydespawn) | Action | 将消失周期延迟一段时间 |
+| 35 | [Despawn](#action_despawn) | Action | 触发 NPC 消失 |
+| 36 | [Die](#action_die) | Action | 杀死 NPC |
+| 37 | [DisplayName](#action_displayname) | Action | 设置显示名称。 |
+| 38 | [Dive](#motioncontroller_dive) | MotionController | 为 NPC 提供潜水能力 |
+| 39 | [DropItem](#action_dropitem) | Action | 掉落物品 |
+| 40 | [DroppedItem](#sensor_droppeditem) | Sensor | 如果指定物品位于 NPC 的特定范围内则触发。 |
+| 41 | [EntityEvent](#sensor_entityevent) | Sensor | 当特定范围内属于指定 NPC 组的实体受到伤害、被杀死或被交互时匹配 |
+| 42 | [Eval](#sensor_eval) | Sensor | 求值 JavaScript 表达式并测试是否为 true |
+| 43 | [Flag](#sensor_flag) | Sensor | 测试是否设置了具名标志 |
+| 44 | [Flee](#bodymotion_flee) | BodyMotion | 远离目标移动 |
+| 45 | [Flock](#bodymotion_flock) | BodyMotion | 群体——开发中 |
+| 46 | [Flock](#ientityfilter_flock) | IEntityFilter | 测试群体成员资格及相关属性 |
+| 47 | [FlockBeacon](#action_flockbeacon) | Action | 向群体发送信标消息 |
+| 48 | [FlockCombatDamage](#sensor_flockcombatdamage) | Sensor | 测试 NPC 所在的群体是否受到战斗伤害 |
+| 49 | [FlockLeader](#sensor_flockleader) | Sensor | 测试群体首领是否存在并提供其位置 |
+| 50 | [FlockState](#action_flockstate) | Action | 为群体设置状态名称。 |
+| 51 | [FlockTarget](#action_flocktarget) | Action | 设置或清除群体的锁定目标。 |
+| 52 | [Fly](#motioncontroller_fly) | MotionController | 飞行运动控制器 |
+| 53 | [Generic](#role_generic) | Role | NPC 的通用角色 |
+| 54 | [HasHostileTargetMemory](#sensor_hashostiletargetmemory) | Sensor | 检查目标记忆中当前是否有敌对目标。 |
+| 55 | [HasInteracted](#sensor_hasinteracted) | Sensor | 检查交互指令当前迭代到的玩家是否已与此 NPC 交互 |
+| 56 | [HasTask](#sensor_hastask) | Sensor | 检查交互指令当前迭代到的玩家是否拥有任意给定任务 |
+| 57 | [HashMap](#hashmap_hashmap) | HashMap | 运动控制器列表 |
+| 58 | [HeightDifference](#ientityfilter_heightdifference) | IEntityFilter | 匹配给定高度范围内的实体 |
+| 59 | [IgnoreForAvoidance](#action_ignoreforavoidance) | Action | 设置避让期间应忽略的实体的目标槽位 |
+| 60 | [InAir](#sensor_inair) | Sensor | 测试 NPC 是否不在地面上 |
+| 61 | [InWater](#sensor_inwater) | Sensor | 检查 NPC 当前是否在水中 |
+| 62 | [InflictedDamage](#sensor_inflicteddamage) | Sensor | 测试某个个体或其所属群体是否造成了战斗伤害 |
+| 63 | [InsideBlock](#ientityfilter_insideblock) | IEntityFilter | 如果实体位于 BlockSet 中任意方块的内部则匹配 |
+| 64 | [Instruction](#instruction_instruction) | Instruction | 包含 Sensor、Motions 和 Actions 的指令，或一组嵌套指令。 |
+| 65 | [InteractionContext](#sensor_interactioncontext) | Sensor | 检查交互指令当前迭代到的玩家是否在给定上下文中与此 NPC 交互 |
+| 66 | [Inventory](#action_inventory) | Action | 在物品栏中添加或移除物品。 |
+| 67 | [Inventory](#ientityfilter_inventory) | IEntityFilter | 测试与实体物品栏相关的各种条件 |
+| 68 | [IsBackingAway](#sensor_isbackingaway) | Sensor | 测试 NPC 当前是否正在从某物旁后退。 |
+| 69 | [IsBusy](#sensor_isbusy) | Sensor | 测试 NPC 是否处于某个已定义的 Busy 状态中。 |
+| 70 | [ItemInHand](#ientityfilter_iteminhand) | IEntityFilter | 检查实体是否手持物品 |
+| 71 | [JoinFlock](#action_joinflock) | Action | 加入其他实体或与其组建群体 |
+| 72 | [Kill](#sensor_kill) | Sensor | 测试 NPC 是否完成了一次击杀 |
+| 73 | [Land](#bodymotion_land) | BodyMotion | 尝试在给定位置着陆 |
+| 74 | [Leash](#sensor_leash) | Sensor | 当 NPC 超出距牵引点的指定范围时触发 |
+| 75 | [Leave](#bodymotion_leave) | BodyMotion | 离开当前位置 |
+| 76 | [LeaveFlock](#action_leaveflock) | Action | 离开群体。 |
+| 77 | [Light](#sensor_light) | Sensor | 检查实体所站方块的光照等级 |
+| 78 | [LineOfSight](#ientityfilter_lineofsight) | IEntityFilter | 如果到目标有视线则匹配 |
+| 79 | [LockOnInteractionTarget](#action_lockoninteractiontarget) | Action | 锁定交互指令当前迭代到的玩家 |
+| 80 | [Log](#action_log) | Action | 向控制台记录消息。 |
+| 81 | [MaintainDistance](#bodymotion_maintaindistance) | BodyMotion | 与给定位置保持距离 |
+| 82 | [MakePath](#action_makepath) | Action | 基于一系列旋转和距离为 NPC 构建一条临时路径 |
+| 83 | [MatchLook](#bodymotion_matchlook) | BodyMotion | 使 NPC 身体旋转以匹配视线方向 |
+| 84 | [Mob](#sensor_mob) | Sensor | 测试匹配特定属性和过滤器的实体是否在范围内 |
+| 85 | [ModelAttachment](#action_modelattachment) | Action | 在当前 NPC 模型上设置附着物 |
+| 86 | [MotionController](#sensor_motioncontroller) | Sensor | 测试特定运动控制器是否处于活动状态。 |
+| 87 | [Mount](#action_mount) | Action | 使玩家能够骑乘该实体 |
+| 88 | [MovementState](#ientityfilter_movementstate) | IEntityFilter | 检查实体是否处于给定的移动状态 |
+| 89 | [NPCGroup](#ientityfilter_npcgroup) | IEntityFilter | 返回该实体是否匹配所提供的某个 NPCGroup |
+| 90 | [Nav](#sensor_nav) | Sensor | 查询导航状态 |
+| 91 | [Not](#sensor_not) | Sensor | 反转传感器测试 |
+| 92 | [Not](#ientityfilter_not) | IEntityFilter | 反转过滤器测试 |
+| 93 | [Nothing](#action_nothing) | Action | 不执行任何操作 |
+| 94 | [Nothing](#bodymotion_nothing) | BodyMotion | 不执行任何操作 |
+| 95 | [Nothing](#headmotion_nothing) | HeadMotion | 不执行任何操作 |
+| 96 | [Notify](#action_notify) | Action | 用信标消息直接通知目标 NPC |
+| 97 | [Observe](#headmotion_observe) | HeadMotion | 以多种方式观察周围环境。 |
+| 98 | [OnGround](#sensor_onground) | Sensor | 测试 NPC 是否在地面上 |
+| 99 | [OpenBarterShop](#action_openbartershop) | Action | 为当前玩家打开以物易物商店 UI |
+| 100 | [OpenShop](#action_openshop) | Action | 为当前玩家打开商店 UI |
+| 101 | [Or](#sensor_or) | Sensor | 传感器列表的逻辑或 |
+| 102 | [Or](#ientityfilter_or) | IEntityFilter | 过滤器列表的逻辑或 |
+| 103 | [OverrideAltitude](#action_overridealtitude) | Action | 临时覆盖飞行 NPC 的首选高度 |
+| 104 | [OverrideAttitude](#action_overrideattitude) | Action | 在给定时长内覆盖此 NPC 对所提供的目标的态度 |
+| 105 | [ParentState](#action_parentstate) | Action | 从组件内部设置 NPC 的主状态 |
+| 106 | [Path](#path_path) | Path | 临时路径点列表 |
+| 107 | [Path](#sensor_path) | Sensor | 基于各种条件查找路径 |
+| 108 | [Path](#bodymotion_path) | BodyMotion | 沿路径行走 |
+| 109 | [PickUpItem](#action_pickupitem) | Action | 拾取物品 |
+| 110 | [PlaceBlock](#action_placeblock) | Action | 如果距离足够近，在传感器返回的位置放置一个（由其他动作选定的）方块 |
+| 111 | [PlayAnimation](#action_playanimation) | Action | 播放动画 |
+| 112 | [PlaySound](#action_playsound) | Action | 向指定范围内的玩家播放声音。 |
+| 113 | [Player](#sensor_player) | Sensor | 测试匹配特定属性和过滤器的玩家是否在范围内 |
+| 114 | [Random](#action_random) | Action | 从加权动作列表中执行单个随机动作。 |
+| 115 | [Random](#sensor_random) | Sensor | 在指定的随机时长内交替返回 true 和 false |
+| 116 | [Random](#instruction_random) | Instruction | 加权指令的随机列表。 |
+| 117 | [ReadPosition](#sensor_readposition) | Sensor | 读取带某些条件的已存储位置 |
+| 118 | [RecomputePath](#action_recomputepath) | Action | 强制重新计算寻路求解结果 |
+| 119 | [Reference](#instruction_reference) | Instruction | 可在文件其他位置引用的、带优先级的指令列表 |
+| 120 | [RelativeWaypointDefinition](#relativewaypointdefinition_relativewaypointdefinition) | RelativeWaypointDefinition | 简单的路径路点定义，其中每个路点都相对于前一个路点 |
+| 121 | [ReleaseTarget](#action_releasetarget) | Action | 清除锁定目标 |
+| 122 | [Remove](#action_remove) | Action | 从世界中抹除目标实体（无死亡动画）。 |
+| 123 | [ResetBlockSensors](#action_resetblocksensors) | Action | 按名称重置特定方块传感器，或重置所有方块传感器 |
+| 124 | [ResetInstructions](#action_resetinstructions) | Action | 强制重置 instructionList |
+| 125 | [ResetPath](#action_resetpath) | Action | 重置此 NPC 当前遵循的巡逻路径。 |
+| 126 | [ResetSearchRays](#action_resetsearchrays) | Action | 按名称重置特定搜索射线传感器的缓存位置，或重置所有搜索射线传感器 |
+| 127 | [Role](#action_role) | Action | 更改 NPC 的角色 |
+| 128 | [SearchRay](#sensor_searchray) | Sensor | 以特定角度发射射线，检查命中的对象是否匹配给定的目标方块 |
+| 129 | [Seek](#bodymotion_seek) | BodyMotion | 追逐目标 |
+| 130 | [Self](#sensor_self) | Sensor | 测试 NPC 自身是否匹配一组实体过滤器 |
+| 131 | [Sequence](#action_sequence) | Action | 动作列表。 |
+| 132 | [Sequence](#bodymotion_sequence) | BodyMotion | （循环）运动序列 |
+| 133 | [Sequence](#headmotion_sequence) | HeadMotion | （循环）运动序列 |
+| 134 | [SetAlarm](#action_setalarm) | Action | 在 NPC 上设置具名警报 |
+| 135 | [SetBlockToPlace](#action_setblocktoplace) | Action | 设置 NPC 将要放置的方块类型 |
+| 136 | [SetFlag](#action_setflag) | Action | 将具名标志设置为布尔值 |
+| 137 | [SetInteractable](#action_setinteractable) | Action | 设置交互指令当前迭代到的玩家是否应能与此 NPC 交互 |
+| 138 | [SetLeashPosition](#action_setleashposition) | Action | 将 NPC 的当前位置设置为生成/牵引位置 |
+| 139 | [SetMarkedTarget](#action_setmarkedtarget) | Action | 在给定槽位中显式设置一个标记目标。 |
+| 140 | [SetStat](#action_setstat) | Action | 设置（或累加）NPC 上的实体属性值。 |
+| 141 | [Spawn](#action_spawn) | Action | 生成 NPC |
+| 142 | [SpawnParticles](#action_spawnparticles) | Action | 生成粒子系统，在给定范围内可见，其偏移相对于 NPC 朝向 |
+| 143 | [SpotsMe](#ientityfilter_spotsme) | IEntityFilter | 检查实体能否在给定的视野扇区或视锥内、且无遮挡地看到该 NPC。 |
+| 144 | [StandingOnBlock](#ientityfilter_standingonblock) | IEntityFilter | 将实体正下方的方块与 BlockSet 进行匹配 |
+| 145 | [StartObjective](#action_startobjective) | Action | 为交互指令当前迭代到的玩家启动给定目标 |
+| 146 | [Stat](#ientityfilter_stat) | IEntityFilter | 匹配实体的属性值 |
+| 147 | [State](#action_state) | Action | 设置 NPC 的状态 |
+| 148 | [State](#sensor_state) | Sensor | 测试特定状态 |
+| 149 | [StateTransition](#statetransition_statetransition) | StateTransition | 包含从一种状态转移到另一种状态时要执行的动作列表的条目 |
+| 150 | [StateTransitionController](#statetransitioncontroller_statetransitioncontroller) | StateTransitionController | 状态转移列表 |
+| 151 | [StateTransitionEdges](#statetransitionedges_statetransitionedges) | StateTransitionEdges | 定义状态转移的起始状态与目标状态集合 |
+| 152 | [StorePosition](#action_storeposition) | Action | 存储所附着传感器提供的位置 |
+| 153 | [Switch](#sensor_switch) | Sensor | 检查计算出的布尔值是否为 true |
+| 154 | [TakeOff](#bodymotion_takeoff) | BodyMotion | 将 NPC 从行走运动控制器切换为飞行运动控制器 |
+| 155 | [Target](#sensor_target) | Sensor | 测试给定目标是否匹配一系列条件及可选的实体过滤器 |
+| 156 | [Teleport](#bodymotion_teleport) | BodyMotion | 将 NPC 传送到传感器给出的位置 |
+| 157 | [Test](#action_test) | Action | 用于检验属性求值的测试动作（请勿使用） |
+| 158 | [TestProbe](#bodymotion_testprobe) | BodyMotion | 调试——测试探测 |
+| 159 | [Time](#sensor_time) | Sensor | 检查每天/每年的时刻是否处于某个指定时间内。 |
+| 160 | [Timeout](#action_timeout) | Action | 延迟一个动作，或在动作序列中插入延迟 |
+| 161 | [Timer](#sensor_timer) | Sensor | 测试计时器是否存在且其值在特定范围内 |
+| 162 | [Timer](#bodymotion_timer) | BodyMotion | 在指定的最长时间内执行一个运动 |
+| 163 | [Timer](#headmotion_timer) | HeadMotion | 在指定的最长时间内执行一个运动 |
+| 164 | [TimerContinue](#action_timercontinue) | Action | 继续计时器 |
+| 165 | [TimerModify](#action_timermodify) | Action | 修改计时器的值 |
+| 166 | [TimerPause](#action_timerpause) | Action | 暂停计时器 |
+| 167 | [TimerRestart](#action_timerrestart) | Action | 重新启动计时器 |
+| 168 | [TimerStart](#action_timerstart) | Action | 启动计时器 |
+| 169 | [TimerStop](#action_timerstop) | Action | 停止计时器 |
+| 170 | [ToggleStateEvaluator](#action_togglestateevaluator) | Action | 启用或禁用 NPC 的状态评估器 |
+| 171 | [TriggerSpawnBeacon](#action_triggerspawnbeacon) | Action | 触发与配置 ID 匹配的最近的生成信标 |
+| 172 | [TriggerSpawners](#action_triggerspawners) | Action | 触发 NPC 周围半径内所有手动生成标记，或最多触发指定数量 |
+| 173 | [ValueProviderWrapper](#sensor_valueproviderwrapper) | Sensor | 包装一个传感器，并向下传递从值存储中取出的一些附加参数覆盖项 |
+| 174 | [ValueToParameterMapping](#valuetoparametermapping_valuetoparametermapping) | ValueToParameterMapping | 包含从一种状态转移到另一种状态时要执行的动作列表的条目 |
+| 175 | [Variant](#role_variant) | Role | 从现有 NPC JSON 文件创建变体 |
+| 176 | [ViewSector](#ientityfilter_viewsector) | IEntityFilter | 匹配给定视野扇区内的实体 |
+| 177 | [Walk](#motioncontroller_walk) | MotionController | 为 NPC 提供地面行走能力 |
+| 178 | [Wander](#bodymotion_wander) | BodyMotion | 随机移动 |
+| 179 | [WanderInCircle](#bodymotion_wanderincircle) | BodyMotion | 在生成位置周围的圆形区域内随机移动 |
+| 180 | [WanderInRect](#bodymotion_wanderinrect) | BodyMotion | 在生成位置周围的矩形区域内随机移动 |
+| 181 | [Watch](#headmotion_watch) | HeadMotion | 旋转朝向目标 |
+| 182 | [Weather](#sensor_weather) | Sensor | 将 NPC 位置处的当前天气与一组天气通配模式进行匹配 |
+| 183 | [WeightedAction](#weightedaction_weightedaction) | WeightedAction | 包装并带权重的动作，用于 Random 动作列表。 |
+
+# 角色列表 [#roles]
+
+## Abstract: Role（稳定） [#role_abstract]
+
+带有核心规划器和运动控制器列表的 NPC 通用角色。
+
+### 属性
+
+#### - MaxHealth（稳定）
+
+- 最大生命值
+- **类型**：`Integer`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（开发中）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - Appearance（稳定）
+
+- 用于渲染的模型
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - DisplayNames（稳定）
+
+- 可供选择的显示名称列表
+- **类型**：`StringList`，**可选**（默认：null）
+- **约束**：数组中的字符串不能为空
+
+#### - NameTranslationKey（稳定）
+
+- 此 NPC 名称的翻译键
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - OpaqueBlockSet（稳定）
+
+- 阻挡视线的方块
+- **类型**：`Asset`，**可选**（默认：Opaque）
+
+#### - Inertia（实验性）
+
+- 惯性
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0.1
+
+#### - KnockbackScale（稳定）
+
+- 击退的缩放系数。大于 1 的值会增强击退，较小的值会减弱击退。
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - InventorySize（稳定）
+
+- 可用物品栏槽位数量
+- **类型**：`Integer`，**可选**（默认：0）
+- **约束**：值必须大于或等于 0 且小于或等于 36
+
+#### - HotbarSize（稳定）
+
+- 可用快捷栏槽位数量
+- **类型**：`Integer`，**可选**（默认：3）
+- **约束**：值必须大于或等于 3 且小于或等于 8
+
+#### - OffHandSlots（稳定）
+
+- 副手物品的槽位数量
+- **类型**：`Integer`，**可选**（默认：0）
+- **约束**：值必须大于或等于 0 且小于或等于 4
+
+#### - HotbarItems（稳定）
+
+- 快捷栏物品（例如主武器、副武器等）
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+#### - OffHandItems（稳定）
+
+- 副手物品（例如盾牌、火把等）
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+#### - PossibleInventoryItems（稳定）
+
+- 定义 NPC 物品栏可能包含哪些物品的掉落列表
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - DefaultOffHandSlot（稳定）
+
+- 默认副手物品槽位（-1 表示空）
+- **类型**：`Integer`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 4
+
+#### - Armor（开发中）
+
+- 护甲物品
+- **类型**：`AssetArray`，**可选**（默认：null），**元素类型**：Item
+
+#### - DropList（稳定）
+
+- 被击杀时生成的掉落列表
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - StartState（稳定）
+
+- 初始状态
+- **类型**：`String`，**可选**（默认：start）
+- **约束**：字符串不能为空
+
+#### - DefaultSubState（稳定）
+
+- 转换到未指定子状态的主状态时所引用的默认子状态
+- **类型**：`String`，**可选**（默认：Default）
+- **约束**：字符串不能为空
+
+#### - CollisionDistance（稳定）
+
+- 碰撞预判
+- **类型**：`Double`，**可选**（默认：5.0）
+- **约束**：值必须大于 0
+
+#### - CollisionForceFalloff（实验性）
+
+- 碰撞力的衰减速率
+- **类型**：`Double`，**可选**（默认：2.0）
+- **约束**：值必须大于 0
+
+#### - CollisionRadius（实验性）
+
+- 碰撞半径覆盖值
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - CollisionViewAngle（实验性）
+
+- 碰撞检测视野锥
+- **类型**：`Double`，**可选**（默认：320.0）
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - SeparationDistance（实验性）
+
+- 期望的分离距离
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SeparationWeight（实验性）
+
+- 分离的混合系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - SeparationDistanceTarget（实验性）
+
+- 接近目标时的期望分离距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - SeparationNearRadiusTarget（实验性）
+
+- 使用 SeparationDistanceTarget 时的距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SeparationFarRadiusTarget（实验性）
+
+- 超过此距离后使用普通分离距离
+- **类型**：`Double`，**可选**（默认：5.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - ApplyAvoidance（实验性）
+
+- 应用避让转向力
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ApplySeparation（实验性）
+
+- 应用分离转向力
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - AvoidanceMode（实验性）
+
+- 用于避让的能力
+- **类型**：`Flag`，**可选**（默认：Any）
+- **标志值**：
+  - `Evade`：仅闪避
+  - `Slowdown`：仅减速 NPC
+  - `Any`：允许任意避让
+
+#### - EntityAvoidanceStrength（实验性）
+
+- 避让的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - StayInEnvironment（实验性）
+
+- 停留在生成环境中
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - AllowedEnvironments（实验性）
+
+- 允许行走的环境
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+#### - FlockSpawnTypes（开发中）
+
+- 该群体应包含的 NPC 类型
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+#### - FlockSpawnTypesRandom（开发中）
+
+- 如果为 true 则创建随机群体，否则按 FlockSpawnTypes 的顺序生成
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - FlockAllowedNPC（实验性）
+
+- 允许加入群体的 NPC 列表
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+#### - FlockCanLead（实验性）
+
+- 此 NPC 可以成为群体领袖
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - FlockWeightAlignment（实验性）
+
+- 群体对齐的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockWeightSeparation（实验性）
+
+- 群体分离的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockWeightCohesion（实验性）
+
+- 群体凝聚的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockInfluenceRange（实验性）
+
+- 群体作用力的影响半径
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - DisableDamageFlock（开发中）
+
+- 如果为 true，则禁用群体成员造成的战斗伤害
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - DisableDamageGroups（开发中）
+
+- 此列表中的组成员不会造成伤害
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：TagSet
+
+#### - BusyStates（稳定）
+
+- 此 NPC 处于忙碌且无法交互的状态
+- **类型**：`StringList`，**必需**
+- **约束**：字符串必须是有效的状态字符串。句点前必须包含主状态（例如 Main.Test）。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可以省略主状态（例如 .Test）。
+
+#### - CombatConfig（稳定）
+
+- 提供可选战斗动作评估器的战斗配置
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - Invulnerable（稳定）
+
+- 使 NPC 忽略伤害
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - BreathesInAir（开发中）
+
+- 能在空气中呼吸
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BreathesInWater（开发中）
+
+- 能在流体/水中呼吸
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - PickupDropOnDeath（稳定）
+
+- 死亡时掉落最后拾取的物品
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - DeathAnimationTime（实验性）
+
+- 在移除前让死亡动画播放多长时间
+- **类型**：`Double`，**可选**（默认：5.0）
+- **约束**：值必须大于或等于 0
+
+#### - DeathInteraction（实验性）
+
+- 死亡时运行的交互
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - DespawnAnimationTime（实验性）
+
+- 在移除前让消失动画播放多长时间
+- **类型**：`Double`，**可选**（默认：0.800000011920929）
+- **约束**：值必须大于或等于 0
+
+#### - SpawnParticles（实验性）
+
+- 生成时的粒子系统
+- **类型**：`String`，**可选**（默认：null）
+
+#### - SpawnParticlesOffset（实验性）
+
+- 相对于 NPC 朝向，从脚部点到生成位置的位移
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Double
+
+#### - SpawnViewDistance（实验性）
+
+- 生成粒子的可见距离
+- **类型**：`Double`，**可选**（默认：75.0）
+- **约束**：值必须大于 0
+
+#### - DefaultPlayerAttitude（稳定）
+
+- 此 NPC 对玩家的默认态度
+- **类型**：`Flag`，**可选**（默认：HOSTILE），**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+#### - DefaultNPCAttitude（稳定）
+
+- 此 NPC 对其他 NPC 的默认态度
+- **类型**：`Flag`，**可选**（默认：NEUTRAL），**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+#### - AttitudeGroup（稳定）
+
+- 此 NPC 所属的态度组，用于处理与其他 NPC 的关系（通常与物种相关）
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - ItemAttitudeGroup（稳定）
+
+- 此 NPC 的物品态度
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - CorpseStaysInFlock（稳定）
+
+- NPC 应留在群体中直到尸体被移除，还是在死亡瞬间就被移除
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - OverrideHeadPitchAngle（实验性）
+
+- 是否覆盖头部俯仰角范围
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - HeadPitchAngleRange（实验性）
+
+- 用于替代模型相机设置的头部旋转俯仰范围
+- **类型**：`Array`，**可选**（默认：[-89.0, 89.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -90、小于或等于 90，并且按弱升序排列
+
+#### - MotionControllerList（稳定）
+
+- 运动控制器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：HashMap
+
+#### - Instructions（开发中）
+
+- 指令列表
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Instruction
+
+#### - InteractionInstruction（稳定）
+
+- 一种指令，用于评估并设置哪些玩家可以与该 NPC 交互，同时在交互时设置正确的状态
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Instruction
+
+#### - DeathInstruction（稳定）
+
+- 一种仅在 NPC 死亡后、直到其被移除前运行的指令
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Instruction
+
+#### - StateTransitions（稳定）
+
+- 一组状态转换，以及在这些转换期间执行的动作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：StateTransitionController
+
+#### - StateEvaluator（稳定）
+
+- 状态评估器
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - InitialMotionController（稳定）
+
+- 要设置的初始运动控制器。如果省略且存在多个，将随机选择一个。
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - InteractionVars（稳定）
+
+- 用于交互的交互变量。
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - IsMemory（稳定）
+
+- 用于定义该 NPC 是否有需要记录的 Memory。
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - MemoriesCategory（稳定）
+
+- 作为 Memories 插件的一部分，将该 NPC 归入的类别
+- **类型**：`String`，**可选**（默认：Other），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - MemoriesNameOverride（稳定）
+
+- 设置时覆盖 Memory 名称。
+- **类型**：`String`，**可选**（默认：），**可计算**
+
+#### - SpawnLockTime（稳定）
+
+- NPC 首次生成时应被锁定且无法执行行为的时长
+- **类型**：`Double`，**可选**（默认：1.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+### 约束
+
+- BreathesInAir、BreathesInWater 中至少有一个必须为 true
+
+[(顶部)](#top)
+
+## Generic: Role（稳定） [#role_generic]
+
+带有核心规划器和运动控制器列表的 NPC 通用角色。
+
+### 属性
+
+#### - MaxHealth（稳定）
+
+- 最大生命值
+- **类型**：`Integer`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（开发中）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - Appearance（稳定）
+
+- 用于渲染的模型
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - DisplayNames（稳定）
+
+- 可供选择的显示名称列表
+- **类型**：`StringList`，**可选**（默认：null）
+- **约束**：数组中的字符串不能为空
+
+#### - NameTranslationKey（稳定）
+
+- 此 NPC 名称的翻译键
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - OpaqueBlockSet（稳定）
+
+- 阻挡视线的方块
+- **类型**：`Asset`，**可选**（默认：Opaque）
+
+#### - Inertia（实验性）
+
+- 惯性
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0.1
+
+#### - KnockbackScale（稳定）
+
+- 击退的缩放系数。大于 1 的值会增强击退，较小的值会减弱击退。
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - InventorySize（稳定）
+
+- 可用物品栏槽位数量
+- **类型**：`Integer`，**可选**（默认：0）
+- **约束**：值必须大于或等于 0 且小于或等于 36
+
+#### - HotbarSize（稳定）
+
+- 可用快捷栏槽位数量
+- **类型**：`Integer`，**可选**（默认：3）
+- **约束**：值必须大于或等于 3 且小于或等于 8
+
+#### - OffHandSlots（稳定）
+
+- 副手物品的槽位数量
+- **类型**：`Integer`，**可选**（默认：0）
+- **约束**：值必须大于或等于 0 且小于或等于 4
+
+#### - HotbarItems（稳定）
+
+- 快捷栏物品（例如主武器、副武器等）
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+#### - OffHandItems（稳定）
+
+- 副手物品（例如盾牌、火把等）
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+#### - PossibleInventoryItems（稳定）
+
+- 定义 NPC 物品栏可能包含哪些物品的掉落列表
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - DefaultOffHandSlot（稳定）
+
+- 默认副手物品槽位（-1 表示空）
+- **类型**：`Integer`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 4
+
+#### - Armor（开发中）
+
+- 护甲物品
+- **类型**：`AssetArray`，**可选**（默认：null），**元素类型**：Item
+
+#### - DropList（稳定）
+
+- 被击杀时生成的掉落列表
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - StartState（稳定）
+
+- 初始状态
+- **类型**：`String`，**可选**（默认：start）
+- **约束**：字符串不能为空
+
+#### - DefaultSubState（稳定）
+
+- 转换到未指定子状态的主状态时所引用的默认子状态
+- **类型**：`String`，**可选**（默认：Default）
+- **约束**：字符串不能为空
+
+#### - CollisionDistance（稳定）
+
+- 碰撞预判
+- **类型**：`Double`，**可选**（默认：5.0）
+- **约束**：值必须大于 0
+
+#### - CollisionForceFalloff（实验性）
+
+- 碰撞力的衰减速率
+- **类型**：`Double`，**可选**（默认：2.0）
+- **约束**：值必须大于 0
+
+#### - CollisionRadius（实验性）
+
+- 碰撞半径覆盖值
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - CollisionViewAngle（实验性）
+
+- 碰撞检测视野锥
+- **类型**：`Double`，**可选**（默认：320.0）
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - SeparationDistance（实验性）
+
+- 期望的分离距离
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SeparationWeight（实验性）
+
+- 分离的混合系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - SeparationDistanceTarget（实验性）
+
+- 接近目标时的期望分离距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - SeparationNearRadiusTarget（实验性）
+
+- 使用 SeparationDistanceTarget 时的距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SeparationFarRadiusTarget（实验性）
+
+- 超过此距离后使用普通分离距离
+- **类型**：`Double`，**可选**（默认：5.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - ApplyAvoidance（实验性）
+
+- 应用避让转向力
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ApplySeparation（实验性）
+
+- 应用分离转向力
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - AvoidanceMode（实验性）
+
+- 用于避让的能力
+- **类型**：`Flag`，**可选**（默认：Any）
+- **标志值**：
+  - `Evade`：仅闪避
+  - `Slowdown`：仅减速 NPC
+  - `Any`：允许任意避让
+
+#### - EntityAvoidanceStrength（实验性）
+
+- 避让的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - StayInEnvironment（实验性）
+
+- 停留在生成环境中
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - AllowedEnvironments（实验性）
+
+- 允许行走的环境
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+#### - FlockSpawnTypes（开发中）
+
+- 该群体应包含的 NPC 类型
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+#### - FlockSpawnTypesRandom（开发中）
+
+- 如果为 true 则创建随机群体，否则按 FlockSpawnTypes 的顺序生成
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - FlockAllowedNPC（实验性）
+
+- 允许加入群体的 NPC 列表
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+#### - FlockCanLead（实验性）
+
+- 此 NPC 可以成为群体领袖
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - FlockWeightAlignment（实验性）
+
+- 群体对齐的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockWeightSeparation（实验性）
+
+- 群体分离的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockWeightCohesion（实验性）
+
+- 群体凝聚的混合系数
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0
+
+#### - FlockInfluenceRange（实验性）
+
+- 群体作用力的影响半径
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - DisableDamageFlock（开发中）
+
+- 如果为 true，则禁用群体成员造成的战斗伤害
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - DisableDamageGroups（开发中）
+
+- 此列表中的组成员不会造成伤害
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：TagSet
+
+#### - BusyStates（稳定）
+
+- 此 NPC 处于忙碌且无法交互的状态
+- **类型**：`StringList`，**必需**
+- **约束**：字符串必须是有效的状态字符串。句点前必须包含主状态（例如 Main.Test）。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可以省略主状态（例如 .Test）。
+
+#### - CombatConfig（稳定）
+
+- 提供可选战斗动作评估器的战斗配置
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - Invulnerable（稳定）
+
+- 使 NPC 忽略伤害
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - BreathesInAir（开发中）
+
+- 能在空气中呼吸
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BreathesInWater（开发中）
+
+- 能在流体/水中呼吸
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - PickupDropOnDeath（稳定）
+
+- 死亡时掉落最后拾取的物品
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - DeathAnimationTime（实验性）
+
+- 在移除前让死亡动画播放多长时间
+- **类型**：`Double`，**可选**（默认：5.0）
+- **约束**：值必须大于或等于 0
+
+#### - DeathInteraction（实验性）
+
+- 死亡时运行的交互
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - DespawnAnimationTime（实验性）
+
+- 在移除前让消失动画播放多长时间
+- **类型**：`Double`，**可选**（默认：0.800000011920929）
+- **约束**：值必须大于或等于 0
+
+#### - SpawnParticles（实验性）
+
+- 生成时的粒子系统
+- **类型**：`String`，**可选**（默认：null）
+
+#### - SpawnParticlesOffset（实验性）
+
+- 相对于 NPC 朝向，从脚部点到生成位置的位移
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Double
+
+#### - SpawnViewDistance（实验性）
+
+- 生成粒子的可见距离
+- **类型**：`Double`，**可选**（默认：75.0）
+- **约束**：值必须大于 0
+
+#### - DefaultPlayerAttitude（稳定）
+
+- 此 NPC 对玩家的默认态度
+- **类型**：`Flag`，**可选**（默认：HOSTILE），**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+#### - DefaultNPCAttitude（稳定）
+
+- 此 NPC 对其他 NPC 的默认态度
+- **类型**：`Flag`，**可选**（默认：NEUTRAL），**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+#### - AttitudeGroup（稳定）
+
+- 此 NPC 所属的态度组，用于处理与其他 NPC 的关系（通常与物种相关）
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - ItemAttitudeGroup（稳定）
+
+- 此 NPC 的物品态度
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - CorpseStaysInFlock（稳定）
+
+- NPC 应留在群体中直到尸体被移除，还是在死亡瞬间就被移除
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - OverrideHeadPitchAngle（实验性）
+
+- 是否覆盖头部俯仰角范围
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - HeadPitchAngleRange（实验性）
+
+- 用于替代模型相机设置的头部旋转俯仰范围
+- **类型**：`Array`，**可选**（默认：[-89.0, 89.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -90、小于或等于 90，并且按弱升序排列
+
+#### - MotionControllerList（稳定）
+
+- 运动控制器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：HashMap
+
+#### - Instructions（开发中）
+
+- 指令列表
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Instruction
+
+#### - InteractionInstruction（稳定）
+
+- 一种指令，用于评估并设置哪些玩家可以与该 NPC 交互，同时在交互时设置正确的状态
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Instruction
+
+#### - DeathInstruction（稳定）
+
+- 一种仅在 NPC 死亡后、直到其被移除前运行的指令
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Instruction
+
+#### - StateTransitions（稳定）
+
+- 一组状态转换，以及在这些转换期间执行的动作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：StateTransitionController
+
+#### - StateEvaluator（稳定）
+
+- 状态评估器
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - InitialMotionController（稳定）
+
+- 要设置的初始运动控制器。如果省略且存在多个，将随机选择一个。
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - InteractionVars（稳定）
+
+- 用于交互的交互变量。
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+#### - IsMemory（稳定）
+
+- 用于定义该 NPC 是否有需要记录的 Memory。
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - MemoriesCategory（稳定）
+
+- 作为 Memories 插件的一部分，将该 NPC 归入的类别
+- **类型**：`String`，**可选**（默认：Other），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - MemoriesNameOverride（稳定）
+
+- 设置时覆盖 Memory 名称。
+- **类型**：`String`，**可选**（默认：），**可计算**
+
+#### - SpawnLockTime（稳定）
+
+- NPC 首次生成时应被锁定且无法执行行为的时长
+- **类型**：`Double`，**可选**（默认：1.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+### 约束
+
+- BreathesInAir、BreathesInWater 中至少有一个必须为 true
+
+[(顶部)](#top)
+
+## Variant: Role（开发中） [#role_variant]
+
+从现有 NPC JSON 文件创建变体
+
+[(顶部)](#top)
+
+# 运动控制器列表 [#motioncontrollers]
+
+## Dive: MotionController（开发中） [#motioncontroller_dive]
+
+为 NPC 提供潜水能力
+
+### 属性
+
+#### - Type（稳定）
+
+- 类型字段
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+#### - EpsilonSpeed（实验性）
+
+- 被视为非 0 的最小速度
+- **类型**：`Double`，**可选**（默认：1.0E-5）
+- **约束**：值必须大于 0
+
+#### - EpsilonAngle（实验性）
+
+- 被视为非 0 的最小角度差，单位为度
+- **类型**：`Double`，**可选**（默认：3.0）
+- **约束**：值必须大于 0
+
+#### - MaxHeadRotationSpeed（稳定）
+
+- 头部的最大旋转速度，单位为度
+- **类型**：`Double`，**可选**（默认：360.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - ForceVelocityDamping（实验性）
+
+- 外力/速度随时间的阻尼
+- **类型**：`Double`，**可选**（默认：0.5）
+- **约束**：值必须大于 0
+
+#### - RunThreshold（开发中）
+
+- 应使用奔跑动画的相对阈值
+- **类型**：`Double`，**可选**（默认：0.7），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - RunThresholdRange（开发中）
+
+- 在奔跑/行走之间切换的相对阈值范围
+- **类型**：`Double`，**可选**（默认：0.15）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MaxSwimSpeed（稳定）
+
+- 最大水平速度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxDiveSpeed（稳定）
+
+- 最大垂直速度
+- **类型**：`Double`，**可选**（默认：8.0）
+- **约束**：值必须大于 0
+
+#### - MaxFallSpeed（稳定）
+
+- 在空气中下落的终端速度
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - MaxSinkSpeed（稳定）
+
+- 在水中下沉的终端速度
+- **类型**：`Double`，**可选**（默认：4.0）
+- **约束**：值必须大于 0
+
+#### - Gravity（稳定）
+
+- 重力
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - Acceleration（稳定）
+
+- 加速度
+- **类型**：`Double`，**可选**（默认：3.0）
+- **约束**：值必须大于 0
+
+#### - MaxRotationSpeed（稳定）
+
+- 最大旋转速度，单位为度
+- **类型**：`Double`，**可选**（默认：360.0）
+- **约束**：值必须大于 0
+
+#### - MaxSwimTurnAngle（开发中）
+
+- NPC 无需明确转向即可行走的最大角度，单位为度
+- **类型**：`Double`，**可选**（默认：90.0）
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - FastSwimThreshold（开发中）
+
+- 应使用快速游泳动画的相对阈值
+- **类型**：`Double`，**可选**（默认：0.6）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - SwimDepth（开发中）
+
+- 0 位于眼睛高度，-1 为包围盒底部，+1 为包围盒顶部。-1 到 +1 之间的其他值按线性缩放
+- **类型**：`Double`，**可选**（默认：0.4）
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - SinkRatio（开发中）
+
+- 游荡时的相对下沉或上浮速度
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinDiveDepth（未知）
+
+- null
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MaxDiveDepth（开发中）
+
+- 期望的低于水面的最大下潜深度
+- **类型**：`Double`，**可选**（默认：1.7976931348623157E308）
+- **约束**：值必须大于 0
+
+#### - MinDepthAboveGround（开发中）
+
+- 期望的距地面最小距离
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinDepthBelowSurface（开发中）
+
+- 期望的距水面最小距离
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinWaterDepth（未知）
+
+- null
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0
+
+#### - MaxWaterDepth（未知）
+
+- null
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - DesiredDepthWeight（稳定）
+
+- 此 NPC 对处于期望高度范围内的偏好程度。0 表示不太在意，1 表示会尽力快速到达该范围。
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+### 约束
+
+- MinSwimSpeed 必须小于或等于 MaxSwimSpeed
+
+[(顶部)](#top)
+
+## Fly: MotionController（开发中） [#motioncontroller_fly]
+
+飞行运动控制器
+
+### 属性
+
+#### - Type（稳定）
+
+- 类型字段
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+#### - EpsilonSpeed（实验性）
+
+- 被视为非 0 的最小速度
+- **类型**：`Double`，**可选**（默认：1.0E-5）
+- **约束**：值必须大于 0
+
+#### - EpsilonAngle（实验性）
+
+- 被视为非 0 的最小角度差，单位为度
+- **类型**：`Double`，**可选**（默认：3.0）
+- **约束**：值必须大于 0
+
+#### - MaxHeadRotationSpeed（稳定）
+
+- 头部的最大旋转速度，单位为度
+- **类型**：`Double`，**可选**（默认：360.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - ForceVelocityDamping（实验性）
+
+- 外力/速度随时间的阻尼
+- **类型**：`Double`，**可选**（默认：0.5）
+- **约束**：值必须大于 0
+
+#### - RunThreshold（开发中）
+
+- 应使用奔跑动画的相对阈值
+- **类型**：`Double`，**可选**（默认：0.7），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - RunThresholdRange（开发中）
+
+- 在奔跑/行走之间切换的相对阈值范围
+- **类型**：`Double`，**可选**（默认：0.15）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MinAirSpeed（开发中）
+
+- 最小空中速度
+- **类型**：`Double`，**可选**（默认：0.1）
+- **约束**：值必须大于或等于 0
+
+#### - MaxHorizontalSpeed（稳定）
+
+- 最大水平速度
+- **类型**：`Double`，**可选**（默认：8.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxClimbSpeed（稳定）
+
+- 最大攀爬速度
+- **类型**：`Double`，**可选**（默认：6.0）
+- **约束**：值必须大于 0
+
+#### - MaxSinkSpeed（稳定）
+
+- 最大下沉/下降速度
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - MaxFallSpeed（稳定）
+
+- 最大下落速度
+- **类型**：`Double`，**可选**（默认：40.0）
+- **约束**：值必须大于 0
+
+#### - MaxSinkSpeedFluid（稳定）
+
+- 在流体中的最大下沉/下落速度
+- **类型**：`Double`，**可选**（默认：4.0）
+- **约束**：值必须大于或等于 0
+
+#### - MaxClimbAngle（稳定）
+
+- 最大攀爬角度
+- **类型**：`Double`，**可选**（默认：45.0）
+- **约束**：值必须大于 0
+
+#### - MaxSinkAngle（稳定）
+
+- 最大下沉角度
+- **类型**：`Double`，**可选**（默认：85.0）
+- **约束**：值必须大于 0
+
+#### - Acceleration（稳定）
+
+- 最大加速度
+- **类型**：`Double`，**可选**（默认：4.0）
+- **约束**：值必须大于 0
+
+#### - Deceleration（稳定）
+
+- 最大减速度
+- **类型**：`Double`，**可选**（默认：4.0）
+- **约束**：值必须大于 0
+
+#### - Gravity（稳定）
+
+- 重力
+- **类型**：`Double`，**可选**（默认：40.0）
+- **约束**：值必须大于 0
+
+#### - MaxTurnSpeed（稳定）
+
+- 最大转向速度，单位为度/秒
+- **类型**：`Double`，**可选**（默认：180.0）
+- **约束**：值必须大于 0
+
+#### - MaxRollAngle（稳定）
+
+- 最大翻滚角度，单位为度
+- **类型**：`Double`，**可选**（默认：45.0）
+- **约束**：值必须大于 0
+
+#### - MaxRollSpeed（稳定）
+
+- 最大翻滚速度，单位为度/秒
+- **类型**：`Double`，**可选**（默认：180.0）
+- **约束**：值必须大于 0
+
+#### - RollDamping（稳定）
+
+- 翻滚阻尼
+- **类型**：`Double`，**可选**（默认：0.8999999761581421）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MinHeightOverGround（稳定）
+
+- 离地最小高度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxHeightOverGround（稳定）
+
+- 离地最大高度
+- **类型**：`Double`，**可选**（默认：20.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - FastFlyThreshold（开发中）
+
+- 应使用快速飞行动画的相对阈值
+- **类型**：`Double`，**可选**（默认：0.6）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - AutoLevel（稳定）
+
+- 未施加转向力时将俯仰设为 0
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 对处于期望高度范围内的偏好程度。0 表示不太在意，1 表示会尽力快速到达该范围。
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+[(顶部)](#top)
+
+## Walk: MotionController（开发中） [#motioncontroller_walk]
+
+为 NPC 提供在地面上行走的能力
+
+### 属性
+
+#### - Type（稳定）
+
+- 类型字段
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+#### - EpsilonSpeed（实验性）
+
+- 被视为非 0 的最小速度
+- **类型**：`Double`，**可选**（默认：1.0E-5）
+- **约束**：值必须大于 0
+
+#### - EpsilonAngle（实验性）
+
+- 被视为非 0 的最小角度差（度）
+- **类型**：`Double`，**可选**（默认：3.0）
+- **约束**：值必须大于 0
+
+#### - MaxHeadRotationSpeed（稳定）
+
+- 头部的最大旋转速度（度）
+- **类型**：`Double`，**可选**（默认：360.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - ForceVelocityDamping（实验性）
+
+- 外力/速度随时间的阻尼
+- **类型**：`Double`，**可选**（默认：0.5）
+- **约束**：值必须大于 0
+
+#### - RunThreshold（开发中）
+
+- 应使用奔跑动画时的相对阈值
+- **类型**：`Double`，**可选**（默认：0.7），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - RunThresholdRange（开发中）
+
+- 在奔跑/行走之间切换的相对阈值范围
+- **类型**：`Double`，**可选**（默认：0.15）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MaxWalkSpeed（稳定）
+
+- 最大水平速度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinWalkSpeed（开发中）
+
+- 最小水平速度
+- **类型**：`Double`，**可选**（默认：0.1）
+- **约束**：值必须大于或等于 0
+
+#### - MaxFallSpeed（稳定）
+
+- 最大下落速度
+- **类型**：`Double`，**可选**（默认：8.0）
+- **约束**：值必须大于 0
+
+#### - MaxSinkSpeedFluid（稳定）
+
+- 在流体中的最大下沉速度
+- **类型**：`Double`，**可选**（默认：4.0）
+- **约束**：值必须大于 0
+
+#### - Gravity（稳定）
+
+- 重力
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - Acceleration（稳定）
+
+- 加速度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxRotationSpeed（稳定）
+
+- 最大旋转速度（度）
+- **类型**：`Double`，**可选**（默认：360.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxWalkTurnAngle（开发中）
+
+- NPC 在不显式转向的情况下能够行走的最大角度（度）
+- **类型**：`Double`，**可选**（默认：90.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - BlendRestTurnAngle（开发中）
+
+- 当 NPC 正在混合朝向且所需转向角大于此值时，速度会降低
+- **类型**：`Double`，**可选**（默认：60.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - BlendRestRelativeSpeed（开发中）
+
+- 当 NPC 正在混合朝向时，用于降低速度的相对速度
+- **类型**：`Double`，**可选**（默认：0.2），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MaxClimbHeight（稳定）
+
+- NPC 能够攀爬的最大高度
+- **类型**：`Double`，**可选**（默认：1.3），**可计算**
+- **约束**：值必须大于 0
+
+#### - JumpHeight（实验性）
+
+- NPC 在攀爬高度之上跳跃的高度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MinJumpHeight（实验性）
+
+- 超过该高度才会尝试跳跃的最小高度
+- **类型**：`Double`，**可选**（默认：0.6），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MinJumpDistance（实验性）
+
+- 超过该距离才会执行跳跃的最小距离
+- **类型**：`Double`，**可选**（默认：0.2），**可计算**
+- **约束**：值必须大于 0
+
+#### - JumpForce（实验性）
+
+- 跳跃向上运动的力乘数
+- **类型**：`Double`，**可选**（默认：1.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - JumpBlending（实验性）
+
+- 向上跳跃模式的混合系数。0 更弯曲，1 为线性
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - JumpDescentBlending（实验性）
+
+- 跳跃下降模式的混合系数。0 为线性，值越大越弯曲
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - JumpDescentSteepness（实验性）
+
+- 跳跃下降部分的陡峭程度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AscentAnimationType（稳定）
+
+- 向上走上方块时播放的动画
+- **类型**：`Flag`，**可选**（默认：Walk），**可计算**
+- **标志值**：
+  - `Walk`：播放行走动画
+  - `Fly`：播放飞行动画
+  - `Idle`：播放待机动画
+  - `Climb`：播放攀爬动画
+  - `Jump`：播放跳跃动画
+
+#### - ClimbSpeedMult（开发中）
+
+- 攀爬速度乘数（const + multiplier \* walkspeed \*\* power）
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+
+#### - ClimbSpeedPow（开发中）
+
+- 攀爬速度的幂（const + multiplier \* walkspeed \*\* power）
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+
+#### - ClimbSpeedConst（开发中）
+
+- 攀爬速度常量（const + multiplier \* walkspeed \*\* power）
+- **类型**：`Double`，**可选**（默认：5.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinDescentAnimationHeight（稳定）
+
+- 从标准行走动画切换到指定下降动画的最小下落距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - DescendFlatness（开发中）
+
+- NPC 在向下攀爬时向前移动速度的相对比例
+- **类型**：`Double`，**可选**（默认：0.7），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - DescendSpeedCompensation（开发中）
+
+- 用于补偿向下移动时前向速度降低的系数
+- **类型**：`Double`，**可选**（默认：0.9），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - DescentAnimationType（实验性）
+
+- 向下走下方块时播放的动画
+- **类型**：`Flag`，**可选**（默认：Fall），**可计算**
+- **标志值**：
+  - `Walk`：播放行走动画
+  - `Idle`：播放待机动画
+  - `Fall`：播放下落动画
+
+#### - DescentSteepness（实验性）
+
+- 下降的相对陡峭程度
+- **类型**：`Double`，**可选**（默认：1.4），**可计算**
+- **约束**：值必须大于 0
+
+#### - DescentBlending（实验性）
+
+- 下降模式的混合系数。0 为线性，值越大越弯曲
+- **类型**：`Double`，**可选**（默认：1.8），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxDropHeight（开发中）
+
+- NPC 认为可安全下落的最大高度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - FenceBlockSet（稳定）
+
+- 不可攀爬的方块
+- **类型**：`Asset`，**可选**（默认：Fence）
+
+#### - JumpRange（开发中）
+
+- 跳跃距离范围
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 10，并且按弱升序排列
+
+#### - MinHover（开发中）
+
+- 离地的最小悬停高度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinHoverClimb（开发中）
+
+- 攀爬时离地的最小悬停高度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinHoverDrop（开发中）
+
+- 下落时离地的最小悬停高度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - FloatsDown（开发中）
+
+- 如果为 true，则启用悬停时 NPC 会飘落，否则由重力决定
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - MaxHover（开发中）
+
+- 离地的最大悬停高度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - HoverFreq（开发中）
+
+- 悬停频率
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MinHitSlowdown（稳定）
+
+- 被从背后攻击时减速的最小百分比
+- **类型**：`Double`，**可选**（默认：0.1）
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+### 约束
+
+- MinHover 必须小于或等于 MaxHover
+- MinHoverClimb 必须小于或等于 MinHover
+- MinHoverDrop 必须小于或等于 MinHover
+- MinWalkSpeed 必须小于或等于 MaxWalkSpeed
+
+[(顶部)](#top)
+
+# 其他部件列表 [#miscparts]
+
+## ActionList: ActionList（稳定） [#actionlist_actionlist]
+
+要执行的动作数组
+
+- 动作列表
+- **类型**：`Array`，**必需**，**元素类型**：Action
+
+[(顶部)](#top)
+
+## Aim: HeadMotion（稳定） [#headmotion_aim]
+
+在考虑手中武器的情况下瞄准目标。
+
+### 属性
+
+#### - Spread（实验性）
+
+- 随机瞄准误差
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 5
+
+#### - HitProbability（实验性）
+
+- 射击正中目标的概率
+- **类型**：`Double`，**可选**（默认：0.33），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - Deflection（实验性）
+
+- 计算移动目标的偏转
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelativeTurnSpeed（稳定）
+
+- 相对转向速度修正系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+### 约束
+
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+
+[(顶部)](#top)
+
+## AimCharge: BodyMotion（稳定） [#bodymotion_aimcharge]
+
+根据瞄准信息将 NPC 瞄准目标位置以执行冲锋，并在执行之前确保冲锋可行。
+
+### 属性
+
+#### - RelativeTurnSpeed（稳定）
+
+- 相对转向速度修正系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+### 约束
+
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+
+[(顶部)](#top)
+
+## Altitude: IEntityFilter（稳定） [#ientityfilter_altitude]
+
+如果目标位于地面上方定义的范围内，则匹配
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AltitudeRange（稳定）
+
+- 要匹配的离地范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+[(顶部)](#top)
+
+## And: IEntityFilter（稳定） [#ientityfilter_and]
+
+过滤器列表的逻辑与
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Filters（稳定）
+
+- 过滤器列表
+- **类型**：`Array`，**必需**，**元素类型**：IEntityFilter
+- **约束**：数组不能为空
+
+[(顶部)](#top)
+
+## Attitude: ISensorEntityPrioritiser（稳定） [#isensorentityprioritiser_attitude]
+
+按态度对返回的实体进行优先级排序
+
+### 属性
+
+#### - AttitudesByPriority（稳定）
+
+- 按优先级排列的态度列表
+- **类型**：`FlagArray`，**必需**，**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+- **约束**：数组不能包含重复项
+
+[(顶部)](#top)
+
+## Attitude: IEntityFilter（稳定） [#ientityfilter_attitude]
+
+匹配对锁定目标的态度
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Attitudes（稳定）
+
+- 要匹配的态度
+- **类型**：`FlagSet`，**必需**，**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：敬畏目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+### 约束
+
+[(顶部)](#top)
+
+## Combat: IEntityFilter（稳定） [#ientityfilter_combat]
+
+检查目标的战斗状态。包括目标是否正在攻击、是否正在使用特定攻击等
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sequence（稳定）
+
+- 要检查的攻击 ID。
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - TimeElapsedRange（稳定）
+
+- 可接受的已流逝时间范围（秒）。
+- **类型**：`Array`，**可选**（默认：[0.0, 3.4028234663852886E38]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 3.4028234663852886e+38，并且按弱升序排列
+
+#### - Mode（稳定）
+
+- 要触发的战斗类型
+- **类型**：`Flag`，**可选**（默认：Attacking），**可计算**
+- **标志值**：
+  - `Ranged`：远程
+  - `Charging`：武器蓄力
+  - `Melee`：近战
+  - `Blocking`：格挡
+  - `Sequence`：战斗序列
+  - `Attacking`：攻击中
+  - `Any`：任意
+  - `None`：无
+
+### 约束
+
+- 如果 Mode 为 Sequence，则必须提供 Sequence 资源
+
+[(顶部)](#top)
+
+## CombatTargets: ISensorEntityCollector（稳定） [#isensorentitycollector_combattargets]
+
+一种收集器，用于处理匹配到的友方和敌方目标，并将其添加到 NPC 的短期战斗记忆中。
+
+[(顶部)](#top)
+
+## Flee: BodyMotion（实验性） [#bodymotion_flee]
+
+使用寻路或转向远离目标
+
+### 属性
+
+#### - RelativeSpeed（稳定）
+
+- NPC 移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - RelativeSpeedWaypoint（稳定）
+
+- NPC 在路径点附近移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - WaypointRadius（稳定）
+
+- 在路径点周围开始减速的半径
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0.1
+
+#### - UseBestPath（稳定）
+
+- 如果无法到达目标，则使用最佳的部分路径
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ThrottleDelayRange（稳定）
+
+- 未找到寻路方案后的延迟时间
+- **类型**：`Array`，**可选**（默认：[3.0, 5.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - ThrottleIgnoreCount（稳定）
+
+- 在应用节流延迟之前，允许找不到有效路径方案的次数
+- **类型**：`Integer`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - BuildOptimisedPath（稳定）
+
+- 尝试减少生成路径的节点数量
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlendHeading（稳定）
+
+- 到达当前路径点时朝下一个路径点转向的相对旋转角度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - PathSmoothing（稳定）
+
+- 尝试平滑所跟随的路径。值越大平滑程度越高。
+- **类型**：`Integer`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - RejectionWeight（稳定）
+
+- 将实体推回原始路径的排斥向量的权重
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - UseSteering（稳定）
+
+- 如果可用，则使用简单/低开销的转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - SkipSteering（实验性）
+
+- 如果目标不可达，则跳过转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - UsePathfinder（稳定）
+
+- 使用寻路器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MinPathLength（实验性）
+
+- 无法到达目标时所需的最小路径长度（应大于或等于 2）
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - DiagonalMoves（稳定）
+
+- 允许对角线移动
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - StepsPerTick（稳定）
+
+- 每次迭代的步数
+- **类型**：`Integer`，**可选**（默认：50.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxPathLength（稳定）
+
+- 中止寻路前的最大路径步数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxOpenNodes（稳定）
+
+- 中止寻路前的最大开放节点数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxTotalNodes（稳定）
+
+- 中止寻路前的最大总节点数
+- **类型**：`Integer`，**可选**（默认：900.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（稳定）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 对处于期望高度范围内的偏好程度。0 表示不太在意，1 表示会尽力尽快到达该范围。小于 0 的值表示使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - WaitDistance（实验性）
+
+- 找不到路径时，在重新计算路径之前目标需要移动的最小距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - RecomputeDistance（实验性）
+
+- 路径重新计算之前目标可以移动的最大距离，或设为 0 以抑制重新计算
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - ReprojectDistance（实验性）
+
+- 位置重新投影之前目标可以移动的最大距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - AdjustRangeByHitboxSize（稳定）
+
+- 根据相关实体的碰撞箱尺寸修正范围
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - RecomputeConeAngle（实验性）
+
+- 当目标离开从初始位置到目标的锥形区域时重新计算路径
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - SlowDownDistance（稳定）
+
+- NPC 应开始减速时与目标的距离
+- **类型**：`Double`，**可选**（默认：8.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- NPC 应停止时与目标的距离
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Falloff（稳定）
+
+- 减速相对于距离发生的速率
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - HoldDirectionTimeRange（稳定）
+
+- 更换朝向的间隔时间范围
+- **类型**：`Array`，**可选**（默认：[2.0, 5.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - ChangeDirectionViewSector（稳定）
+
+- NPC 用于判断是否应切换方向的视野扇区
+- **类型**：`Double`，**可选**（默认：230.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - DirectionJitter（稳定）
+
+- 为 NPC 使用的朝向添加的抖动角度（度）
+- **类型**：`Double`，**可选**（默认：45.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - ErraticDistance（稳定）
+
+- 如果玩家比此距离更近，NPC 将使用额外的抖动参数表现出更不稳定的行为
+- **类型**：`Double`，**可选**（默认：4.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - ErraticExtraJitter（稳定）
+
+- 当目标过近时，在标准抖动之上为 NPC 朝向添加的额外抖动
+- **类型**：`Double`，**可选**（默认：45.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - ErraticChangeDurationMultiplier（稳定）
+
+- 当目标过近时，用于缩短方向变化间隔时长的乘数
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1
+
+### 约束
+
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+- SlowDownDistance 必须小于或等于 StopDistance
+
+[(顶部)](#top)
+
+## Flock: BodyMotion（实验性） [#bodymotion_flock]
+
+群体行为 - 开发中
+
+### 约束
+
+[(顶部)](#top)
+
+## Flock: IEntityFilter（稳定） [#ientityfilter_flock]
+
+测试群体成员资格及相关属性
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - FlockStatus（稳定）
+
+- 测试 NPC 相对于群体的状态
+- **类型**：`Flag`，**可选**（默认：Any）
+- **标志值**：
+  - `Leader`：是群体的首领
+  - `Follower`：是群体的一员但不是首领
+  - `NotMember`：不是群体的一员
+  - `Member`：是群体的一员
+  - `Any`：不关心
+
+#### - FlockPlayerStatus（稳定）
+
+- 测试玩家在 NPC 所属群体中的状态
+- **类型**：`Flag`，**可选**（默认：Any）
+- **标志值**：
+  - `NotMember`：玩家不是群体成员
+  - `Member`：玩家是群体成员
+  - `Any`：不关心
+
+#### - Size（稳定）
+
+- 检查群体中 NPC 数量是否处于特定范围
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：integer
+
+#### - CheckCanJoin（稳定）
+
+- 如果为 true，将筛选出执行者可加入的群体中的实体
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## HashMap: HashMap（稳定） [#hashmap_hashmap]
+
+非空的运动控制器列表。
+
+- 运动控制器列表
+- **类型**：`Array`，**必需**，**元素类型**：MotionController
+- **约束**：数组不能为空
+
+[(顶部)](#top)
+
+## HeightDifference: IEntityFilter（稳定） [#ientityfilter_heightdifference]
+
+匹配处于给定高度范围内的实体
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - HeightDifference（稳定）
+
+- 用于测试实体的高度范围。对于位于 NPC 下方的位置，该范围会延伸到负值
+- **类型**：`Array`，**可选**（默认：[-1.7976931348623157E308, 1.7976931348623157E308]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -1.7976931348623157e+308、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - UseEyePosition（稳定）
+
+- 使用眼睛位置进行高度差检查
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## InsideBlock: IEntityFilter（稳定） [#ientityfilter_insideblock]
+
+如果实体位于 BlockSet 中任意方块的内部，则匹配
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlockSet（稳定）
+
+- 要匹配的 BlockSet
+- **类型**：`Asset`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## Instruction: Instruction（开发中） [#instruction_instruction]
+
+一种指令，包含传感器、运动和动作，或一组嵌套指令。
+
+### 属性
+
+#### - Name（稳定）
+
+- 描述符的可选名称
+- **类型**：`String`，**可选**（默认：null）
+
+#### - Tag（实验性）
+
+- 用于调试的内部标识标签
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+#### - Enabled（稳定）
+
+- 此指令是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 用于测试指令是否可应用的传感器。如果未提供，则始终匹配
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Sensor
+
+#### - BodyMotion（稳定）
+
+- 要执行的身体运动
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：BodyMotion
+
+#### - HeadMotion（稳定）
+
+- 要执行的头运动
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：HeadMotion
+
+#### - Actions（稳定）
+
+- 要执行的动作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ActionList
+
+#### - ActionsBlocking（稳定）
+
+- 除非上一个动作可以执行，否则不执行动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ActionsAtomic（稳定）
+
+- 仅当所有动作都能执行时才执行动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Instructions（稳定）
+
+- 可选的嵌套指令列表
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Instruction
+
+#### - Continue（开发中）
+
+- 在此指令执行后继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Weight（稳定）
+
+- 在随机指令中选中此指令的加权概率
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - TreeMode（稳定）
+
+- 是否将此指令及其内容视为传统行为树，即当所有子指令都失败时仍会继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - InvertTreeModeResult（稳定）
+
+- 在向父级 TreeMode 指令传递时，是否反转 TreeMode 评估的结果
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 约束
+
+- BodyMotion、Instructions 中最多只能提供一项，或都不提供
+- HeadMotion、Instructions 中最多只能提供一项，或都不提供
+- Actions、Instructions 中最多只能提供一项，或都不提供
+- 如果 TreeMode 为 true，则 Continue 必须为 false
+
+[(顶部)](#top)
+
+## Inventory: IEntityFilter（稳定） [#ientityfilter_inventory]
+
+测试与实体物品栏相关的各种条件。包括是否包含特定物品、物品数量以及空闲槽位
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Items（稳定）
+
+- 要匹配的 glob 物品模式列表
+- **类型**：`AssetArray`，**可选**（默认：[*]），**可计算**，**元素类型**：Item
+
+#### - CountRange（稳定）
+
+- 需要匹配这些模式的物品数量范围
+- **类型**：`Array`，**可选**（默认：[1, 2147483647]），**可计算**，**元素类型**：integer
+- **约束**：值必须大于或等于 0、小于或等于 2147483647，并且按弱升序排列
+
+#### - FreeSlotRange（稳定）
+
+- 指定所需空闲槽位数量的范围。将最小值和最大值都设为 0 可检查是否已满
+- **类型**：`Array`，**可选**（默认：[0, 2147483647]），**可计算**，**元素类型**：integer
+- **约束**：值必须大于或等于 0、小于或等于 2147483647，并且按弱升序排列
+
+[(顶部)](#top)
+
+## ItemInHand: IEntityFilter（稳定） [#ientityfilter_iteminhand]
+
+检查实体是否手持物品
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Items（稳定）
+
+- 要匹配的 glob 物品模式列表
+- **类型**：`AssetArray`，**必需**，**可计算**，**元素类型**：Item
+
+#### - Hand（稳定）
+
+- 要检查哪只手
+- **类型**：`Flag`，**可选**（默认：Both），**可计算**
+- **标志值**：
+  - `OffHand`：副手
+  - `Main`：主手
+  - `Both`：双手
+
+[(顶部)](#top)
+
+## Land: BodyMotion（实验性） [#bodymotion_land]
+
+尝试使用类似追踪的运动在给定位置着陆
+
+### 属性
+
+#### - RelativeSpeed（稳定）
+
+- NPC 移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - RelativeSpeedWaypoint（稳定）
+
+- NPC 在路径点附近移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - WaypointRadius（稳定）
+
+- 在路径点周围开始减速的半径
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0.1
+
+#### - UseBestPath（稳定）
+
+- 如果无法到达目标，则使用最佳的部分路径
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ThrottleDelayRange（稳定）
+
+- 未找到寻路方案后的延迟时间
+- **类型**：`Array`，**可选**（默认：[3.0, 5.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - ThrottleIgnoreCount（稳定）
+
+- 在应用节流延迟之前，允许找不到有效路径方案的次数
+- **类型**：`Integer`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - BuildOptimisedPath（稳定）
+
+- 尝试减少生成路径的节点数量
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlendHeading（稳定）
+
+- 到达当前路径点时朝下一个路径点转向的相对旋转角度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - PathSmoothing（稳定）
+
+- 尝试平滑所跟随的路径。值越大平滑程度越高。
+- **类型**：`Integer`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - RejectionWeight（稳定）
+
+- 将实体推回原始路径的排斥向量的权重
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - UseSteering（稳定）
+
+- 如果可用，则使用简单/低开销的转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - SkipSteering（实验性）
+
+- 如果目标不可达，则跳过转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - UsePathfinder（稳定）
+
+- 使用寻路器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MinPathLength（实验性）
+
+- 无法到达目标时所需的最小路径长度（应大于或等于 2）
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - DiagonalMoves（稳定）
+
+- 允许对角线移动
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - StepsPerTick（稳定）
+
+- 每次迭代的步数
+- **类型**：`Integer`，**可选**（默认：50.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxPathLength（稳定）
+
+- 中止寻路前的最大路径步数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxOpenNodes（稳定）
+
+- 中止寻路前的最大开放节点数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxTotalNodes（稳定）
+
+- 中止寻路前的最大总节点数
+- **类型**：`Integer`，**可选**（默认：900.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（稳定）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 对处于期望高度范围内的偏好程度。0 表示不太在意，1 表示会尽力尽快到达该范围。小于 0 的值表示使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - WaitDistance（实验性）
+
+- 找不到路径时，在重新计算路径之前目标需要移动的最小距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - RecomputeDistance（实验性）
+
+- 路径重新计算之前目标可以移动的最大距离，或设为 0 以抑制重新计算
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - ReprojectDistance（实验性）
+
+- 位置重新投影之前目标可以移动的最大距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - AdjustRangeByHitboxSize（稳定）
+
+- 根据相关实体的碰撞箱尺寸修正范围
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - RecomputeConeAngle（实验性）
+
+- 当目标离开从初始位置到目标的锥形区域时重新计算路径
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - Reachable（实验性）
+
+- 目标必须可达，以便碰撞箱能够重叠
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - HeightDifference（实验性）
+
+- 允许与目标的高度差
+- **类型**：`Array`，**可选**（默认：[-1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -1.7976931348623157e+308、小于或等于 1.7976931348623157e+308，并且按严格升序排列
+
+#### - SlowDownDistance（稳定）
+
+- 接近时开始减速的距离
+- **类型**：`Double`，**可选**（默认：8.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- 停止时所处的距离
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AbortDistance（稳定）
+
+- 中止行为时的距离
+- **类型**：`Double`，**可选**（默认：96.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Falloff（稳定）
+
+- 接近目标时的减速度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SwitchToSteeringDistance（稳定）
+
+- 低于此距离时，NPC 可以测试目标是否可达并中止现有路径
+- **类型**：`Double`，**可选**（默认：20.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - GoalLenience（实验性）
+
+- 距目标着陆点可接受的落点距离
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于 0
+
+### 约束
+
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+- SlowDownDistance 必须大于或等于 StopDistance
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+
+[(顶部)](#top)
+
+## Leave: BodyMotion（实验性） [#bodymotion_leave]
+
+使用寻路离开当前位置
+
+### 属性
+
+#### - RelativeSpeed（稳定）
+
+- NPC 移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - RelativeSpeedWaypoint（稳定）
+
+- NPC 在路径点附近移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - WaypointRadius（稳定）
+
+- 在路径点周围开始减速的半径
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0.1
+
+#### - UseBestPath（稳定）
+
+- 如果无法到达目标，则使用最佳的部分路径
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ThrottleDelayRange（稳定）
+
+- 未找到寻路方案后的延迟时间
+- **类型**：`Array`，**可选**（默认：[3.0, 5.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - ThrottleIgnoreCount（稳定）
+
+- 在应用节流延迟之前，允许找不到有效路径方案的次数
+- **类型**：`Integer`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - BuildOptimisedPath（稳定）
+
+- 尝试减少生成路径的节点数量
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlendHeading（稳定）
+
+- 到达当前路径点时朝下一个路径点转向的相对旋转角度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - PathSmoothing（稳定）
+
+- 尝试平滑所跟随的路径。值越大平滑程度越高。
+- **类型**：`Integer`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - RejectionWeight（稳定）
+
+- 将实体推回原始路径的排斥向量的权重
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinPathLength（实验性）
+
+- 无法到达目标时所需的最小路径长度（应大于或等于 2）
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - DiagonalMoves（稳定）
+
+- 允许对角线移动
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - StepsPerTick（稳定）
+
+- 每次迭代的步数
+- **类型**：`Integer`，**可选**（默认：50.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxPathLength（稳定）
+
+- 中止寻路前的最大路径步数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxOpenNodes（稳定）
+
+- 中止寻路前的最大开放节点数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxTotalNodes（稳定）
+
+- 中止寻路前的最大总节点数
+- **类型**：`Integer`，**可选**（默认：900.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（稳定）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 对处于期望高度范围内的偏好程度。0 表示不太在意，1 表示会尽力尽快到达该范围。小于 0 的值表示使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - Distance（实验性）
+
+- 所需的最小距离
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+### 约束
+
+[(顶部)](#top)
+
+## LineOfSight: IEntityFilter（稳定） [#ientityfilter_lineofsight]
+
+如果到目标存在视线，则匹配
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 是否应启用此实体过滤器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## MaintainDistance: BodyMotion（稳定） [#bodymotion_maintaindistance]
+
+与给定位置保持距离
+
+### 属性
+
+#### - DesiredDistanceRange（稳定）
+
+- 希望保持的距离。
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -1.7976931348623157e+308、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - TargetDistanceFactor（稳定）
+
+- 用于决定当目标落在目标范围之外时移动到范围内哪个距离的系数。0 表示移动到范围内最短的距离，1 表示最远的距离，0.5 大致为范围的中间。
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - MoveThreshold（稳定）
+
+- 在 NPC 触发移动之前，期望范围两侧的额外阈值距离。
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - RelativeForwardsSpeed（稳定）
+
+- NPC 向前移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - RelativeBackwardsSpeed（稳定）
+
+- NPC 向后移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - MoveTowardsSlowdownThreshold（稳定）
+
+- NPC 在朝目标移动时开始减速的位置与目标停止点之间的距离
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - StrafingDurationRange（稳定）
+
+- 横向移动（围绕目标向左或向右移动）的持续时间。如果设为 [ 0, 0 ]，则完全不会水平移动。
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - StrafingFrequencyRange（稳定）
+
+- 执行横向移动的频率
+- **类型**：`Array`，**可选**（默认：[2.0, 2.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+### 约束
+
+- 必须附着到提供玩家目标、NPC 目标、掉落物品目标或向量位置之一的传感器上
+
+[(顶部)](#top)
+
+## MatchLook: BodyMotion（稳定） [#bodymotion_matchlook]
+
+让 NPC 的身体旋转以匹配视线方向
+
+### 约束
+
+[(顶部)](#top)
+
+## MovementState: IEntityFilter（稳定） [#ientityfilter_movementstate]
+
+检查实体是否处于给定的移动状态
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - State（稳定）
+
+- 要检查的移动状态
+- **类型**：`Flag`，**必需**
+- **标志值**：
+  - `WALKING`：行走
+  - `FLYING`：飞行
+  - `RUNNING`：奔跑
+  - `FALLING`：下落
+  - `IDLE`：Idle
+  - `SPRINTING`：冲刺
+  - `CROUCHING`：蹲伏
+  - `CLIMBING`：攀爬
+  - `ANY`：任意
+  - `JUMPING`：跳跃
+
+[(顶部)](#top)
+
+## NPCGroup: IEntityFilter（稳定） [#ientityfilter_npcgroup]
+
+返回实体是否与所提供的 NPCGroup 之一匹配
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - IncludeGroups（稳定）
+
+- 要包含在匹配中的 NPCGroup 集合
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：TagSet
+
+#### - ExcludeGroups（稳定）
+
+- 要从匹配中排除的 NPCGroup 集合
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：TagSet
+
+### 约束
+
+- 必须提供 IncludeGroups、ExcludeGroups 中的一个（且仅一个）
+
+[(顶部)](#top)
+
+## Not: IEntityFilter（开发中） [#ientityfilter_not]
+
+反转过滤测试
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Filter（稳定）
+
+- 要测试的过滤器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：IEntityFilter
+
+[(顶部)](#top)
+
+## Nothing: BodyMotion（稳定） [#bodymotion_nothing]
+
+什么都不做
+
+### 约束
+
+[(顶部)](#top)
+
+## Nothing: HeadMotion（稳定） [#headmotion_nothing]
+
+什么都不做
+
+### 约束
+
+[(顶部)](#top)
+
+## Observe: HeadMotion（稳定） [#headmotion_observe]
+
+以多种方式观察周围环境。这包括在某个角度范围内随机朝各个方向看，或左右扫视头部等。角度在任何时刻都相对于身体角度。
+
+### 属性
+
+#### - AngleRange（稳定）
+
+- 要观察的角度范围，单位为度，相对于正前方偏移
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -180、小于或等于 180，并且按弱升序排列
+
+#### - PauseTimeRange（稳定）
+
+- 在给定方向上持续看多久
+- **类型**：`Array`，**可选**（默认：[2.0, 2.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - PickRandomAngle（稳定）
+
+- 是否在该范围内随机选取角度。如果为 false，则改为在整个范围内扫视，并在两端暂停。
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - ViewSegments（稳定）
+
+- 从左到右扫视时应停留的不同分段数量
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - RelativeTurnSpeed（稳定）
+
+- 相对转向速度的修正系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+### 约束
+
+[(顶部)](#top)
+
+## Or: IEntityFilter（稳定） [#ientityfilter_or]
+
+一组过滤器的逻辑或
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Filters（稳定）
+
+- 过滤器列表
+- **类型**：`Array`，**必需**，**元素类型**：IEntityFilter
+- **约束**：数组不能为空
+
+[(顶部)](#top)
+
+## Path: Path（稳定） [#path_path]
+
+临时路径点列表
+
+### 属性
+
+#### - Waypoints（稳定）
+
+- 临时路径点列表
+- **类型**：`Array`，**必需**，**元素类型**：RelativeWaypointDefinition
+
+#### - Scale（稳定）
+
+- 路径的整体缩放
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+[(顶部)](#top)
+
+## Path: BodyMotion（稳定） [#bodymotion_path]
+
+沿路径行走。
+
+### 属性
+
+#### - StartAtNearestNode（稳定）
+
+- 从最近的扭曲点开始
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - PathWidth（实验性）
+
+- 行走走廊的宽度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - NodeWidth（实验性）
+
+- 扭曲点节点的半径
+- **类型**：`Double`，**可选**（默认：0.2）
+- **约束**：值必须大于 0
+
+#### - MinRelSpeed（稳定）
+
+- 最小相对行走速度
+- **类型**：`Double`，**可选**（默认：0.5）
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - MaxRelSpeed（稳定）
+
+- 最大相对行走速度
+- **类型**：`Double`，**可选**（默认：0.5）
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - MinWalkDistance（实验性）
+
+- PathWidth 大于 0 时的最小行走距离
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MaxWalkDistance（实验性）
+
+- PathWidth 大于 0 时的最大行走距离
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - Direction（稳定）
+
+- 相对于节点顺序的行走方向
+- **类型**：`Flag`，**可选**（默认：FORWARD）
+- **标志值**：
+  - `BACKWARD`：以相反顺序开始访问节点
+  - `RANDOM`：可在节点之间改变方向，并在 Points 形状模式下随机选取目标节点
+  - `FORWARD`：按顺序开始访问节点
+  - `ANY`：任选起始方向
+
+#### - Shape（稳定）
+
+- 路径形状
+- **类型**：`Flag`，**可选**（默认：LOOP），**可计算**
+- **标志值**：
+  - `CHAIN`：节点构成由线段组成的开放路径，并在到达最终节点时与下一个最近的路径连接
+  - `LINE`：节点构成由线段组成的开放路径
+  - `LOOP`：节点构成由线段组成的闭合环路（最后一个节点通向第一个节点）
+  - `POINTS`：节点之间可以有任何路径
+
+#### - MinNodeDelay（稳定）
+
+- 在节点处的最短休息时间
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - MaxNodeDelay（稳定）
+
+- 在节点处的最长休息时间
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+#### - UseNodeViewDirection（稳定）
+
+- 在节点处朝下一个节点的方向看去
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - NodePauseScaleRange（稳定）
+
+- 用于选取一个值的范围，该值定义转向之前应花在面向某一方向上的总节点暂停时间占比
+- **类型**：`Array`，**可选**（默认：[0.2, 0.4]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - NodePauseExtraPercentRange（稳定）
+
+- 用于选取要叠加到方向性暂停时间上的额外百分比的范围
+- **类型**：`Array`，**可选**（默认：[0.0, 0.2]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1，并且按弱升序排列
+
+#### - PickRandomAngle（稳定）
+
+- 是使用观察角度左右扫视，还是每次在该扇区内随机选取一个角度
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ViewSegments（稳定）
+
+- 使用观察角度从左到右扫视时应停留的不同分段数量
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+### 约束
+
+- MinRelativeSpeed 必须小于或等于 MaxRelativeSpeed
+- MinWalkDistance 必须小于或等于 MaxWalkDistance
+- MinNodeDelay 必须小于或等于 MaxNodeDelay
+- 必须附加到提供 path 的传感器
+
+[(顶部)](#top)
+
+## Random: Instruction（稳定） [#instruction_random]
+
+加权指令的随机列表。将随机选择其中一条执行，直到 NPC 状态发生变化。
+
+### 属性
+
+#### - Name（稳定）
+
+- 描述符的可选名称
+- **类型**：`String`，**可选**（默认：null）
+
+#### - Tag（实验性）
+
+- 用于调试的内部标识标签
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或不能为空
+
+#### - Enabled（稳定）
+
+- 此指令是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 用于测试指令是否可应用的传感器。如果未提供，则始终匹配
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Sensor
+
+#### - Instructions（稳定）
+
+- 可供选择的加权指令列表
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Instruction
+
+#### - Continue（开发中）
+
+- 此指令执行后是否继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Weight（稳定）
+
+- 在随机指令中被选中的加权概率
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - TreeMode（稳定）
+
+- 此指令及其内容是否应按传统行为树处理，即当所有子指令都失败时仍继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - InvertTreeModeResult（稳定）
+
+- 在将 TreeMode 的评估结果向上传递给父级 TreeMode 指令时，是否反转该结果
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - ResetOnStateChange（稳定）
+
+- NPC 状态变化时是否重置
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ExecuteFor（稳定）
+
+- 在选取另一条指令之前，所选指令的执行时长
+- **类型**：`Array`，**可选**（默认：[1.7976931348623157E308, 1.7976931348623157E308]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+### 约束
+
+- 如果 TreeMode 为 true，则 Continue 必须为 false
+
+[(顶部)](#top)
+
+## Reference: Instruction（稳定） [#instruction_reference]
+
+可从此文件的其他位置引用的优先级指令列表。除此之外与默认指令的行为相同
+
+### 属性
+
+#### - Parameters（稳定）
+
+- 用于定义变量的参数块
+- **类型**：`Parameters`，**可选**（默认：）
+
+#### - Name（稳定）
+
+- 用于引用的名称
+- **类型**：`String`，**必需**
+
+#### - Tag（实验性）
+
+- 用于调试的内部标识标签
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或不能为空
+
+#### - Enabled（稳定）
+
+- 此指令是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 用于测试指令是否可应用的传感器。如果未提供，则始终匹配
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Sensor
+
+#### - BodyMotion（稳定）
+
+- 要执行的身体运动
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：BodyMotion
+
+#### - HeadMotion（稳定）
+
+- 要执行的头部运动
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：HeadMotion
+
+#### - Actions（稳定）
+
+- 要执行的动作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ActionList
+
+#### - ActionsBlocking（稳定）
+
+- 除非上一个动作能够执行，否则不执行动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ActionsAtomic（稳定）
+
+- 仅当所有动作都能执行时才执行动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Instructions（稳定）
+
+- 可选的嵌套指令列表
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：Instruction
+
+#### - Continue（开发中）
+
+- 此指令执行后是否继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Weight（稳定）
+
+- 在随机指令中被选中的加权概率
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - TreeMode（稳定）
+
+- 此指令及其内容是否应按传统行为树处理，即当所有子指令都失败时仍继续
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - InvertTreeModeResult（稳定）
+
+- 在将 TreeMode 的评估结果向上传递给父级 TreeMode 指令时，是否反转该结果
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 约束
+
+- BodyMotion、Instructions 中最多提供其中一个或不提供
+- HeadMotion、Instructions 中最多提供其中一个或不提供
+- Actions、Instructions 中最多提供其中一个或不提供
+- 如果 TreeMode 为 true，则 Continue 必须为 false
+
+[(顶部)](#top)
+
+## RelativeWaypointDefinition: RelativeWaypointDefinition（稳定） [#relativewaypointdefinition_relativewaypointdefinition]
+
+一种简单的路径点定义，其中每个路径点都相对于前一个路径点
+
+### 属性
+
+#### - Rotation（稳定）
+
+- 相对于前一个路径点的旋转角度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于 -360 且小于 360
+
+#### - Distance（稳定）
+
+- 从前一个路径点移动的距离
+- **类型**：`Double`，**必需**
+- **约束**：值必须大于 0
+
+[(顶部)](#top)
+
+## Seek: BodyMotion（实验性） [#bodymotion_seek]
+
+使用寻路或转向朝目标移动
+
+### 属性
+
+#### - RelativeSpeed（稳定）
+
+- NPC 应移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - RelativeSpeedWaypoint（稳定）
+
+- NPC 在路径点附近应移动的最大相对速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1
+
+#### - WaypointRadius（稳定）
+
+- 在路径点周围开始减速的半径
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0.1
+
+#### - UseBestPath（稳定）
+
+- 如果无法到达目标，则使用最佳的部分路径
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ThrottleDelayRange（稳定）
+
+- 未找到寻路解决方案后的延迟时间
+- **类型**：`Array`，**可选**（默认：[3.0, 5.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - ThrottleIgnoreCount（稳定）
+
+- 在应用节流延迟之前，可以出现多少次未找到有效路径解决方案的情况
+- **类型**：`Integer`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - BuildOptimisedPath（稳定）
+
+- 尝试减少所生成路径的节点数量
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlendHeading（稳定）
+
+- 到达当前路径点时朝向下一个路径点的相对旋转角度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 1
+
+#### - PathSmoothing（稳定）
+
+- 尝试平滑所遵循的路径。值越大越平滑。
+- **类型**：`Integer`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - RejectionWeight（稳定）
+
+- 将实体推向原始路径的排斥向量的权重
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - UseSteering（稳定）
+
+- 如果可用，使用简单/低开销的转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - SkipSteering（实验性）
+
+- 如果目标不可达则跳过转向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - UsePathfinder（稳定）
+
+- 使用寻路器
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MinPathLength（实验性）
+
+- 无法到达目标时所需的最小路径长度（应大于或等于 2）
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - DiagonalMoves（稳定）
+
+- 允许斜向移动
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - StepsPerTick（稳定）
+
+- 每次迭代的步数
+- **类型**：`Integer`，**可选**（默认：50.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxPathLength（稳定）
+
+- 中止寻路前的最大路径步数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxOpenNodes（稳定）
+
+- 中止寻路前的最大开放节点数
+- **类型**：`Integer`，**可选**（默认：200.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MaxTotalNodes（稳定）
+
+- 中止寻路前的最大总节点数
+- **类型**：`Integer`，**可选**（默认：900.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Debug（稳定）
+
+- 调试标志
+- **类型**：`String`，**可选**（默认：）
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 有多偏好处于期望高度范围内。0 表示不太在意，1 表示会尽力快速到达那里。小于 0 的值表示将使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - WaitDistance（实验性）
+
+- 找不到路径时，在重新计算路径之前目标需要移动的最小距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - RecomputeDistance（实验性）
+
+- 在重新计算路径之前目标可以移动的最大距离，为 0 则抑制重新计算
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - ReprojectDistance（实验性）
+
+- 在位置被重新投影之前目标可以移动的最大距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - AdjustRangeByHitboxSize（稳定）
+
+- 根据相关实体的碰撞箱尺寸修正范围
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - RecomputeConeAngle（实验性）
+
+- 当目标离开从初始位置到目标的锥形区域时重新计算路径
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - Reachable（实验性）
+
+- 目标必须可达，以便碰撞箱能够重叠
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - HeightDifference（实验性）
+
+- 允许与目标的高度差
+- **类型**：`Array`，**可选**（默认：[-1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 -1.7976931348623157e+308、小于或等于 1.7976931348623157e+308，并且按严格升序排列
+
+#### - SlowDownDistance（稳定）
+
+- 接近时开始减速的距离
+- **类型**：`Double`，**可选**（默认：8.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- 停止距离
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AbortDistance（稳定）
+
+- 中止行为的距离
+- **类型**：`Double`，**可选**（默认：96.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Falloff（稳定）
+
+- 接近目标时的减速度
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - SwitchToSteeringDistance（稳定）
+
+- 低于该距离时，NPC 可以测试目标是否可达并中止现有路径
+- **类型**：`Double`，**可选**（默认：20.0），**可计算**
+- **约束**：值必须大于 0
+
+### 约束
+
+- 必须附加到提供以下目标之一的传感器：玩家目标、NPC 目标、掉落物目标、向量位置
+- SlowDownDistance 必须大于或等于 StopDistance
+- 必须附加到提供以下目标之一的传感器：玩家目标、NPC 目标、掉落物目标、向量位置
+
+[(顶部)](#top)
+
+## Sequence: BodyMotion（稳定） [#bodymotion_sequence]
+
+运动序列。可与 'Timer' 配合使用来建模更复杂的运动。
+
+### 属性
+
+#### - Looped（稳定）
+
+- 为 true 时，在最后一个运动结束后重新开始
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - RestartOnActivate（实验性）
+
+- NPC 被激活时从第一个运动重新开始。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Motions（稳定）
+
+- 运动数组
+- **类型**：`Array`，**必需**，**元素类型**：BodyMotion
+- **约束**：数组不能为空
+
+### 约束
+
+[(顶部)](#top)
+
+## Sequence: HeadMotion（稳定） [#headmotion_sequence]
+
+运动序列。可与 'Timer' 配合使用来建模更复杂的运动。
+
+### 属性
+
+#### - Looped（稳定）
+
+- 为 true 时，在最后一个运动结束后重新开始
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - RestartOnActivate（实验性）
+
+- NPC 被激活时从第一个运动重新开始。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Motions（稳定）
+
+- 运动数组
+- **类型**：`Array`，**必需**，**元素类型**：HeadMotion
+- **约束**：数组不能为空
+
+### 约束
+
+[(顶部)](#top)
+
+## SpotsMe: IEntityFilter（稳定） [#ientityfilter_spotsme]
+
+检查实体能否在给定的视野扇区或视锥内且无遮挡地看到该 NPC。
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ViewAngle（稳定）
+
+- 用于视野扇区和视锥测试的角度
+- **类型**：`Double`，**可选**（默认：90.0）
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - ViewTest（稳定）
+
+- 检查实体是位于视锥、视野扇区，还是两者都不在
+- **类型**：`Flag`，**可选**（默认：VIEW_SECTOR）
+- **标志值**：
+  - `VIEW_SECTOR`：视野扇区
+  - `NONE`：无
+  - `VIEW_CONE`：视锥
+
+#### - TestLineOfSight（稳定）
+
+- 检查到该 NPC 的视线是否未被阻挡
+- **类型**：`Boolean`，**可选**（默认：true）
+
+### 约束
+
+[(顶部)](#top)
+
+## StandingOnBlock: IEntityFilter（稳定） [#ientityfilter_standingonblock]
+
+将实体正下方的方块与某个 BlockSet 进行匹配
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - BlockSet（稳定）
+
+- 要匹配的 BlockSet
+- **类型**：`Asset`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## Stat: IEntityFilter（稳定） [#ientityfilter_stat]
+
+匹配实体的属性值
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Stat（稳定）
+
+- 要检查的属性值
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - StatTarget（稳定）
+
+- 属性值目标
+- **类型**：`Flag`，**必需**，**可计算**
+- **标志值**：
+  - `Min`：最小值
+  - `Max`：最大值
+  - `Value`：当前值
+
+#### - RelativeTo（稳定）
+
+- 用于比较的属性值
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - RelativeToTarget（稳定）
+
+- 属性值目标
+- **类型**：`Flag`，**必需**，**可计算**
+- **标志值**：
+  - `Min`：最小值
+  - `Max`：最大值
+  - `Value`：当前值
+
+#### - ValueRange（稳定）
+
+- 触发所需的小数范围，1 表示相等
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+[(顶部)](#top)
+
+## StateTransition: StateTransition（稳定） [#statetransition_statetransition]
+
+一个条目，包含从一个状态转移到另一个状态时要执行的动作列表
+
+### 属性
+
+#### - States（稳定）
+
+- 状态转移列表
+- **类型**：`Array`，**必需**，**元素类型**：StateTransitionEdges
+
+#### - Actions（稳定）
+
+- 动作列表
+- **类型**：`ObjectRef`，**必需**，**对象类型**：ActionList
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## StateTransitionController: StateTransitionController（稳定） [#statetransitioncontroller_statetransitioncontroller]
+
+状态转移列表
+
+- 由带动作列表的状态转移条目组成的列表
+- **类型**：`Array`，**必需**，**元素类型**：StateTransition
+
+[(顶部)](#top)
+
+## StateTransitionEdges: StateTransitionEdges（稳定） [#statetransitionedges_statetransitionedges]
+
+定义状态转移的起始状态集合与目标状态集合
+
+### 属性
+
+#### - Priority（稳定）
+
+- 此转移中动作的优先级
+- **类型**：`Integer`，**可选**（默认：0）
+- **约束**：值必须大于或等于 0
+
+#### - From（稳定）
+
+- 起始状态集合
+- **类型**：`StringList`，**必需**
+- **约束**：数组中的字符串不能为空
+
+#### - To（稳定）
+
+- 目标状态集合
+- **类型**：`StringList`，**必需**
+- **约束**：数组中的字符串不能为空
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## TakeOff: BodyMotion（实验性） [#bodymotion_takeoff]
+
+将 NPC 从行走运动控制器切换为飞行运动控制器
+
+### 属性
+
+#### - JumpSpeed（实验性）
+
+- 起跳速度
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0
+
+### 约束
+
+[(顶部)](#top)
+
+## Teleport: BodyMotion（实验性） [#bodymotion_teleport]
+
+将 NPC 传送到传感器给定的位置，或传送到附近的一个随机位置，可选偏移量为从最小值到最大值
+
+### 属性
+
+#### - OffsetRange（实验性）
+
+- NPC 可以距目标位置生成的最小与最大偏移
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - MaxYOffset（实验性）
+
+- 遇到地形障碍时距目标位置的最大垂直偏移
+- **类型**：`Double`，**可选**（默认：5.0）
+- **约束**：值必须大于 0
+
+#### - OffsetSector（实验性）
+
+- 围绕目标的可传送扇区。原点位于目标与正在传送的 NPC 之间
+- **类型**：`Double`，**可选**（默认：0.0）
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - Orientation（实验性）
+
+- 传送后要面向的方向
+- **类型**：`Flag`，**可选**（默认：Unchanged）
+- **标志值**：
+  - `UseTarget`：使用目标的朝向
+  - `TowardsTarget`：面向目标
+  - `Unchanged`：不改变朝向
+
+### 约束
+
+- 必须附加到提供以下目标之一的传感器：玩家目标、NPC 目标、掉落物目标、向量位置
+- 如果 Orientation 为 UseTarget，则必须附加到提供以下目标之一的传感器：玩家目标、NPC 目标、掉落物目标
+
+[(顶部)](#top)
+
+## TestProbe: BodyMotion（实验性） [#bodymotion_testprobe]
+
+调试——测试探测
+
+### 属性
+
+#### - AdjustX（实验性）
+
+- X 方块位置调整
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - AdjustZ（实验性）
+
+- Y 方块位置调整
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - AdjustDistance（实验性）
+
+- 为调试设置探测方向长度
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - SnapAngle（实验性）
+
+- 为调试将角度吸附到该值的倍数
+- **类型**：`Double`，**可选**（默认：-1.0）
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+[(顶部)](#top)
+
+## Timer: BodyMotion（稳定） [#bodymotion_timer]
+
+在指定的最长时间内执行一个运动。如果运动提前结束，Timer 也会结束。
+
+### 属性
+
+#### - Time（稳定）
+
+- 用于选取随机计时器时长的时间范围
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - Motion（稳定）
+
+- 要执行的运动
+- **类型**：`ObjectRef`，**必需**，**对象类型**：BodyMotion
+
+### 约束
+
+[(顶部)](#top)
+
+## Timer: HeadMotion（稳定） [#headmotion_timer]
+
+在指定的最长时间内执行一个运动。如果运动提前结束，Timer 也会结束。
+
+### 属性
+
+#### - Time（稳定）
+
+- 用于选取随机计时器时长的时间范围
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - Motion（稳定）
+
+- 要执行的运动
+- **类型**：`ObjectRef`，**必需**，**对象类型**：HeadMotion
+
+### 约束
+
+[(顶部)](#top)
+
+## ValueToParameterMapping: ValueToParameterMapping（稳定） [#valuetoparametermapping_valuetoparametermapping]
+
+一个条目，包含从一个状态转移到另一个状态时要执行的动作列表
+
+### 属性
+
+#### - ValueType（稳定）
+
+- 被映射值的类型
+- **类型**：`Flag`，**必需**
+- **标志值**：
+  - `String`：字符串值
+  - `Double`：双精度值
+  - `Int`：整数值
+
+#### - FromValue（稳定）
+
+- 要从值存储中读取的值
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+#### - ToParameter（稳定）
+
+- 要覆盖的参数名
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## ViewSector: IEntityFilter（稳定） [#ientityfilter_viewsector]
+
+匹配位于给定视野扇区内的实体
+
+### 属性
+
+#### - Enabled（稳定）
+
+- 此实体过滤器是否应启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ViewSector（稳定）
+
+- 用于测试实体的视野扇区
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+### 约束
+
+[(顶部)](#top)
+
+## Wander: BodyMotion（稳定） [#bodymotion_wander]
+
+以短直线段进行的随机移动。
+
+### 属性
+
+#### - MinWalkTime（稳定）
+
+- 每个分段的游荡最短时间。
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxWalkTime（稳定）
+
+- 每个分段的游荡最长时间。
+- **类型**：`Double`，**可选**（默认：4.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinHeadingChange（稳定）
+
+- 分段之间的大致最小朝向变化
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - MaxHeadingChange（稳定）
+
+- 分段之间的大致最大朝向变化
+- **类型**：`Double`，**可选**（默认：90.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - RelaxHeadingChange（稳定）
+
+- 当首选方向受阻时允许其他方向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelativeSpeed（稳定）
+
+- 相对游荡速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - MinMoveDistance（稳定）
+
+- 每个分段中移动的最小距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- 在目标处停止的距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - TestsPerTick（稳定）
+
+- 每 tick 的方向测试次数
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 有多偏好处于期望高度范围内。0 表示不太在意，1 表示会尽力快速到达那里。小于 0 的值表示将使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+### 约束
+
+- MinWalkTime 必须小于或等于 MaxWalkTime
+- MinHeadingChange 必须小于或等于 MaxHeadingChange
+
+[(顶部)](#top)
+
+## WanderInCircle: BodyMotion（稳定） [#bodymotion_wanderincircle]
+
+在生成位置周围的圆形范围内以短直线段进行的随机移动。
+
+### 属性
+
+#### - MinWalkTime（稳定）
+
+- 每个分段的游荡最短时间。
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxWalkTime（稳定）
+
+- 每个分段的游荡最长时间。
+- **类型**：`Double`，**可选**（默认：4.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinHeadingChange（稳定）
+
+- 分段之间的大致最小朝向变化
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - MaxHeadingChange（稳定）
+
+- 分段之间的大致最大朝向变化
+- **类型**：`Double`，**可选**（默认：90.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - RelaxHeadingChange（稳定）
+
+- 当首选方向受阻时允许其他方向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelativeSpeed（稳定）
+
+- 相对游荡速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - MinMoveDistance（稳定）
+
+- 每个分段中移动的最小距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- 在目标处停止的距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - TestsPerTick（稳定）
+
+- 每 tick 的方向测试次数
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 有多偏好处于期望高度范围内。0 表示不太在意，1 表示会尽力快速到达那里。小于 0 的值表示将使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - Radius（稳定）
+
+- 游荡圆形的半径
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Flock（实验性）
+
+- 请勿使用
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - UseSphere（稳定）
+
+- 使用球体而非圆柱形区域
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+- MinWalkTime 必须小于或等于 MaxWalkTime
+- MinHeadingChange 必须小于或等于 MaxHeadingChange
+
+[(顶部)](#top)
+
+## WanderInRect: BodyMotion（稳定） [#bodymotion_wanderinrect]
+
+在生成位置周围的矩形范围内以短直线段进行的随机移动。
+
+### 属性
+
+#### - MinWalkTime（稳定）
+
+- 每个分段的游荡最短时间。
+- **类型**：`Double`，**可选**（默认：2.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxWalkTime（稳定）
+
+- 每个分段的游荡最长时间。
+- **类型**：`Double`，**可选**（默认：4.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - MinHeadingChange（稳定）
+
+- 分段之间的大致最小朝向变化
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - MaxHeadingChange（稳定）
+
+- 分段之间的大致最大朝向变化
+- **类型**：`Double`，**可选**（默认：90.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 180
+
+#### - RelaxHeadingChange（稳定）
+
+- 当首选方向受阻时允许其他方向
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelativeSpeed（稳定）
+
+- 相对游荡速度
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+#### - MinMoveDistance（稳定）
+
+- 每个分段中移动的最小距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - StopDistance（稳定）
+
+- 在目标处停止的距离
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+#### - TestsPerTick（稳定）
+
+- 每 tick 的方向测试次数
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AvoidBlockDamage（稳定）
+
+- 是否应避免来自方块的环境伤害
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - RelaxedMoveConstraints（稳定）
+
+- NPC 可以执行涉水等移动（取决于运动控制器类型）
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - DesiredAltitudeWeight（稳定）
+
+- 此 NPC 有多偏好处于期望高度范围内。0 表示不太在意，1 表示会尽力快速到达那里。小于 0 的值表示将使用运动控制器中的默认值。
+- **类型**：`Double`，**可选**（默认：-1.0），**可计算**
+- **约束**：值必须大于或等于 -1 且小于或等于 1
+
+#### - Width（稳定）
+
+- 矩形宽度
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+#### - Depth（稳定）
+
+- 矩形深度
+- **类型**：`Double`，**可选**（默认：10.0）
+- **约束**：值必须大于 0
+
+### 约束
+
+- MinWalkTime 必须小于或等于 MaxWalkTime
+- MinHeadingChange 必须小于或等于 MaxHeadingChange
+
+[(顶部)](#top)
+
+## Watch: HeadMotion（稳定） [#headmotion_watch]
+
+旋转以朝向目标。
+
+### 属性
+
+#### - RelativeTurnSpeed（稳定）
+
+- 相对转向速度修正系数
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 2
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标、掉落物目标或向量位置之一的传感器
+
+[(顶部)](#top)
+
+## WeightedAction: WeightedAction（稳定） [#weightedaction_weightedaction]
+
+用于 Random 动作列表的、经过包装并带权重的动作。
+
+### 属性
+
+#### - Action（稳定）
+
+- 要运行的动作
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Action
+
+#### - Weight（稳定）
+
+- 表示该动作被执行的可能性的权重
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+[(顶部)](#top)
+
+# 核心组件列表（AudioVisual） [#corecomponents_audiovisual]
+
+## Animation: Sensor（稳定） [#sensor_animation]
+
+检查指定动画是否正在播放
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Slot（稳定）
+
+- 要检查的动画槽位
+- **类型**：`Flag`，**必需**，**可计算**
+- **标志值**：
+  - `Status`：状态
+  - `Action`：动作
+  - `Face`：面部
+
+#### - Animation（稳定）
+
+- 要检查的动画 ID
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Appearance: Action（稳定） [#action_appearance]
+
+将 NPC 的模型更改为给定外观。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Appearance（稳定）
+
+- 要使用的模型名称
+- **类型**：`Asset`，**必需**
+
+[(顶部)](#top)
+
+## DisplayName: Action（稳定） [#action_displayname]
+
+设置显示在 NPC 上方的名称
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - DisplayName（稳定）
+
+- 显示在 NPC 上方的名称
+- **类型**：`String`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## ModelAttachment: Action（稳定） [#action_modelattachment]
+
+在当前 NPC 模型上设置附件
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Slot（稳定）
+
+- 要设置的附件槽位
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Attachment（稳定）
+
+- 要设置的附件；为空则移除
+- **类型**：`String`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## PlayAnimation: Action（实验性） [#action_playanimation]
+
+播放动画
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Slot（稳定）
+
+- 要在其上播放的动画槽位
+- **类型**：`Flag`，**必需**
+- **标志值**：
+  - `Status`：状态
+  - `Action`：动作
+  - `Face`：面部
+
+#### - Animation（稳定）
+
+- 要播放的动画 ID
+- **类型**：`String`，**可选**（默认：null），**可计算**
+
+[(顶部)](#top)
+
+## PlaySound: Action（稳定） [#action_playsound]
+
+向指定范围内的玩家播放声音。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - SoundEventId（稳定）
+
+- 要播放的声音事件
+- **类型**：`Asset`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## SpawnParticles: Action（开发中） [#action_spawnparticles]
+
+生成粒子系统，在给定范围内可见，其偏移相对于 NPC 朝向
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ParticleSystem（稳定）
+
+- 要生成的粒子系统
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - Range（稳定）
+
+- 最大可见范围
+- **类型**：`Double`，**可选**（默认：75.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Offset（稳定）
+
+- 相对于 NPC 视线方向上的脚点（footpoint）的偏移
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：Double
+
+[(顶部)](#top)
+
+# 核心组件列表（Combat） [#corecomponents_combat]
+
+## ApplyEntityEffect: Action（稳定） [#action_applyentityeffect]
+
+对目标或自身施加实体效果
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - EntityEffect（稳定）
+
+- 要施加的实体效果
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - UseTarget（稳定）
+
+- 为动作使用传感器提供的目标，否则使用自身
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+- 如果 UseTarget 为 true，必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## Attack: Action（实验性） [#action_attack]
+
+让 NPC 开始攻击。当已有攻击正在执行时，不会开始新的攻击。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Attack（实验性）
+
+- 要使用的攻击模式。若省略，将取消当前攻击
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - AttackType（稳定）
+
+- 要使用的交互类型
+- **类型**：`Flag`，**可选**（默认：Primary），**可计算**
+- **标志值**：
+  - `Secondary`：次要攻击
+  - `Ability3`：能力 3
+  - `Primary`：主要攻击
+  - `Ability2`：能力 2
+  - `Ability1`：能力 1
+
+#### - ChargeFor（稳定）
+
+- 蓄力时长。0 表示不蓄力。同时兼作格挡时长
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - AttackPauseRange（稳定）
+
+- 攻击之间最小暂停时间的范围
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - AimingTimeRange（稳定）
+
+- 用于随机选取一个值，表示 NPC 在发起攻击前等待瞄准的最长时间。
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - LineOfSight（实验性）
+
+- 开火前检查视线
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - AvoidFriendlyFire（实验性）
+
+- 如果为 true，则尝试避免误伤友军
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - BallisticMode（开发中）
+
+- 要使用的弹道
+- **类型**：`Flag`，**可选**（默认：Short）
+- **标志值**：
+  - `Random`：随机选择长弹道或短弹道
+  - `Long`：更长的飞行曲线
+  - `Short`：更短的飞行曲线
+  - `Alternate`：在长弹道和短弹道之间交替
+
+#### - MeleeConeAngle（开发中）
+
+- 近战判定是否命中目标时考虑的锥角
+- **类型**：`Double`，**可选**（默认：30.0）
+- **约束**：值必须大于 0 且小于或等于 360
+
+#### - DamageFriendlies（稳定）
+
+- 此攻击是否应绕过被忽略的伤害组并对目标造成伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - SkipAiming（稳定）
+
+- 是否应跳过瞄准并立即执行攻击。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ChargeDistance（稳定）
+
+- 如果这是冲锋攻击，则为其所需的冲锋距离
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - InteractionVars（稳定）
+
+- 用于修改交互的一组交互变量
+- **类型**：`CodecObject`，**可选**（默认：null）
+
+### 约束
+
+- 如果 SkipAiming 为 true，则 LineOfSight、AvoidFriendlyFire 必须为 false
+
+[(顶部)](#top)
+
+## Damage: Sensor（稳定） [#sensor_damage]
+
+测试 NPC 是否受到伤害。仅当 NPC 受到战斗伤害时才返回位置。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Combat（稳定）
+
+- 测试是否受到战斗伤害
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - Friendly（稳定）
+
+- 测试是否受到来自通常被禁用的伤害组的伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Drowning（稳定）
+
+- 测试是否受到溺水伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Environment（稳定）
+
+- 测试是否受到环境伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Other（稳定）
+
+- 测试是否受到其他伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 受到伤害时用于锁定目标的槽位。若省略，则不会锁定目标
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+### 约束
+
+- Combat、Drowning、Environment、Other 中至少有一个必须为 true
+- 如果 TargetSlot 为 true，则 Drowning、Environment、Other 必须为 false
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+- 掉落物目标
+
+[(顶部)](#top)
+
+## IsBackingAway: Sensor（稳定） [#sensor_isbackingaway]
+
+测试 NPC 当前是否正在从某物后退。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+# 核心组件列表（CoreComponents） [#corecomponents_corecomponents]
+
+## AddToHostileTargetMemory: Action（稳定） [#action_addtohostiletargetmemory]
+
+将传感器传入的目标添加到敌对目标记忆
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## CombatAbility: Action（稳定） [#action_combatability]
+
+启动由战斗动作评估器选定的战斗能力。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## CombatActionEvaluator: Sensor（实验性） [#sensor_combatactionevaluator]
+
+一种传感器，负责将战斗动作评估器的信息输送给动作和运动。为受支持的直接子级运动提供当前攻击目标和期望距离。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - TargetInRange（稳定）
+
+- 是匹配目标处于范围内还是范围外。
+- **类型**：`Boolean`，**必需**，**可计算**
+
+#### - AllowableDeviation（稳定）
+
+- 相对于期望攻击范围的允许偏差
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## FlockBeacon: Action（实验性） [#action_flockbeacon]
+
+让 NPC 向群体成员发送消息
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Message（稳定）
+
+- 要发送给目标的消息
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - SendTargetSlot（稳定）
+
+- 要发送的已标记目标槽位。若省略，则发送自身位置
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+#### - ExpirationTime（稳定）
+
+- 消息应持续存在并被接收 NPC 确认的秒数。-1 表示无限时间。
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0，或等于 -1
+
+#### - SendToSelf（稳定）
+
+- 将消息发送给自身
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - SendToLeaderOnly（稳定）
+
+- 仅将消息发送给群体领袖
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## FlockCombatDamage: Sensor（稳定） [#sensor_flockcombatdamage]
+
+如果 NPC 所在的群体受到战斗伤害则返回 true。目标位置为造成伤害最多的实体。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - LeaderOnly（稳定）
+
+- 仅测试群体领袖受到的伤害
+- **类型**：`Boolean`，**可选**（默认：true）
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## FlockLeader: Sensor（稳定） [#sensor_flockleader]
+
+测试群体领袖是否存在并提供其位置
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## FlockState: Action（稳定） [#action_flockstate]
+
+设置 NPC 所属群体的状态名称。群体领袖被明确排除在此操作之外。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - State（稳定）
+
+- 要设置的状态名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串必须是有效的状态字符串。句点前必须包含主状态（例如 Main.Test）。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可省略主状态（例如 .Test）。
+
+### 约束
+
+[(顶部)](#top)
+
+## FlockTarget: Action（稳定） [#action_flocktarget]
+
+设置或清除 NPC 所属群体的锁定目标。如果 Clear 标志为 true，则清除锁定目标，否则将其设为该目标。群体领袖被明确排除在此操作之外。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Clear（稳定）
+
+- 如果为 true，则清除锁定目标。如果为 false，则设为当前目标。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 要使用的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串不能为空
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## HasHostileTargetMemory: Sensor（稳定） [#sensor_hashostiletargetmemory]
+
+检查目标记忆中当前是否存在敌对目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## InflictedDamage: Sensor（稳定） [#sensor_inflicteddamage]
+
+如果某个个体或其所属群体造成了战斗伤害则返回 true。目标位置为受到伤害最多的实体。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Target（稳定）
+
+- 检查谁造成了伤害
+- **类型**：`Flag`，**可选**（默认：Self）
+- **标志值**：
+  - `FlockLeader`：仅检查群体领袖
+  - `Self`：检查自身
+  - `Flock`：检查群体
+
+#### - FriendlyFire（稳定）
+
+- 也考虑友军伤害
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## JoinFlock: Action（稳定） [#action_joinflock]
+
+尝试与目标建立/加入群体。如果 NPC 和目标都已在群体中，则失败。如果 NPC 或目标中有一方在群体中，则不在群体中的一方尝试加入现有群体。如果 NPC 和目标都不在群体中，则创建一个包含 NPC 的新群体，并尝试让目标加入。如果加入的实体具有正确的类型或群体已满，加入群体的请求可能被拒绝。可通过将 ForceJoin 标志设为 true 来覆盖此行为。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ForceJoin（稳定）
+
+- 禁用群体加入条件检查，并强制加入群体。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## LeaveFlock: Action（稳定） [#action_leaveflock]
+
+NPC 离开当前所在的群体。不在群体中时不做任何操作。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## TriggerSpawnBeacon: Action（稳定） [#action_triggerspawnbeacon]
+
+触发与配置 ID 匹配的最近的生成信标
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - BeaconSpawn（稳定）
+
+- 信标生成配置 ID
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - Range（稳定）
+
+- 搜索要触发的信标的距离
+- **类型**：`Integer`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - TargetSlot（稳定）
+
+- 用作所生成 NPC 目标的槽位。若省略，则使用 NPC 自身
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+[(顶部)](#top)
+
+# 核心组件列表（Debug） [#corecomponents_debug]
+
+## Log: Action（稳定） [#action_log]
+
+向控制台记录消息。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Message（稳定）
+
+- 要输出到控制台的文本。
+- **类型**：`String`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## Test: Action（实验性） [#action_test]
+
+用于检验属性求值的测试动作（请勿使用）
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Boolean（已弃用）
+
+- Boolean True
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Double（已弃用）
+
+- Double 0
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+
+#### - Float（已弃用）
+
+- Float 0
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+
+#### - Int（已弃用）
+
+- Int 0
+- **类型**：`Integer`，**可选**（默认：0.0），**可计算**
+
+#### - String（已弃用）
+
+- String Test
+- **类型**：`String`，**可选**（默认：Test），**可计算**
+
+#### - Enum（已弃用）
+
+- Enum RoleDebugFlags Collisions
+- **类型**：`Flag`，**可选**（默认：Collisions），**可计算**
+- **标志值**：
+  - `Overlaps`：验证位置时记录重叠的方块
+  - `ProbeBlockCollisions`：探测时将碰撞追踪到方块级别
+  - `SteeringRole`：调试来自角色的混合转向行为，例如避让/分离
+  - `DisplayInternalId`：显示此实体的内部服务器 ID
+  - `Pathfinder`：显示寻路器状态
+  - `DisplayStamina`：以数值形式显示 NPC 耐力
+  - `FlockDamage`：追踪群体伤害事件
+  - `Collisions`：追踪运动控制器的碰撞信息
+  - `DisplayFreeSlots`：显示空闲的物品栏槽位
+  - `DisplayTime`：将显示名称设为白天时间
+  - `DisplayName`：显示此实体的角色名称
+  - `DisplayLightLevel`：显示光照等级
+  - `DisplayAnim`：显示动画状态
+  - `TraceSensorFailures`：追踪失败的传感器
+  - `DisplayHP`：以数值形式显示 NPC 生命值
+  - `DisplayFlock`：将显示名称设为群体状态
+  - `DisplaySpeed`：显示实体的速度
+  - `ValidateMath`：验证移动中的（部分）数学计算
+  - `VisSeparation`：可视化分离向量
+  - `DisplayState`：将显示名称设为状态的内容
+  - `TraceSuccess`：追踪匹配成功的指令
+  - `MotionControllerMove`：追踪运动控制器的移动活动
+  - `TraceFail`：追踪失败的指令
+  - `DisplayCustom`：显示自定义调试信息（由调试组件生成）
+  - `VisAvoidance`：可视化避让向量
+  - `Flock`：追踪群体事件
+  - `MotionControllerSteer`：追踪运动控制器的转向活动
+  - `BlockCollisions`：将碰撞追踪到方块级别
+  - `ValidatePositions`：验证计算出的移动位置不会与方块相交
+  - `DisplayTarget`：将显示名称设为锁定目标的类型
+  - `BeaconMessages`：启用对信标消息发送与接收的调试
+
+#### - EnumSet（已弃用）
+
+- EnumSet Collisions Flock
+- **类型**：`FlagSet`，**可选**（默认：[Flock, Collisions]），**可计算**
+- **标志值**：
+  - `Overlaps`：验证位置时记录重叠的方块
+  - `ProbeBlockCollisions`：探测时将碰撞追踪到方块级别
+  - `SteeringRole`：调试来自角色的混合转向行为，例如避让/分离
+  - `DisplayInternalId`：显示此实体的内部服务器 ID
+  - `Pathfinder`：显示寻路器状态
+  - `DisplayStamina`：以数值形式显示 NPC 耐力
+  - `FlockDamage`：追踪群体伤害事件
+  - `Collisions`：追踪运动控制器的碰撞信息
+  - `DisplayFreeSlots`：显示空闲的物品栏槽位
+  - `DisplayTime`：将显示名称设为白天时间
+  - `DisplayName`：显示此实体的角色名称
+  - `DisplayLightLevel`：显示光照等级
+  - `DisplayAnim`：显示动画状态
+  - `TraceSensorFailures`：追踪失败的传感器
+  - `DisplayHP`：以数值形式显示 NPC 生命值
+  - `DisplayFlock`：将显示名称设为群体状态
+  - `DisplaySpeed`：显示实体的速度
+  - `ValidateMath`：验证移动中的（部分）数学计算
+  - `VisSeparation`：可视化分离向量
+  - `DisplayState`：将显示名称设为状态的内容
+  - `TraceSuccess`：追踪匹配成功的指令
+  - `MotionControllerMove`：追踪运动控制器的移动活动
+  - `TraceFail`：追踪失败的指令
+  - `DisplayCustom`：显示自定义调试信息（由调试组件生成）
+  - `VisAvoidance`：可视化避让向量
+  - `Flock`：追踪群体事件
+  - `MotionControllerSteer`：追踪运动控制器的转向活动
+  - `BlockCollisions`：将碰撞追踪到方块级别
+  - `ValidatePositions`：验证计算出的移动位置不会与方块相交
+  - `DisplayTarget`：将显示名称设为锁定目标的类型
+  - `BeaconMessages`：启用对信标消息发送与接收的调试
+
+#### - Asset（已弃用）
+
+- Asset Sheep
+- **类型**：`Asset`，**可选**（默认：Sheep），**可计算**
+
+#### - DoubleArray（已弃用）
+
+- DoubleArray [1,2] 0-10
+- **类型**：`Array`，**可选**（默认：[1.0, 2.0]），**可计算**，**元素类型**：Double
+
+#### - StringArray（已弃用）
+
+- StringArray [a,b] 0-10
+- **类型**：`Array`，**可选**（默认：[a, b]），**可计算**，**元素类型**：String
+
+[(顶部)](#top)
+
+# 核心组件列表（Entity） [#corecomponents_entity]
+
+## Beacon: Sensor（稳定） [#sensor_beacon]
+
+检查附近 NPC 是否广播了任何消息。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Message（实验性）
+
+- 要监听的消息
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Range（实验性）
+
+- 可接收信标的最大距离
+- **类型**：`Double`，**可选**（默认：64.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - TargetSlot（稳定）
+
+- 用于将发送者存储为目标的槽位。若省略，则不会存储目标
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或非空
+
+#### - ConsumeMessage（稳定）
+
+- 该消息是否应被此传感器消费
+- **类型**：`Boolean`，**可选**（默认：true）
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+- 掉落物目标
+
+[(顶部)](#top)
+
+## Count: Sensor（稳定） [#sensor_count]
+
+检查特定范围内是否有一定数量的 NPC 或玩家
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Count（稳定）
+
+- 指定允许的实体数量（含端点）
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：integer
+- **约束**：值必须大于或等于 0、小于或等于 2147483647，并且按弱升序排列
+
+#### - Range（稳定）
+
+- 查找实体的范围（含端点）
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - IncludeGroups（稳定）
+
+- 匹配处于这些组中的 NPC
+- **类型**：`AssetArray`，**可选**（默认：null），**元素类型**：TagSet
+
+#### - ExcludeGroups（稳定）
+
+- 绝不匹配处于这些组中的 NPC
+- **类型**：`AssetArray`，**可选**（默认：null），**元素类型**：TagSet
+
+[(顶部)](#top)
+
+## IgnoreForAvoidance: Action（稳定） [#action_ignoreforavoidance]
+
+设置避让期间应忽略的实体的目标槽位
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 包含待忽略实体的目标槽位
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Kill: Sensor（稳定） [#sensor_kill]
+
+如果 NPC 完成击杀则返回 true。目标位置为被击杀实体的位置。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - TargetSlot（稳定）
+
+- 用于检查是否被击杀的目标槽位。若省略，则接受任何被击杀的实体
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## Mob: Sensor（稳定） [#sensor_mob]
+
+如果匹配特定属性和过滤器的实体在范围内则返回 true。目标为该实体。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MinRange（稳定）
+
+- 测试实体的最小范围
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - Range（稳定）
+
+- 测试实体的最大范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - LockOnTarget（稳定）
+
+- 匹配的目标将成为锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - LockedTargetSlot（稳定）
+
+- 用于锁定或解锁的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - AutoUnlockTarget（稳定）
+
+- 当传感器不再匹配该目标时解锁锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - OnlyLockedTarget（稳定）
+
+- 仅测试锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - IgnoredTargetSlot（稳定）
+
+- 用于忽略的目标槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - UseProjectedDistance（稳定）
+
+- 使用投影后的移动方向向量计算距离，而非欧几里得距离
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - Prioritiser（稳定）
+
+- 基于附加参数选择结果的优先级排序器
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ISensorEntityPrioritiser
+
+#### - Collector（稳定）
+
+- 一种收集器，可处理所有被检查的实体，并根据它们是否匹配对其执行操作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ISensorEntityCollector
+
+#### - Filters（稳定）
+
+- 要测试的一系列实体过滤器传感器
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：IEntityFilter
+
+#### - GetPlayers（稳定）
+
+- 测试玩家
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - GetNPCs（稳定）
+
+- 测试生物/NPC
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ExcludeOwnType（稳定）
+
+- 排除与当前 NPC 类型相同的 NPC
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+- Range 必须大于或等于 MinRange
+- GetPlayers、GetNPCs 中至少有一个必须为 true
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## OverrideAttitude: Action（稳定） [#action_overrideattitude]
+
+在给定时长内覆盖此 NPC 对所提供的目标的态度
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Attitude（稳定）
+
+- 要设置的态度
+- **类型**：`Flag`，**必需**，**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标敌对
+  - `REVERED`：崇敬目标
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标保持中立
+
+#### - Duration（稳定）
+
+- 覆盖的持续时长
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## Player: Sensor（稳定） [#sensor_player]
+
+如果匹配特定属性和过滤器的玩家在范围内则返回 true。目标为该玩家。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MinRange（稳定）
+
+- 测试实体的最小范围
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - Range（稳定）
+
+- 测试实体的最大范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - LockOnTarget（稳定）
+
+- 匹配的目标将成为锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - LockedTargetSlot（稳定）
+
+- 用于锁定或解锁的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - AutoUnlockTarget（稳定）
+
+- 当传感器不再匹配该目标时解锁锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - OnlyLockedTarget（稳定）
+
+- 仅测试锁定目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - IgnoredTargetSlot（稳定）
+
+- 用于忽略的目标槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - UseProjectedDistance（稳定）
+
+- 使用投影后的移动方向向量计算距离，而非欧几里得距离
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - Prioritiser（稳定）
+
+- 基于附加参数选择结果的优先级排序器
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ISensorEntityPrioritiser
+
+#### - Collector（稳定）
+
+- 一种收集器，可处理所有被检查的实体，并根据它们是否匹配对其执行操作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：ISensorEntityCollector
+
+#### - Filters（稳定）
+
+- 要测试的一系列实体过滤器传感器
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：IEntityFilter
+
+### 约束
+
+- Range 必须大于或等于 MinRange
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## ReleaseTarget: Action（稳定） [#action_releasetarget]
+
+清除 NPC 的锁定目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 要释放的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Self: Sensor（稳定） [#sensor_self]
+
+测试 NPC 自身是否匹配一组实体过滤器
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Filters（稳定）
+
+- 要测试的一系列实体过滤器传感器
+- **类型**：`Array`，**必需**，**元素类型**：IEntityFilter
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## SetMarkedTarget: Action（稳定） [#action_setmarkedtarget]
+
+在给定槽位中显式设置一个标记目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 要设置目标的目标槽位。
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串不能为空
+
+### 约束
+
+- 必须挂接到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## SetStat: Action（稳定） [#action_setstat]
+
+设置（或累加）NPC 上的实体属性值。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Stat（稳定）
+
+- 要影响的实体属性。
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - Value（稳定）
+
+- 要将该属性设为的值。
+- **类型**：`Double`，**必需**，**可计算**
+
+#### - Add（稳定）
+
+- 将该值累加到现有值上，而不是直接设置。
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+[(顶部)](#top)
+
+## Target: Sensor（稳定） [#sensor_target]
+
+测试给定目标是否匹配一系列条件以及可选的实体过滤器
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - TargetSlot（稳定）
+
+- 要检查的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串不能为空
+
+#### - Range（稳定）
+
+- 锁定目标的最大范围
+- **类型**：`Double`，**可选**（默认：1.7976931348623157E308），**可计算**
+- **约束**：值必须大于 0
+
+#### - AutoUnlockTarget（稳定）
+
+- 如果匹配失败，则解锁已锁定的目标
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - Filters（稳定）
+
+- 要测试的一系列实体过滤器传感器
+- **类型**：`Array`，**可选**（默认：null），**元素类型**：IEntityFilter
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+# 核心组件列表（Interaction） [#corecomponents_interaction]
+
+## CanInteract: Sensor（稳定） [#sensor_caninteract]
+
+检查交互指令中当前迭代到的玩家是否可以与此 NPC 交互
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - ViewSector（稳定）
+
+- 用于检测玩家的视野扇区
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - Attitudes（稳定）
+
+- 要匹配的一组态度
+- **类型**：`FlagSet`，**可选**（默认：[NEUTRAL, FRIENDLY, REVERED]），**可计算**
+- **标志值**：
+  - `HOSTILE`：对目标怀有敌意
+  - `REVERED`：对目标怀有崇敬
+  - `FRIENDLY`：对目标友好
+  - `IGNORE`：忽略目标
+  - `NEUTRAL`：对目标中立
+
+### 约束
+
+[(顶部)](#top)
+
+## HasInteracted: Sensor（稳定） [#sensor_hasinteracted]
+
+检查交互指令中当前迭代到的玩家是否已与此 NPC 交互
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## InteractionContext: Sensor（稳定） [#sensor_interactioncontext]
+
+检查交互指令中当前迭代到的玩家是否在给定上下文中与此 NPC 交互过
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Context（稳定）
+
+- 交互的上下文
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+### 约束
+
+[(顶部)](#top)
+
+## LockOnInteractionTarget: Action（稳定） [#action_lockoninteractiontarget]
+
+锁定交互指令中当前迭代到的玩家
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - TargetSlot（稳定）
+
+- 要使用的目标槽位
+- **类型**：`String`，**可选**（默认：LockedTarget），**可计算**
+- **约束**：字符串不能为空
+
+### 约束
+
+[(顶部)](#top)
+
+## SetInteractable: Action（稳定） [#action_setinteractable]
+
+设置交互指令中当前迭代到的玩家是否应能与此 NPC 交互
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Interactable（稳定）
+
+- 切换交互指令中当前迭代到的玩家是否应能与此 NPC 交互
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Hint（稳定）
+
+- 要向此玩家显示的交互提示翻译键（例如 'interactionHints.trade'）
+- **类型**：`String`，**可选**（默认：null）
+
+#### - ShowPrompt（稳定）
+
+- 是否显示 F 键交互提示。对于仅上下文相关的交互（例如用工具剪羊毛），请设为 false。默认为 true。
+- **类型**：`Boolean`，**可选**（默认：true）
+
+### 约束
+
+[(顶部)](#top)
+
+# 核心组件列表（Items）
+
+## DropItem: Action（稳定） [#action_dropitem]
+
+掉落一个物品。可以是特定物品，也可以来自掉落表
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Delay（稳定）
+
+- 延迟的时间范围（秒）
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+#### - Item（稳定）
+
+- 要掉落的特定物品
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - DropList（稳定）
+
+- 物品掉落列表的引用
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - ThrowSpeed（稳定）
+
+- 要使用的投掷速度
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于 0 且小于或等于 3.4028234663852886e+38
+
+#### - Distance（稳定）
+
+- 从中选取投掷物品距离的范围
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+#### - DropSector（稳定）
+
+- 相对于 NPC 视线方向的掉落散布扇区（以度为单位）。
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**元素类型**：Double
+- **约束**：值必须大于或等于 -360、小于或等于 360，且按弱升序排列
+
+#### - PitchHigh（稳定）
+
+- 是否改用高抛而不是低抛
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+- 必须提供 Item、DropList 中的一项（且仅一项）
+
+[(顶部)](#top)
+
+## DroppedItem: Sensor（稳定） [#sensor_droppeditem]
+
+当给定物品位于 NPC 一定范围内时触发。如果未定义 Items 和 Attitudes，则匹配任意物品，否则将匹配满足任一条件的物品。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Range（稳定）
+
+- 用于搜索的范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - ViewSector（稳定）
+
+- 用于搜索的视野扇区
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - LineOfSight（稳定）
+
+- 需要到物品的视线
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - Items（稳定）
+
+- 要匹配的 glob 物品模式列表。如果省略，则匹配任意物品
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+#### - Attitudes（稳定）
+
+- 要匹配的态度
+- **类型**：`FlagSet`，**可选**（默认：[]），**可计算**
+- **标志值**：
+  - `Neutral`：中立
+  - `Ignore`：忽略
+  - `Like`：喜欢
+  - `Love`：喜爱
+  - `Dislike`：厌恶
+
+### 提供
+
+- 掉落物目标
+
+[(顶部)](#top)
+
+## Inventory: Action（稳定） [#action_inventory]
+
+向物品栏添加或移除若干物品。也可用于装备这些物品。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Operation（稳定）
+
+- 要执行的操作
+- **类型**：`Flag`，**可选**（默认：Add），**可计算**
+- **标志值**：
+  - `Add`：向物品栏添加物品
+  - `RemoveHeldItem`：销毁手持物品
+  - `SetHotbar`：在指定槽位设置快捷栏物品
+  - `Equip`：将物品装备为武器或护甲
+  - `ClearHeldItem`：清除手持物品
+  - `EquipOffHand`：装备指定副手槽位中的物品
+  - `Remove`：从物品栏移除物品
+  - `EquipHotbar`：装备指定快捷栏槽位中的物品
+  - `SetOffHand`：在指定槽位设置副手物品
+
+#### - Count（稳定）
+
+- 要添加/移除的物品数量
+- **类型**：`Integer`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Item（稳定）
+
+- 要添加、移除或装备的物品类型
+- **类型**：`Asset`，**可选**（默认：），**可计算**
+
+#### - UseTarget（稳定）
+
+- 使用传感器提供的目标执行该动作
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Slot（稳定）
+
+- 要影响的快捷栏或副手。仅对 Hotbar/OffHand 的 Set/Equip 操作有效
+- **类型**：`Integer`，**可选**（默认：0.0），**可计算**
+
+### 约束
+
+- 如果 UseTarget 为 true，则必须附着到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## PickUpItem: Action（稳定） [#action_pickupitem]
+
+拾取一个物品。在 hoover 模式下，将匹配 Item 数组。否则需要提供目标，例如由 DroppedItemSensor 提供
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Delay（稳定）
+
+- 延迟的时间范围（秒）
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+#### - Range（稳定）
+
+- 拾取物品的范围
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - StorageTarget（实验性）
+
+- 优先将物品放入何处
+- **类型**：`Flag`，**可选**（默认：Hotbar），**可计算**
+- **标志值**：
+  - `Destroy`：销毁物品
+  - `Hotbar`：优先放入快捷栏
+  - `Inventory`：优先放入物品栏
+
+#### - Hoover（稳定）
+
+- 吸入范围内的所有物品，可选冷却时间。可通过 glob 模式列表进行过滤。在 hoover 模式之外会被忽略
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Items（稳定）
+
+- hoover 模式下要匹配的 glob 物品模式列表。如果省略，则匹配任意物品。在 hoover 模式之外会被忽略
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：Item
+
+### 约束
+
+- 如果 Hoover 为 false，则必须附着到提供掉落物目标的传感器
+
+[(顶部)](#top)
+
+# 核心组件列表（Lifecycle） [#corecomponents_lifecycle]
+
+## Age: Sensor（稳定） [#sensor_age]
+
+当 NPC 的年龄处于某个范围内时触发。范围以周期（例如 1Y2M3W4D——1 年 2 个月 3 周 4 天）或持续时间（例如 2DT3H4M——2 天 3 小时 4 分钟）表示
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - AgeRange（稳定）
+
+- 用于触发的年龄范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：TemporalAmount
+- **约束**：值必须大于或等于数秒、小于或等于 5879611 年，按严格升序排列，并且全部为 Period 或全部为 Duration
+
+[(顶部)](#top)
+
+## DelayDespawn: Action（稳定） [#action_delaydespawn]
+
+将消失周期延迟一段时间
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Time（稳定）
+
+- 要设置的延迟时长
+- **类型**：`Double`，**必需**
+- **约束**：值必须大于 0
+
+#### - Shorten（稳定）
+
+- 将延迟设为当前延迟或给定时间，取两者中较小者。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## Despawn: Action（稳定） [#action_despawn]
+
+触发 NPC 开始消失周期。如果脚本包含 despawn 传感器，则会在移除前运行该动作/运动。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Force（稳定）
+
+- 强制 NPC 自动移除
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## Die: Action（稳定） [#action_die]
+
+杀死该 NPC
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## Remove: Action（稳定） [#action_remove]
+
+从世界中抹除目标实体（无死亡动画）。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - UseTarget（稳定）
+
+- 使用传感器提供的目标执行该动作
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+- 如果 UseTarget 为 true，则必须附着到提供玩家目标、NPC 目标之一的传感器
+
+[(顶部)](#top)
+
+## Role: Action（稳定） [#action_role]
+
+更改 NPC 的角色
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Role（稳定）
+
+- 要切换到的角色名称
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - ChangeAppearance（稳定）
+
+- 是否应使用新角色的外观
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - State（稳定）
+
+- 要设置的状态名称
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串必须是有效的状态字符串。句点之前必须包含主状态（例如 Main.Test）。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可以省略主状态（例如 .Test）。
+
+[(顶部)](#top)
+
+## Spawn: Action（实验性） [#action_spawn]
+
+生成一个 NPC
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - SpawnDirection（实验性）
+
+- 生成锥体相对于视线方向的方向（以度为单位）
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 -180 且小于或等于 180
+
+#### - SpawnAngle（实验性）
+
+- 生成方向的锥体宽度（以度为单位）
+- **类型**：`Double`，**可选**（默认：360.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - FanOut（实验性）
+
+- 将 NPC 按角度均匀地扇形分散
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - DistanceRange（稳定）
+
+- 从生成器到生成位置的距离
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 128，且按弱升序排列
+
+#### - CountRange（稳定）
+
+- 要生成的 NPC 数量
+- **类型**：`Array`，**可选**（默认：[5, 5]），**可计算**，**元素类型**：integer
+- **约束**：值必须大于 0、小于或等于 100，且按弱升序排列
+
+#### - DelayRange（稳定）
+
+- 连续生成之间的时间（秒）
+- **类型**：`Array`，**可选**（默认：[0.25, 0.25]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+#### - Kind（实验性）
+
+- 要生成的 NPC 角色
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Flock（稳定）
+
+- 要生成的群体定义
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - LaunchAtTarget（开发中）
+
+- 将生成的 NPC 朝目标位置/实体发射
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - PitchHigh（稳定）
+
+- 如果朝目标发射，则使用高抛
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - LaunchSpread（稳定）
+
+- 以目标为圆心的圆半径，被投掷的 NPC 将散布在该圆内
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - JoinFlock（稳定）
+
+- 是否加入父 NPC 的群体
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - SpawnState（稳定）
+
+- 如果存在，则在生成的 NPC 上设置的可选状态
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或不能为空
+
+#### - SpawnSubState（稳定）
+
+- 如果存在，则在生成的 NPC 上设置的可选子状态
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或不能为空
+
+### 约束
+
+- 如果 LaunchAtTarget 为 true，则必须附着到提供玩家目标、NPC 目标、掉落物目标、向量位置之一的传感器
+
+[(顶部)](#top)
+
+# 核心组件列表（Message） [#corecomponents_message]
+
+## Beacon: Action（实验性） [#action_beacon]
+
+让 NPC 向一定距离内的目标实体组发送消息。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Message（实验性）
+
+- 要发送给目标的消息
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Range（实验性）
+
+- 发送消息的最大范围
+- **类型**：`Double`，**可选**（默认：64.0）
+- **约束**：值必须大于 0
+
+#### - TargetGroups（实验性）
+
+- 要将消息发送到的目标组
+- **类型**：`AssetArray`，**必需**，**可计算**，**元素类型**：TagSet
+
+#### - SendTargetSlot（稳定）
+
+- 要发送的已标记实体的目标槽位。省略则发送自身位置
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或不能为空
+
+#### - ExpirationTime（实验性）
+
+- 消息应持续并被接收 NPC 确认的秒数。-1 表示无限时间。
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0 或等于 -1
+
+#### - SendCount（实验性）
+
+- 要发送消息的实体数量。-1 将发送给所有实体。将使用蓄水池抽样以大致均匀的随机分布选择实体
+- **类型**：`Integer`，**可选**（默认：-1）
+- **约束**：值必须大于 0 或等于 -1
+
+[(顶部)](#top)
+
+## Notify: Action（稳定） [#action_notify]
+
+使用信标消息直接通知目标 NPC
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Message（稳定）
+
+- 要发送的消息
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - ExpirationTime（实验性）
+
+- 消息应持续并被接收 NPC 确认的秒数。-1 表示无限时间。
+- **类型**：`Double`，**可选**（默认：1.0）
+- **约束**：值必须大于或等于 0 或等于 -1
+
+#### - UseTargetSlot（稳定）
+
+- 用于代替传感器所提供目标的已标记目标。省略则使用传感器提供的目标。
+- **类型**：`String`，**可选**（默认：null）
+- **约束**：字符串值必须为 null 或不能为空
+
+### 约束
+
+- 如果 UseTargetSlot 为 false，则必须附着到提供 NPC 目标的传感器
+
+[(顶部)](#top)
+
+# 核心组件列表（Movement）
+
+## Crouch: Action（稳定） [#action_crouch]
+
+设置 NPC 的蹲伏状态
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Crouch（稳定）
+
+- true 表示蹲伏，false 表示不蹲伏
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## InAir: Sensor（稳定） [#sensor_inair]
+
+如果 NPC 不在地面上，则返回 true。不返回目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## MotionController: Sensor（实验性） [#sensor_motioncontroller]
+
+测试特定运动控制器是否处于活动状态。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - MotionController（实验性）
+
+- 要测试的运动控制器名称
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Nav: Sensor（稳定） [#sensor_nav]
+
+查询导航状态
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - NavStates（稳定）
+
+- 当寻路器处于其中任一状态时触发，留空则匹配所有状态
+- **类型**：`FlagSet`，**可选**（默认：[]），**可计算**
+- **标志值**：
+  - `PROGRESSING`：正在移动或计算路径
+  - `INIT`：未执行任何操作
+  - `AT_GOAL`：已到达目标
+  - `BLOCKED`：无法继续前进
+  - `ABORTED`：搜索已停止但未到达目标
+  - `DEFER`：延迟/无法前进
+
+#### - ThrottleDuration（稳定）
+
+- 寻路器无法到达目标的最短时间（秒），0 表示忽略
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - TargetDelta（稳定）
+
+- 自路径计算以来目标移动的最小距离，0 表示忽略
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+[(顶部)](#top)
+
+## OnGround: Sensor（稳定） [#sensor_onground]
+
+如果 NPC 在地面上，则返回 true。不返回目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## OverrideAltitude: Action（稳定） [#action_overridealtitude]
+
+临时覆盖飞行 NPC 的首选高度。必须在每个 tick 刷新
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - DesiredAltitudeRange（稳定）
+
+- 期望的高度范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+[(顶部)](#top)
+
+## RecomputePath: Action（稳定） [#action_recomputepath]
+
+强制重新计算寻路器的解
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+# 核心组件列表（NPC） [#corecomponents_npc]
+
+## CompleteTask: Action（稳定） [#action_completetask]
+
+完成一个任务。任务根据提供给 SensorCanInteract 的任务进行挑选。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Slot（稳定）
+
+- 要在其上播放动画的槽位
+- **类型**：`Flag`，**必需**
+- **标志值**：
+  - `Status`：状态
+  - `Action`：动作
+  - `Face`：面部
+
+#### - Animation（稳定）
+
+- 要播放的动画 ID
+- **类型**：`String`，**可选**（默认：null），**可计算**
+
+#### - PlayAnimation（稳定）
+
+- 是否播放与完成此任务关联的动画
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## HasTask: Sensor（稳定） [#sensor_hastask]
+
+检查交互指令中当前迭代到的玩家是否拥有给定任务中的任意一个
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - TasksById（稳定）
+
+- 要按名称匹配的可完成任务
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：String
+- **约束**：字符串数组不能为空
+
+### 约束
+
+[(顶部)](#top)
+
+## Mount: Action（稳定） [#action_mount]
+
+使玩家能够骑乘该实体
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - AnchorX（稳定）
+
+- X 锚点位置
+- **类型**：`Double`，**必需**，**可计算**
+
+#### - AnchorY（稳定）
+
+- Y 锚点位置
+- **类型**：`Double`，**必需**，**可计算**
+
+#### - AnchorZ（稳定）
+
+- Z 锚点位置
+- **类型**：`Double`，**必需**，**可计算**
+
+#### - MovementConfig（稳定）
+
+- 用于此骑乘的 MovementConfig
+- **类型**：`String`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## OpenBarterShop: Action（稳定） [#action_openbartershop]
+
+为当前玩家打开以物易物商店 UI
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Shop（稳定）
+
+- 要打开的以物易物商店
+- **类型**：`Asset`，**必需**，**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## OpenShop: Action（稳定） [#action_openshop]
+
+为当前玩家打开商店 UI
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Shop（稳定）
+
+- 要打开的商店
+- **类型**：`Asset`，**必需**，**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+## StartObjective: Action（稳定） [#action_startobjective]
+
+为交互指令中当前迭代到的玩家启动给定目标
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Objective（稳定）
+
+- 要启动的任务
+- **类型**：`Asset`，**必需**，**可计算**
+
+### 约束
+
+[(顶部)](#top)
+
+# 核心组件列表（Path） [#corecomponents_path]
+
+## MakePath: Action（开发中） [#action_makepath]
+
+基于一系列旋转和距离为 NPC 构建一条临时路径
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Path（开发中）
+
+- 一个临时路径定义
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Path
+
+[(顶部)](#top)
+
+## Path: Sensor（稳定） [#sensor_path]
+
+根据多种条件查找路径。提供最近路点的位置以及路径本身
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Path（稳定）
+
+- 路径的名称。如果留空，将查找最近的路径
+- **类型**：`String`，**可选**（默认：null），**可计算**
+
+#### - Range（稳定）
+
+- 到最近路点的测试范围。0 表示不限
+- **类型**：`Double`，**可选**（默认：10.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - PathType（稳定）
+
+- 要搜索的路径类型
+- **类型**：`Flag`，**可选**（默认：AnyPrefabPath），**可计算**
+- **标志值**：
+  - `CurrentPrefabPath`：来自 NPC 生成所在预制件的路径
+  - `TransientPath`：临时路径（仅用于测试）
+  - `AnyPrefabPath`：来自任意预制件的路径
+  - `WorldPath`：具名的世界路径
+
+### 约束
+
+- 如果 PathType 为 WorldPath，则 Path 必须满足以下条件：字符串不能为空
+
+### 提供
+
+- 向量位置
+- 路径
+
+[(顶部)](#top)
+
+# 核心组件列表（StateMachine） [#corecomponents_statemachine]
+
+## IsBusy: Sensor（稳定） [#sensor_isbusy]
+
+测试 NPC 是否处于已定义的忙碌状态（Busy States）之一。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## ParentState: Action（稳定） [#action_parentstate]
+
+从组件内部设置 NPC 的主状态
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - State（稳定）
+
+- 要设置的外部状态的别名，由参数中的 \_ImportStates 定义
+- **类型**：`String`，**必需**
+- **约束**：字符串必须是有效的状态字符串。句点之前必须包含主状态（例如 Main.Test）。只能包含主状态。
+
+### 约束
+
+- 只能包含在组件内
+
+[(顶部)](#top)
+
+## State: Action（稳定） [#action_state]
+
+设置 NPC 的状态。之后可以通过传感器查询该状态。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - State（稳定）
+
+- 要设置的状态名称
+- **类型**：`String`，**必需**
+- **约束**：字符串必须是有效的状态字符串。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可以省略主状态（例如 .Test）。
+
+#### - ClearState（稳定）
+
+- 在转换时清除 set once 标志等状态
+- **类型**：`Boolean`，**可选**（默认：true）
+
+### 约束
+
+[(顶部)](#top)
+
+## State: Sensor（稳定） [#sensor_state]
+
+指示 NPC 是否被设置为特定状态。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - State（稳定）
+
+- 要比较的状态
+- **类型**：`String`，**必需**
+- **约束**：字符串必须是有效的状态字符串。状态字符串由主状态和子状态组成（例如 Main.Test）。如果嵌套在子状态中，引用时可以省略主状态（例如 .Test）。
+
+#### - IgnoreMissingSetState（稳定）
+
+- 覆盖并忽略对设置该状态的匹配 setter 动作的检查。适用于 FlockState 动作等通过另一个 NPC 设置状态的情况
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## ToggleStateEvaluator: Action（稳定） [#action_togglestateevaluator]
+
+启用或禁用 NPC 的状态评估器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 是否启用状态评估器
+- **类型**：`Boolean`，**必需**
+
+[(顶部)](#top)
+
+# 核心组件列表（Timer） [#corecomponents_timer]
+
+## Alarm: Sensor（稳定） [#sensor_alarm]
+
+检查具名闹钟的状态，并在时间已过时可选地清除它
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Name（稳定）
+
+- 要检查的闹钟名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - State（稳定）
+
+- 要检查的状态
+- **类型**：`Flag`，**必需**，**可计算**
+- **标志值**：
+  - `SET`：已设置
+  - `UNSET`：未设置
+  - `PASSED`：已过
+
+#### - Clear（稳定）
+
+- 如果闹钟已过，是否清除（取消设置）该闹钟
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+[(顶部)](#top)
+
+## SetAlarm: Action（稳定） [#action_setalarm]
+
+在 NPC 上设置具名闹钟
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 要设置的闹钟名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - DurationRange（稳定）
+
+- 为闹钟挑选持续时间的时间范围。[ "P0D", "P0D" ] 将取消设置该闹钟
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：TemporalAmount
+- **约束**：值必须大于或等于数秒、小于或等于 5879611 年，按弱升序排列，并且全部为 Period 或全部为 Duration
+
+[(顶部)](#top)
+
+## Timer: Sensor（稳定） [#sensor_timer]
+
+测试计时器是否存在且值处于某个范围内。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 此传感器是否应在该 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - State（稳定）
+
+- 要检查的计时器状态
+- **类型**：`Flag`，**可选**（默认：ANY）
+- **标志值**：
+  - `PAUSED`：已暂停
+  - `RUNNING`：运行中
+  - `STOPPED`：已停止
+  - `ANY`：任意
+
+#### - TimeRemainingRange（稳定）
+
+- 计时器可接受的剩余时间。
+- **类型**：`Array`，**可选**（默认：[0.0, 1.7976931348623157E308]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，且按弱升序排列
+
+[(顶部)](#top)
+
+## TimerContinue: Action（稳定） [#action_timercontinue]
+
+继续一个计时器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## TimerModify: Action（稳定） [#action_timermodify]
+
+修改计时器的值
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - AddValue（稳定）
+
+- 向计时器添加值
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - MaxValue（稳定）
+
+- 设置计时器可具有的重启值范围。如果为 [ 0, 0 ]（默认），则会被忽略
+- **类型**：`Array`，**可选**（默认：[0.0, 0.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308
+
+#### - Rate（稳定）
+
+- 设置计时器的递减速率。如果为 0（默认），则会被忽略
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - SetValue（稳定）
+
+- 设置计时器的值。如果为 0（默认），则会被忽略
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - Repeating（稳定）
+
+- 倒计时结束后是否重复计时器
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+[(顶部)](#top)
+
+## TimerPause: Action（稳定） [#action_timerpause]
+
+暂停计时器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## TimerRestart: Action（稳定） [#action_timerrestart]
+
+重启计时器。将设置为原始的初始值。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## TimerStart: Action（稳定） [#action_timerstart]
+
+启动计时器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - StartValueRange（稳定）
+
+- 用于选取起始初始值的范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - RestartValueRange（稳定）
+
+- 计时器重启时用于选取值的范围。上界同时也是计时器上限
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - Rate（稳定）
+
+- 计时器的递减速率
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - Repeating（稳定）
+
+- 倒计时结束后是否重复计时器
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+[(顶部)](#top)
+
+## TimerStop: Action（稳定） [#action_timerstop]
+
+停止计时器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 计时器的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+# 核心组件列表（utility） [#corecomponents_utility]
+
+## AdjustPosition: Sensor（稳定） [#sensor_adjustposition]
+
+对所包装传感器返回的位置进行调整
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 要包装的传感器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Sensor
+
+#### - Offset（稳定）
+
+- 应用到传感器返回位置上的偏移量
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## And: Sensor（稳定） [#sensor_and]
+
+评估所有传感器，仅当所有传感器都返回 true 时才执行动作。目标由第一个传感器提供。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensors（稳定）
+
+- 传感器列表
+- **类型**：`Array`，**必需**，**元素类型**：Sensor
+- **约束**：数组不能为空
+
+#### - AutoUnlockTargetSlot（稳定）
+
+- 当传感器不再匹配时要解锁的目标槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+[(顶部)](#top)
+
+## Any: Sensor（稳定） [#sensor_any]
+
+传感器始终返回 true，但不返回目标。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## Eval: Sensor（实验性） [#sensor_eval]
+
+对 JavaScript 表达式求值并测试其真值。当前可访问的值为 'health' 和 'blocked'。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Expression（实验性）
+
+- JavaScript 表达式
+- **类型**：`String`，**必需**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Flag: Sensor（稳定） [#sensor_flag]
+
+测试具名标志是否已设置
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Name（稳定）
+
+- 标志的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Set（稳定）
+
+- 标志是否应被设置
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## Not: Sensor（开发中） [#sensor_not]
+
+当给定传感器的测试失败时返回 true。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 要测试的传感器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Sensor
+
+#### - UseTargetSlot（稳定）
+
+- 要提供给动作的已锁定目标槽位（如果有）
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - AutoUnlockTargetSlot（稳定）
+
+- 当传感器不再匹配时要解锁的目标槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+[(顶部)](#top)
+
+## Nothing: Action（稳定） [#action_nothing]
+
+不执行任何操作。常用作占位符。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## Or: Sensor（稳定） [#sensor_or]
+
+评估传感器，当至少一个传感器返回 true 时执行动作。目标由第一个返回 true 的传感器提供。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensors（稳定）
+
+- 传感器列表
+- **类型**：`Array`，**必需**，**元素类型**：Sensor
+- **约束**：数组不能为空
+
+#### - AutoUnlockTargetSlot（稳定）
+
+- 当传感器不再匹配时要解锁的目标槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+[(顶部)](#top)
+
+## Random: Action（稳定） [#action_random]
+
+从加权动作列表中执行单个随机动作。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Actions（稳定）
+
+- 可能动作的列表
+- **类型**：`Array`，**必需**，**元素类型**：WeightedAction
+
+[(顶部)](#top)
+
+## Random: Sensor（稳定） [#sensor_random]
+
+在指定的随机时长内交替返回 true 和 false
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - TrueDurationRange（稳定）
+
+- 用于随机选取返回 true 时长的范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - FalseDurationRange（稳定）
+
+- 用于随机选取返回 false 时长的范围
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+[(顶部)](#top)
+
+## ResetInstructions: Action（稳定） [#action_resetinstructions]
+
+强制重置 instructionList，可按名称或整体重置
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Instructions（稳定）
+
+- 要重置的 instructionList。如果留空，将重置所有 instructionList
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+[(顶部)](#top)
+
+## Sequence: Action（稳定） [#action_sequence]
+
+执行动作列表。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Blocking（稳定）
+
+- 除非上一个动作能够执行，否则不执行该动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Atomic（稳定）
+
+- 仅当所有动作都能执行时才执行这些动作
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Actions（稳定）
+
+- 动作列表
+- **类型**：`ObjectRef`，**必需**，**对象类型**：ActionList
+
+[(顶部)](#top)
+
+## SetFlag: Action（稳定） [#action_setflag]
+
+将具名标志设置为布尔值
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Name（稳定）
+
+- 标志的名称
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - SetTo（稳定）
+
+- 要将标志设置成的值
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## Switch: Sensor（稳定） [#sensor_switch]
+
+检查计算出的布尔值是否为 true
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Switch（稳定）
+
+- 要检查的开关
+- **类型**：`Boolean`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## Timeout: Action（稳定） [#action_timeout]
+
+将动作延迟一段随机选取的时长，该时长介于给定的最小值和最大值之间。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Delay（稳定）
+
+- 延迟的时间范围（秒）
+- **类型**：`Array`，**可选**（默认：[1.0, 1.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 1.7976931348623157e+308，并且按弱升序排列
+
+#### - DelayAfter（稳定）
+
+- 是否在执行动作之后延迟
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Action（稳定）
+
+- 要延迟的可选动作
+- **类型**：`ObjectRef`，**可选**（默认：null），**对象类型**：Action
+
+[(顶部)](#top)
+
+## ValueProviderWrapper: Sensor（稳定） [#sensor_valueproviderwrapper]
+
+包装一个传感器，并向下传递从值存储中取出的一些附加参数覆盖项
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - PassValues（稳定）
+
+- 用于启用/禁用组件中的值传递
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 要包装的传感器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Sensor
+
+#### - ValueToParameterMappings（稳定）
+
+- 值到参数覆盖项的映射关系
+- **类型**：`Array`，**必需**，**元素类型**：ValueToParameterMapping
+- **约束**：数组不能为空
+
+[(顶部)](#top)
+
+# 核心组件列表（world） [#corecomponents_world]
+
+## Block: Sensor（实验性） [#sensor_block]
+
+检查附近区域内是否存在一组方块中的某个方块，并缓存结果，直到被显式重置或目标方块发生变化/被移除。所有查找同一方块集的方块传感器在找到目标后会共享同一个目标方块
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Range（稳定）
+
+- 用于搜索方块的范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0 且小于或等于 1.7976931348623157e+308
+
+#### - MaxHeight（稳定）
+
+- 用于搜索方块的垂直范围
+- **类型**：`Double`，**可选**（默认：4.0），**可计算**
+- **约束**：值必须大于 0 且小于或等于 1.7976931348623157e+308
+
+#### - Blocks（稳定）
+
+- 要搜索的方块集
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - Random（稳定）
+
+- 是从匹配到的方块中随机选取，还是选取最近的
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+#### - Reserve（稳定）
+
+- 是否保留找到的方块，以防其他 NPC 选中它
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## BlockChange: Sensor（稳定） [#sensor_blockchange]
+
+当特定范围内的方块集中的方块被更改或被交互时匹配
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Range（稳定）
+
+- 监听的最大范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - SearchType（稳定）
+
+- 是否监听由玩家、NPC 或两者触发的事件，以及监听顺序
+- **类型**：`Flag`，**可选**（默认：PlayerOnly），**可计算**
+- **标志值**：
+  - `NpcOnly`：仅搜索由 NPC 触发的事件
+  - `PlayerFirst`：优先搜索由玩家触发的事件
+  - `PlayerOnly`：仅搜索由玩家触发的事件
+  - `NpcFirst`：优先搜索由 NPC 触发的事件
+
+#### - TargetSlot（稳定）
+
+- 用于放置目标的目标槽位。如果省略，则不使用槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - BlockSet（稳定）
+
+- 要监听的方块集
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - EventType（稳定）
+
+- 要监听的事件类型
+- **类型**：`Flag`，**可选**（默认：DAMAGE），**可计算**
+- **标志值**：
+  - `DESTRUCTION`：方块被破坏时
+  - `INTERACTION`：方块被使用交互时
+  - `DAMAGE`：方块受到伤害时
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## BlockType: Sensor（稳定） [#sensor_blocktype]
+
+检查给定位置的方块是否与提供的方块集匹配
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Sensor（稳定）
+
+- 要包装的传感器
+- **类型**：`ObjectRef`，**必需**，**对象类型**：Sensor
+
+#### - BlockSet（稳定）
+
+- 要对照检查的方块集
+- **类型**：`Asset`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## CanPlaceBlock: Sensor（稳定） [#sensor_canplaceblock]
+
+测试当前设置的方块能否放置在由方向和偏移给出的相对位置
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Direction（稳定）
+
+- 相对于朝向的放置方向
+- **类型**：`Flag`，**可选**（默认：Forward），**可计算**
+- **标志值**：
+  - `Left`：左
+  - `Backward`：后
+  - `Right`：右
+  - `Forward`：前
+
+#### - Offset（稳定）
+
+- 放置位置的偏移
+- **类型**：`Flag`，**可选**（默认：BodyPosition），**可计算**
+- **标志值**：
+  - `BodyPosition`：身体位置
+  - `FootPosition`：脚部位置
+  - `HeadPosition`：头部位置
+
+#### - RetryDelay（稳定）
+
+- 如果放置失败，在再次尝试放置之前延迟的时间
+- **类型**：`Double`，**可选**（默认：5.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AllowEmptyMaterials（稳定）
+
+- 是否允许替换材质为空的方块
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## EntityEvent: Sensor（稳定） [#sensor_entityevent]
+
+当特定范围内属于指定 NPC 组的实体受到伤害、被杀死或被交互时匹配
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Range（稳定）
+
+- 监听的最大范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - SearchType（稳定）
+
+- 是否监听由玩家、NPC 或两者触发的事件，以及监听顺序
+- **类型**：`Flag`，**可选**（默认：PlayerOnly），**可计算**
+- **标志值**：
+  - `NpcOnly`：仅搜索由 NPC 触发的事件
+  - `PlayerFirst`：优先搜索由玩家触发的事件
+  - `PlayerOnly`：仅搜索由玩家触发的事件
+  - `NpcFirst`：优先搜索由 NPC 触发的事件
+
+#### - TargetSlot（稳定）
+
+- 用于放置目标的目标槽位。如果省略，则不使用槽位
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+#### - NPCGroup（稳定）
+
+- 要监听的 NPC 组
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - EventType（稳定）
+
+- 要监听的事件类型
+- **类型**：`Flag`，**可选**（默认：DAMAGE），**可计算**
+- **标志值**：
+  - `DEATH`：死亡时
+  - `INTERACTION`：使用交互时
+  - `DAMAGE`：受到伤害时
+
+#### - FlockOnly（稳定）
+
+- 是否仅监听群体事件
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 提供
+
+- 玩家目标
+- NPC 目标
+
+[(顶部)](#top)
+
+## InWater: Sensor（稳定） [#sensor_inwater]
+
+检查 NPC 当前是否在水中
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+[(顶部)](#top)
+
+## Leash: Sensor（稳定） [#sensor_leash]
+
+当 NPC 超出距牵引点的指定范围时触发
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Range（稳定）
+
+- 距牵引点允许的最远距离
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## Light: Sensor（稳定） [#sensor_light]
+
+检查实体所站方块的光照等级。可以测试光照强度、天空光或方块通道等级。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - LightRange（稳定）
+
+- 光照强度的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - SkyLightRange（稳定）
+
+- 天空光的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - SunlightRange（稳定）
+
+- 日光的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - RedLightRange（稳定）
+
+- 红光的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - GreenLightRange（稳定）
+
+- 绿光的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - BlueLightRange（稳定）
+
+- 蓝光的百分比范围
+- **类型**：`Array`，**可选**（默认：[0.0, 100.0]），**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 100，并且按弱升序排列
+
+#### - UseTargetSlot（稳定）
+
+- 要检查的目标槽位。如果省略，将检查自身
+- **类型**：`String`，**可选**（默认：null），**可计算**
+- **约束**：字符串值必须为 null 或非空
+
+[(顶部)](#top)
+
+## PlaceBlock: Action（稳定） [#action_placeblock]
+
+如果距离足够近，在传感器返回的位置放置一个（由其他动作选定的）方块
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Range（稳定）
+
+- 放置方块前要求距目标位置的范围
+- **类型**：`Double`，**可选**（默认：3.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - AllowEmptyMaterials（稳定）
+
+- 是否允许替换材质为空的方块
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 约束
+
+- 必须附着到提供向量位置的传感器
+
+[(顶部)](#top)
+
+## ReadPosition: Sensor（稳定） [#sensor_readposition]
+
+读取带某些条件的已存储位置
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Slot（稳定）
+
+- 要从中读取位置的槽位
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - MinRange（稳定）
+
+- 距已存储位置的最小范围
+- **类型**：`Double`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+#### - Range（稳定）
+
+- 距已存储位置的最大范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - UseMarkedTarget（稳定）
+
+- 是否从已标记的目标槽位读取，而非位置槽位
+- **类型**：`Boolean`，**可选**（默认：false），**可计算**
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## ResetBlockSensors: Action（稳定） [#action_resetblocksensors]
+
+按名称重置特定方块传感器，或通过清除当前目标方块来重置所有方块传感器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - BlockSets（稳定）
+
+- 要为其重置方块传感器的已搜索方块集。如果留空，将重置所有方块传感器和已找到的方块
+- **类型**：`AssetArray`，**可选**（默认：null），**可计算**，**元素类型**：BlockSet
+
+[(顶部)](#top)
+
+## ResetPath: Action（稳定） [#action_resetpath]
+
+重置此 NPC 当前遵循的巡逻路径。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+[(顶部)](#top)
+
+## ResetSearchRays: Action（稳定） [#action_resetsearchrays]
+
+按名称重置特定搜索射线传感器的缓存位置，或重置所有搜索射线传感器
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Names（稳定）
+
+- 搜索射线传感器的 id。如果留空，将重置所有搜索射线传感器
+- **类型**：`Array`，**可选**（默认：null），**可计算**，**元素类型**：String
+- **约束**：数组中的字符串不能为空
+
+[(顶部)](#top)
+
+## SearchRay: Sensor（稳定） [#sensor_searchray]
+
+以特定角度发射射线，检查命中的对象是否匹配给定的目标方块
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Name（稳定）
+
+- 此搜索射线传感器的 id，以便缓存位置
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+#### - Angle（稳定）
+
+- 发射射线的角度。水平为 0。正值表示向下
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于或等于 -90 且小于或等于 90
+
+#### - Range（稳定）
+
+- 搜索距离
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0 且小于或等于 96
+
+#### - Blocks（稳定）
+
+- 要搜索的方块集
+- **类型**：`Asset`，**必需**，**可计算**
+
+#### - MinRetestAngle（稳定）
+
+- 在射线停止被节流之前，NPC 旋转的最小变化量
+- **类型**：`Double`，**可选**（默认：5.0），**可计算**
+- **约束**：值必须大于或等于 0 且小于或等于 360
+
+#### - MinRetestMove（稳定）
+
+- 在射线停止被节流之前，NPC 在面向同一方向时需要移动的最小距离
+- **类型**：`Double`，**可选**（默认：1.0），**可计算**
+- **约束**：值必须大于 0
+
+#### - ThrottleTime（稳定）
+
+- 当 NPC 面向同一方向时，两次重新测试之间的延迟
+- **类型**：`Double`，**可选**（默认：0.5），**可计算**
+- **约束**：值必须大于 0
+
+### 提供
+
+- 向量位置
+
+[(顶部)](#top)
+
+## SetBlockToPlace: Action（稳定） [#action_setblocktoplace]
+
+设置 NPC 将要放置的方块类型
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Block（稳定）
+
+- 方块物品类型
+- **类型**：`Asset`，**必需**，**可计算**
+
+[(顶部)](#top)
+
+## SetLeashPosition: Action（稳定） [#action_setleashposition]
+
+将 NPC 的当前位置设置为生成/牵引位置，以便与 Leash 传感器配合使用。
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ToCurrent（稳定）
+
+- 设置为 NPC 的当前位置。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ToTarget（稳定）
+
+- 设置为目标位置。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+### 约束
+
+- ToCurrent、ToTarget 中至少有一个必须为 true
+- 如果 ToTarget 为 true，则必须附着到提供玩家目标、NPC 目标、掉落物目标之一的传感器
+
+[(顶部)](#top)
+
+## StorePosition: Action（稳定） [#action_storeposition]
+
+存储所附着传感器提供的位置
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Slot（稳定）
+
+- 要存储位置的槽位
+- **类型**：`String`，**必需**，**可计算**
+- **约束**：字符串不能为空
+
+[(顶部)](#top)
+
+## Time: Sensor（稳定） [#sensor_time]
+
+检查每天/每年的时刻是否处于某个指定时间内。如果要检查跨越午夜的时段（即切换到次日），请将较大的时间作为最小值、较小的时间作为最大值。
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Period（稳定）
+
+- 用于触发的时间段
+- **类型**：`Array`，**必需**，**可计算**，**元素类型**：Double
+- **约束**：值必须大于或等于 0、小于或等于 24
+
+#### - CheckDay（稳定）
+
+- 检查白天时刻。使用 double 时，值的范围为 [.00, .99]。不要因为一小时只有 60 分钟而混淆。
+- **类型**：`Boolean`，**可选**（默认：true）
+
+#### - CheckYear（开发中）
+
+- 检查年度时刻。使用 double 时，值的范围为 [.00, .99]。不要因为一小时只有 60 分钟而混淆。
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - ScaleDayTimeRange（稳定）
+
+- 是否对白天时刻使用相对比例。无论游戏内实际时间如何，日出都位于相对 6、正午位于 12、日落位于 18
+- **类型**：`Boolean`，**可选**（默认：true）
+
+[(顶部)](#top)
+
+## TriggerSpawners: Action（稳定） [#action_triggerspawners]
+
+触发 NPC 周围半径内所有手动生成标记，或最多触发指定数量
+
+### 属性
+
+#### - Once（稳定）
+
+- 仅执行一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - SpawnMarker（稳定）
+
+- 要触发的生成标记类型
+- **类型**：`Asset`，**可选**（默认：null），**可计算**
+
+#### - Range（稳定）
+
+- 触发生成标记的范围
+- **类型**：`Double`，**必需**，**可计算**
+- **约束**：值必须大于 0
+
+#### - Count（稳定）
+
+- 随机触发的标记数量（0 将触发所有匹配的验证器）
+- **类型**：`Integer`，**可选**（默认：0.0），**可计算**
+- **约束**：值必须大于或等于 0
+
+[(顶部)](#top)
+
+## Weather: Sensor（稳定） [#sensor_weather]
+
+将 NPC 位置处的当前天气与一组天气通配模式进行匹配
+
+### 属性
+
+#### - Once（稳定）
+
+- 传感器仅触发一次
+- **类型**：`Boolean`，**可选**（默认：false）
+
+#### - Enabled（稳定）
+
+- 该传感器是否应在 NPC 上启用
+- **类型**：`Boolean`，**可选**（默认：true），**可计算**
+
+#### - Weathers（稳定）
+
+- 用于匹配天气的通配模式
+- **类型**：`AssetArray`，**必需**，**可计算**，**元素类型**：Weather
+
+[(顶部)](#top)

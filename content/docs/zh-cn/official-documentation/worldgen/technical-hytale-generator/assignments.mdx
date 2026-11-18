@@ -1,0 +1,146 @@
+---
+title: 分配
+description: 将物件分配给 Positions 字段中的每个位置。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+### Constant
+
+将物件分配给所有位置。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="207.17828369140625">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### FieldFunction
+
+允许你根据密度场以及你配置的分隔符来选择要分配哪些物件。密度在每个位置上的值决定分配哪个分隔符对应的物件。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="218.5841064453125">名称</th>
+      <th width="205.6929931640625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FieldFunction</td>
+      <td>密度槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Delimiters</td>
+      <td>分隔符列表</td>
+      <td>将物件附加到密度场的各个值范围。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Min</td>
+      <td>小数</td>
+      <td>分隔符的下界（包含）。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Max</td>
+      <td>小数</td>
+      <td>分隔符的上界（不包含）。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Assignments</td>
+      <td>Assignments 资源槽位</td>
+      <td>提供要使用的物件的分配。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Sandwich
+
+允许你根据物件的垂直（世界 Y 轴）位置以及你配置的分隔符来选择要分配哪些物件。根据每个位置的世界高度，会分配匹配的分隔符所对应的物件。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/assignments/sandwich.png)
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="225.23760986328125">名称</th>
+      <th width="206.82177734375">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Delimiters</td>
+      <td>高度分隔符列表</td>
+      <td>每个分隔符定义一个世界高度范围及其分配。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].MinY</td>
+      <td>小数</td>
+      <td>分隔符的下界（包含）。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].MaxY</td>
+      <td>小数</td>
+      <td>分隔符的上界（不包含）。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Assignments</td>
+      <td>Assignments 资源槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Weighted
+
+根据权重和种子随机挑选要分配的物件。
+
+参数：
+
+| 名称                | 类型                               | 描述                                         |
+| ------------------- | ---------------------------------- | --------------------------------------------------- |
+| Seed                | string                             |                                                     |
+| SkipChance          | 小数（0.0–1.0）           | 跳过某个位置而不分配物件的概率。                    |
+| WeightedAssignments | 带权重的 Assignments 槽位列表 |                                                     |
+| Assignments         | Assignments 资源槽位             |                                                     |
+
+---
+
+### Imported
+
+导入已导出的分配。
+
+参数：
+
+| 名称 | 类型   | 描述                    |
+| ---- | ------ | ------------------------------ |
+| Name | string | 已导出的分配的名称。           |

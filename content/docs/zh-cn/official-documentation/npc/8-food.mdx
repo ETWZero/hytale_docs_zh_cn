@@ -1,0 +1,320 @@
+---
+title: "8 - 给食人魔喂食"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+别忘了，我们还有另一个复杂得多的空闲行为需要实现：
+
+- 站岗放哨（这个我们已经做过了！）
+- 小睡一会儿（这个也做过了！）
+- **跑出去找点吃的。**
+
+这个可能会有点棘手。当我们选中这个行为时，需要扫描周围区域，看看有没有食物。如果找到了，我们就走过去，假装把它抓起来，然后开始进食。
+
+但如果我们_找不到_任何食物呢？我们大概还是应该假装去找一找——这只食人魔又不是全知全能，不会因为传感器说没有，就提前知道它期望有食物的那个地方真的没有……_对吧？_
+
+我们首先在 **.Guard** 之后立即创建 **.FindFood** 子状态。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": ".Guard"
+	},
+	"Instructions": [ ... ],
+},
+{
+	"Sensor": {
+		"Type": "State",
+		"State": ".FindFood"
+	},
+	"Instructions": [ ... ]
+}
+```
+
+然后把它加入我们的随机动作列表。
+
+```json
+"Type": "Random",
+"Actions": [
+    {
+        "Weight": 70,
+        "Action": {
+            "Type": "State",
+            "State": ".Guard"
+        }
+    },
+    {
+        "Weight": 20,
+        "Action": {
+            "Type": "State",
+            "State": "Sleep"
+        }
+    },
+    {
+        "Weight": 10,
+        "Action": {
+            "Type": "State",
+            "State": ".FindFood"
+        }
+    }
+]
+
+```
+
+接下来我们要执行真正的找食物过程。但食物_究竟_是什么？这里不是哲学意义上的追问。这只食人魔会找哪些种类的食物？这又是一个我们可能需要和设计师聊聊的点。他们希望它去寻找多种不同的东西吗？还是说哥布林食人魔只对某一种特定的食物感兴趣？
+
+和设计师简单讨论后，我们发现我们一直在一个错误的假设下工作，这也凸显了确保我们充分理解设计规格的内容以及其_背后的意图_的重要性。这只食人魔的职责是守卫，不应该离开岗位。它绝不应该主动跑出去找食物，而应该从口袋里掏出点东西，就地吃掉。
+
+好吧。这让事情简单多了！现在我们可以划掉一个空闲子状态：
+
+- .Default（选择要切换到的随机行为状态）
+- .Guard（站岗守卫）
+- ~~.FindFood（去附近搜索是否存在食物）~~
+- .EatRat（谋杀附近一只无辜的老鼠——我们暂时仍然忽略它）
+
+所以我们删掉 **.FindFood**，直接跳到 **Eat**，并加上我们给其他空闲状态添加的相同逻辑。还要记得更新随机动作列表中的引用，让它指向正确的状态！
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Eat"
+  },
+  "Instructions": [
+    {
+      "ActionsBlocking": true,
+      "Actions": [
+        {
+          "Type": "Timeout",
+          "Delay": [5, 10]
+        },
+        {
+          "Type": "State",
+          "State": "Idle"
+        }
+      ]
+    }
+  ]
+}
+```
+
+我们其实并不确定这只食人魔口袋里到底有什么食物，而且这很可能是将来会改动的内容，或者最好能让它在各个变体中方便地修改。
+
+为了满足这一点，我们在参数块中添加一个 **EatItem** 参数以及相应的描述。
+
+```json
+"Parameters": {
+    "Appearance": {
+        "Value": "Bear_Grizzly",
+        "Description": "Model to be used"
+    },
+    "EatItem": {
+        "Value": "Food_Beef_Raw",
+        "Description": "The item this NPC will find when it rummages for food"
+    },
+    "DropList": {
+        "Value": "Empty",
+        "Description": "Drop Items"
+    }
+}
+
+```
+
+现在我们只需再设置一个 **PlayAnimation** 动作来处理进食本身，就像在 **Sleep** 状态中那样。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Eat"
+  },
+  "Instructions": [
+    {
+      "Continue": true,
+      "ActionsBlocking": true,
+      "Actions": [
+        {
+          "Type": "Timeout",
+          "Delay": [5, 10]
+        },
+        {
+          "Type": "State",
+          "State": "Idle"
+        }
+      ]
+    },
+    {
+      "Reference": "Component_Instruction_Play_Animation",
+      "Modify": {
+        "Animation": "Eat"
+      }
+    }
+  ]
+}
+```
+
+这看起来_似曾相识_……这是不是我们在许多 NPC 中经常想做的事？我们会不会经常想播放一段具有特定随机时长的动画？我觉得会，那就把它做成组件吧！
+
+```json
+{
+  "Type": "Component",
+  "Class": "Instruction",
+  "Parameters": {
+    "_ImportStates": ["Main"],
+    "Animation": {
+      "Value": "",
+      "Description": "The animation to play"
+    },
+    "Duration": {
+      "Value": [3, 5],
+      "Description": "The amount of time to wait before transitioning"
+    }
+  },
+  "Content": {
+    "Continue": true,
+    "Instructions": [
+      {
+        "Reference": "Component_Instruction_State_Timeout",
+        "Modify": {
+          "_ExportStates": ["Main"],
+          "Delay": { "Compute": "Duration" }
+        }
+      },
+      {
+        "Reference": "Component_Instruction_Play_Animation",
+        "Modify": {
+          "Animation": { "Compute": "Animation" }
+        }
+      }
+    ]
+  }
+}
+```
+
+我把这个组件叫做 `Component_Instruction_Play_Animation_In_State_For_Duration`。Timeout 指令被替换为上一段插曲中制作的组件。
+
+现在我们需要把它应用到食人魔模板中的两个地方。
+
+```json
+"Sensor": {
+    "Type": "State",
+    "State": "Eat"
+},
+"Instructions": [
+    {
+        "Reference": "Component_Instruction_Play_Animation_In_State_For_Duration",
+        "Modify": {
+            "_ExportStates": ["Idle.Default"],
+            "Animation": "Eat",
+            "Duration": [15, 20]
+        }
+    }
+]
+
+```
+
+这里只展示了 **Eat**，但你可以想象 **Sleep** 也做了同样的改动。
+
+那么，为什么不把整个状态本身转换成一个组件呢？这背后有个很好的理由：我们还没有添加实体检测，而且几乎肯定会加。实体检测需要和其他逻辑一起放在状态中，所以我们不能把整个状态本身塞进组件里。
+
+要让这只食人魔真正吃上东西，还有最后一件事要做——把食物拿出来，再收回去。因为我们不想冒这样的风险：食人魔最后处于用一块肉殴打敌人或吃掉自己武器的状态，所以我们会用状态转换来完成这件事。
+
+```json
+"StateTransitions": [
+    ...
+    {
+        "States": [
+            {
+                "From": ["Idle"],
+                "To": ["Eat"]
+            }
+        ],
+        "Actions": [
+            {
+                "Type": "Inventory",
+                "Operation": "SetHotbar",
+                "Item": { "Compute": "EatItem" },
+                "Slot": 2,
+                "UseTarget": false
+            },
+            {
+                "Type": "Inventory",
+                "Operation": "EquipHotbar",
+                "Slot": 2,
+                "UseTarget": false
+            }
+        ]
+    }
+]
+
+```
+
+这里有几个要点需要注意。这组动作会把我们之前定义的 **EatItem** 参数中的物品放入其快捷栏的槽位 2，然后切换到使用该槽位。我们必须把它定义为 **UseTarget: false**，以确保它作用于食人魔自身。
+
+默认情况下，NPC 有三个快捷栏槽位，所以我们把它设为使用最后一个槽位来达成此目的（槽位从零开始编号）。
+
+这样处理了真正掏出食物来吃的过程，但之后还没有把它收回去。我们也把这个加上。
+
+```json
+{
+  "States": [
+    {
+      "From": ["Eat"],
+      "To": []
+    }
+  ],
+  "Actions": [
+    {
+      "Type": "PlayAnimation",
+      "Slot": "Status"
+    },
+    {
+      "Type": "Inventory",
+      "Operation": "EquipHotbar",
+      "Slot": 0,
+      "UseTarget": false
+    }
+  ]
+}
+```
+
+现在我们的食人魔会开开心心地掏出一块肉，开始进食，吃完后再把它收回去！
+
+![npc-tutorial 3](/assets/official-documentation/npc/npc-tutorial-3.jpg)
+
+完美！我们要做的最后一件事，是确保在空闲状态开始时也切换到正确的武器，以防哥布林在进食时被卸载，从而让我们陷入奇怪的状态。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Idle"
+	},
+	"Instructions": [
+		{
+			"Continue": true,
+			"Sensor": {
+				"Type": "Any",
+				"Once": true
+			},
+			"Actions": [
+				{
+					"Type": "Inventory",
+					"Operation": "EquipHotbar",
+					"Slot": 0,
+					"UseTarget": false
+				}
+			]
+		},
+		...
+	]
+}
+
+```
+
+至此，所有不依赖其他 NPC 的空闲行为都已设置完成。我们接下来就处理那些依赖其他 NPC 的行为！

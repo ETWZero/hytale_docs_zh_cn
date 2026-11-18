@@ -1,0 +1,47 @@
+---
+title: "通用样式"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 通用样式
+
+## 通用 UI 样式库
+
+本文档介绍 `Common.ui` 中定义的共享 UI 组件与样式。
+
+---
+
+### 样式
+
+我们提供了一些可在任何自定义 UI 中复用的样式，它们能与核心游戏 UI 形成一致的界面体验。这些样式位于 `Common.ui` 文件中。
+
+在游戏内运行 `/ui-gallery` 命令，可以查看所有已定义样式及其实际效果示例。
+
+![Gallery](/assets/official-documentation/ui/gallery.png)
+
+### 导入
+
+要在你的 UI 文件中使用这些样式：
+
+```
+$Common = "Common.ui";
+
+// Then reference styles and components:
+$Common.@TextButton { @Text = "My Button"; }
+$Common.@Container { ... }
+```
+
+<Callout type="info">
+`Common.ui` 文件位于 Hytale 包内的 `Common/UI/Custom/Common.ui`。如果你的自定义 UI 文档位于 `Common/UI/Custom/` 的子文件夹中，请通过相对路径回溯来引用它：
+
+```
+$Common = "../Common.ui";
+```
+
+你可以在[此处](markup#path)了解更多关于路径的信息。
+
+</Callout>

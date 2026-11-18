@@ -1,0 +1,492 @@
+---
+title: "布局"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 布局
+
+布局系统决定 UI 元素在屏幕上的定位与尺寸。理解布局对于创建结构良好、响应式的界面至关重要。
+
+## 布局基础
+
+每个 UI 元素都有：
+
+- **容器矩形** - 父级分配的空间
+- **Anchor** - 元素如何在容器内定位与调整自身尺寸
+- **Padding** - 影响子元素布局的内部间距
+- **LayoutMode** - 元素如何排列其子元素（如果它是容器）
+
+```
+┌─────────────────────────────────────┐
+│  Container Rectangle (from parent)  │
+│  ┌───────────────────────────────┐  │
+│  │  Anchored Rectangle           │  │
+│  │  ┌─────────────────────────┐  │  │
+│  │  │ Padding                 │  │  │
+│  │  │  ┌───────────────────┐  │  │  │
+│  │  │  │  Content Area     │  │  │  │
+│  │  │  └───────────────────┘  │  │  │
+│  │  └─────────────────────────┘  │  │
+│  └───────────────────────────────┘  │
+└─────────────────────────────────────┘
+```
+
+## Anchor
+
+`Anchor` 控制元素在其容器矩形内的定位与尺寸。
+
+### 固定尺寸
+
+```
+Button {
+    Anchor: (Width: 200, Height: 40);
+}
+```
+
+创建一个 200×40 像素的按钮。
+
+### 定位
+
+```
+Label {
+    Anchor: (Top: 10, Left: 20, Width: 100, Height: 30);
+}
+```
+
+- **Top**：距容器顶边 10 像素
+- **Left**：距容器左边 20 像素
+- **Width**：宽 100 像素
+- **Height**：高 30 像素
+
+### 锚定到边缘
+
+```
+Button {
+    Anchor: (Bottom: 10, Right: 10, Width: 100, Height: 30);
+}
+```
+
+将按钮锚定到右下角，距每条边 10 像素。
+
+### 拉伸
+
+```
+Group {
+    Anchor: (Top: 0, Bottom: 0, Left: 0, Right: 0);
+}
+```
+
+拉伸以填满整个容器（所有边均为 0 像素）。
+
+**简写：**
+
+```
+Group {
+    Anchor: (Full: 0);
+}
+```
+
+### 混合锚定
+
+```
+Panel {
+    Anchor: (Top: 10, Bottom: 10, Left: 20, Width: 300);
+}
+```
+
+- 固定宽度 300 像素
+- 在顶边与底边之间垂直拉伸
+- 距顶部和底部 10 像素
+- 距左侧 20 像素
+
+## Padding
+
+`Padding` 创建内部间距，影响子元素的定位位置。
+
+### 均匀内边距
+
+```
+Group {
+    Padding: (Full: 20);
+}
+```
+
+四边各 20 像素的内边距。
+
+### 定向内边距
+
+```
+Group {
+    Padding: (Top: 10, Bottom: 20, Left: 15, Right: 15);
+}
+```
+
+每条边使用不同的内边距。
+
+### 简写
+
+```
+// Horizontal and vertical
+Group {
+    Padding: (Horizontal: 20, Vertical: 10);
+}
+
+// Equivalent to:
+// Top: 10, Bottom: 10, Left: 20, Right: 20
+```
+
+### 对子元素的影响
+
+```
+Group {
+    Anchor: (Width: 200, Height: 100);
+    Padding: (Full: 10);
+
+    Label {
+        Anchor: (Full: 0);
+    }
+}
+```
+
+标签会填满该组，但由于内边距，四边各有 10 像素的间隙。
+
+```
+┌──────────────────────┐
+│ Group (200×100)      │
+│  ┌────────────────┐  │
+│  │ Label          │  │ ← 10px padding all around
+│  │                │  │
+│  └────────────────┘  │
+└──────────────────────┘
+```
+
+## LayoutMode
+
+`LayoutMode` 决定容器如何排列其子元素。
+
+### Top（垂直堆叠）
+
+```
+Group {
+    LayoutMode: Top;
+
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+}
+```
+
+子元素从上到下垂直堆叠：
+
+```
+┌──────────┐
+│ Button 1 │
+├──────────┤
+│ Button 2 │
+├──────────┤
+│ Button 3 │
+└──────────┘
+
+
+```
+
+每个子元素的 `Anchor.Bottom` 会在元素之间添加间距：
+
+```
+Button { Anchor: (Height: 30, Bottom: 10); }  // 10px gap after this button
+```
+
+### Bottom（垂直堆叠）
+
+```
+Group {
+    LayoutMode: Bottom;
+
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+}
+```
+
+子元素从上到下垂直堆叠，但与父级的底边对齐：
+
+```
+
+
+
+┌──────────┐
+│ Button 1 │
+├──────────┤
+│ Button 2 │
+├──────────┤
+│ Button 3 │
+└──────────┘
+```
+
+### Left（水平堆叠）
+
+```
+Group {
+    LayoutMode: Left;
+
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+}
+```
+
+子元素从左到右水平排列：
+
+```
+┌────────┬────────┬────────┐
+│ Button │ Button │ Button │
+│   1    │   2    │   3    │
+└────────┴────────┴────────┘
+```
+
+使用 `Anchor.Right` 在元素之间添加间距。
+
+### Right（水平堆叠）
+
+```
+Group {
+    LayoutMode: Right;
+
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+}
+```
+
+子元素从左到右水平排列，但与父级的右侧对齐：
+
+```
+                                                                 ┌────────┬────────┬────────┐
+                                                                 │ Button │ Button │ Button │
+                                                                 │   1    │   2    │   3    │
+                                                                 └────────┴────────┴────────┘
+```
+
+### Center
+
+```
+Group {
+    LayoutMode: Center;
+
+    Group #Dialog {
+        Anchor: (Width: 400, Height: 300);
+    }
+}
+```
+
+将子元素水平居中。
+
+### Middle
+
+```
+Group {
+    LayoutMode: Middle;
+
+    Group #Dialog {
+        Anchor: (Width: 400, Height: 300);
+    }
+}
+```
+
+将子元素垂直居中。
+
+### CenterMiddle（水平堆叠，完全居中）
+
+```
+Group {
+    LayoutMode: CenterMiddle;
+
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+    Button { Anchor: (Width: 80); }
+}
+```
+
+子元素从左到右水平堆叠，并在父级中水平与垂直居中：
+
+```
+┌────────────────────────────────────────────┐
+│                                            │
+│                                            │
+│         ┌──────┐ ┌──────┐ ┌──────┐         │
+│         │  B1  │ │  B2  │ │  B3  │         │
+│         └──────┘ └──────┘ └──────┘         │
+│                                            │
+│                                            │
+└────────────────────────────────────────────┘
+```
+
+---
+
+### MiddleCenter（垂直堆叠，完全居中）
+
+```
+Group {
+    LayoutMode: MiddleCenter;
+
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+    Button { Anchor: (Height: 30); }
+}
+```
+
+子元素从上到下垂直堆叠，并在父级中水平与垂直居中：
+
+```
+┌────────────────────────────────────────────┐
+│                                            │
+│              ┌──────────┐                  │
+│              │ Button 1 │                  │
+│              ├──────────┤                  │
+│              │ Button 2 │                  │
+│              ├──────────┤                  │
+│              │ Button 3 │                  │
+│              └──────────┘                  │
+│                                            │
+└────────────────────────────────────────────┘
+```
+
+---
+
+### Full
+
+```
+Group {
+    LayoutMode: Full;
+
+    Label {
+        Anchor: (Top: 20, Left: 20, Width: 100, Height: 30);
+    }
+}
+```
+
+子元素通过其 `Anchor` 属性使用绝对定位。
+
+### TopScrolling
+
+```
+Group {
+    LayoutMode: TopScrolling;
+    ScrollbarStyle: $Common.@DefaultScrollbar;
+
+    // ... many children
+}
+```
+
+与 `Top` 类似，但当内容超出容器高度时会添加滚动条。
+
+或者对底部对齐的内容使用 `BottomScrolling`。
+
+### LeftScrolling
+
+```
+Group {
+    LayoutMode: LeftScrolling;
+    ScrollbarStyle: $Common.@DefaultScrollbar;
+
+    // ... many children
+}
+```
+
+与 `Left` 类似，但会添加用于水平滚动的滚动条。
+
+或者对右对齐的内容使用 `RightScrolling`。
+
+### LeftCenterWrap（可换行的水平堆叠，水平居中）
+
+```
+Group {
+    LayoutMode: LeftCenterWrap;
+
+    Button { Anchor: (Width: 80, Height: 30); }
+    Button { Anchor: (Width: 80, Height: 30); }
+    Button { Anchor: (Width: 80, Height: 30); }
+    Button { Anchor: (Width: 80, Height: 30); }
+    Button { Anchor: (Width: 80, Height: 30); }
+}
+```
+
+子元素从左到右流式排列。当没有更多水平空间时，它们会换行到下一行。每一行在父级中水平居中：
+
+```
+┌────────────────────────────────────────────┐
+│                                            │
+│       ┌──────┐ ┌──────┐ ┌──────┐           │
+│       │  B1  │ │  B2  │ │  B3  │           │
+│       └──────┘ └──────┘ └──────┘           │
+│            ┌──────┐ ┌──────┐               │
+│            │  B4  │ │  B5  │               │
+│            └──────┘ └──────┘               │
+│                                            │
+└────────────────────────────────────────────┘
+```
+
+## FlexWeight
+
+`FlexWeight` 在子元素之间分配剩余空间。
+
+```
+Group {
+    LayoutMode: Left;
+    Anchor: (Width: 400);
+
+    Button {
+        Anchor: (Width: 100);
+    }
+
+    Group {
+        FlexWeight: 1;  // Takes all remaining space
+    }
+
+    Button {
+        Anchor: (Width: 100);
+    }
+}
+```
+
+结果：
+
+- 第一个按钮：100px
+- 中间的组：200px（400 - 100 - 100 = 200）
+- 最后一个按钮：100px
+
+### 多个 FlexWeight
+
+```
+Group {
+    LayoutMode: Left;
+    Anchor: (Width: 600);
+
+    Group { FlexWeight: 1; }
+    Group { FlexWeight: 2; }
+    Group { FlexWeight: 1; }
+}
+```
+
+剩余空间（600px）被划分为：
+
+- 第一个组：600 × (1/4) = 150px
+- 第二个组：600 × (2/4) = 300px
+- 第三个组：600 × (1/4) = 150px
+
+## 可见性
+
+```
+Button #HiddenButton {
+    Visible: false;
+}
+```
+
+**效果：**
+
+- 元素及其子元素不显示
+- 元素**不参与布局**（不占用空间）

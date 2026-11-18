@@ -1,0 +1,467 @@
+---
+title: 模式
+description: >-
+  根据世界位置的材质构成及其他条件来验证该位置。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+### BlockType
+
+根据方块的材质进行检查。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Material</td>
+      <td>方块材质</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### BlockSet
+
+检查方块材质是否属于该 BlockSet。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BlockSet</td>
+      <td>BlockSet 槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Offset
+
+按给定向量偏移子模式。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="203.158447265625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern 槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Offset</td>
+      <td>三维整数值向量</td>
+      <td>偏移子模式的方向。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Rotator
+
+旋转子模式。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="203.158447265625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern 槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Rotation</td>
+      <td>Rotation</td>
+      <td>子模式的旋转。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Floor
+
+检查位置下方是否存在地板。Origin 验证该位置，Floor 验证该位置正下方。若要简单配置 Floor，可在这些槽位中使用 BlockType 或 BlockSet 模式。
+
+![Example of Floor](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/floor.png)
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="144.22772216796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Floor</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置下方的方块。</td>
+    </tr>
+    <tr>
+      <td>Origin</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置处的方块。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Ceiling
+
+检查世界位置上方是否存在天花板。Origin 验证该位置，Ceiling 验证该位置正上方。若要简单配置 Ceiling，可在这些槽位中使用 BlockType 或 BlockSet 模式。
+
+![Example of Ceiling](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/ceiling.png)
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="149.9306640625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ceiling</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置上方的坐标。</td>
+    </tr>
+    <tr>
+      <td>Origin</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置处的坐标。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Wall
+
+检查世界位置旁边是否存在墙。若要简单配置 Wall，可在这些槽位中使用 BlockType 或 BlockSet 模式。你可以使用 `N`、`S`、`E`、`W` 字符串值指定墙的有效方向。
+
+墙的大小可以是 1x1 方块或更大。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="208.86138916015625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Wall</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置旁边的坐标。</td>
+    </tr>
+    <tr>
+      <td>Origin</td>
+      <td>Pattern 槽位</td>
+      <td>验证 Origin 位置处的坐标。</td>
+    </tr>
+    <tr>
+      <td>Directions</td>
+      <td>字符串方向值列表</td>
+      <td>“N”、“S”、“E” 或 “W”。</td>
+    </tr>
+    <tr>
+      <td>RequireAllDirections</td>
+      <td>boolean</td>
+      <td>
+        如果为 true，则列表中你填入的所有方向都必须通过验证，模式才会验证该位置。否则，只要列表中的一个方向通过验证即可。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Surface
+
+验证所给位置是否存在表面。表面是从一组材质过渡到另一组材质的交界。例如，用于放置大型树木的土壤地面，就是空气介质中的土壤表面。表面的朝向、表面的面积、介质的面积以及过渡间隙均可配置。
+
+表面可以朝向 6 个正交方向：上、下、北、南、东和西。表面的朝向由其 Facings 决定。此外，你可以指定多个朝向，并使用 RequireAllFacings 参数。当表面朝上时，介质位于原点，表面位于原点下方。请参见下方图示，其中展示了朝上表面的侧视图。
+
+![Example of Surface facing up](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-up.png)
+
+表面材质和介质材质所需的最小面积由 SurfaceRadius 和 MediumRadius 的值决定。半径为 0.0 时面积为 1x1 方块，而半径为 2.0 时则是一个直径 5 方块的圆盘。下方图示以朝上表面的俯视图展示了这种关系。
+
+![Example of Surface and Medium area](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-medium-area.png)
+
+你可以通过在介质与表面之间配置间隙来放宽表面检测的严格程度。该间隙允许介质与表面之间存在一定的粗糙度。下方图示展示了其工作方式。
+
+![Example of Surface Gap 0](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-gap-0.png)
+
+![Example of Surface Gap 1](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-gap-1.png)
+
+![Example of Surface Gap 2](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-gap-2.png)
+
+![Example of Surface Gap 3](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-gap-3.png)
+
+![Example of Surface Gap 4](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/surface-gap-4.png)
+
+#### 参数：
+
+<table><thead><tr><th width="159.089111328125">名称</th><th width="223.66326904296875">类型</th><th>描述</th></tr></thead><tbody><tr><td>Surface</td><td>Pattern 槽位</td><td>验证表面的每个方块。</td></tr><tr><td>Medium</td><td>Pattern 槽位</td><td>验证介质的每个方块。</td></tr><tr><td>SurfaceRadius</td><td>正小数（>= 0.0）</td><td>决定表面区域的大小。</td></tr><tr><td>MediumRadius</td><td>正小数（>= 0.0）</td><td>决定介质区域的大小。</td></tr><tr><td>SurfaceGap</td><td>integer (>= 0)</td><td></td></tr><tr><td>MediumGap</td><td>integer (>= 0)</td><td></td></tr><tr><td>Facings</td><td>字符串朝向值列表</td><td>“N”、“S”、“E”、“W”、“U”、“D”。</td></tr><tr><td>RequireAllFacings</td><td>boolean</td><td>如果为 true，则只有在所有 Facings 都通过验证时，模式才会通过验证。</td></tr></tbody></table>
+
+---
+
+### Gap
+
+验证所给位置是否存在间隙。在此语境下，间隙是两个锚点之间的某种空间。你必须用 GapPattern 参数定义该空间的有效材质类型，并用 AnchorPattern 参数定义锚点的有效材质类型。GapSize 以方块为单位，表示两个锚点之间的距离。AnchorSize 同样以方块为单位，表示验证锚点时检查的“墙”的大小。你可以使用 DepthUp 和 DepthDown 参数来确保 Gap 原点下方和/或上方有足够空间。下方图示展示了 Gap 模式的底层结构。
+
+![Example of Gap Pattern](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/gap-pattern.png)
+
+下方是上方图示的方块搭建版本，用于展示典型的 Gap 模式会检查哪些方块。灰色方块由 GapPattern 检查，黑色方块由 AnchorPattern 检查。
+
+![Example of Gap Pattern blocks](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/gap-pattern-blocks.png)
+
+将 AnchorRoughness 设为高于 0.0 的值，可以让非平整的墙也能作为锚点通过验证。如果你得到的匹配结果不够多，可以尝试提高该值。该字段的值同样以方块为单位，用于裁剪间隙检查的两端。下方图示展示了这一点。
+
+![Example of Anchor Roughness](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/anchor-roughness.png)
+
+#### 参数：
+
+<table><thead><tr><th width="167.6435546875">名称</th><th width="151.22772216796875">类型</th><th>描述</th></tr></thead><tbody><tr><td>GapSize</td><td>小数（>= 0.0）</td><td>决定构成间隙的两个锚点之间的距离（以方块为单位）。</td></tr><tr><td>AnchorSize</td><td>小数（>= 0.0）</td><td>决定锚点的大小（以方块为单位）。直观展示请参见上方图示。</td></tr><tr><td>AnchorRoughness</td><td>小数（>= 0.0）</td><td>决定锚点检查的严格程度。值越高越宽松。建议从 1 开始。</td></tr><tr><td>DepthDown</td><td>integer (>= 0)</td><td>决定间隙从原点开始向下的深度（以方块为单位）。</td></tr><tr><td>DepthUp</td><td>integer (>= 0)</td><td>决定间隙从原点开始向上的深度（以方块为单位）。</td></tr><tr><td>Angles</td><td>小数值列表</td><td>以度为单位的角。角度 0 对应 Z 轴，角度 90 对应 X 轴。</td></tr><tr><td>GapPattern</td><td>Pattern 槽位</td><td>用于验证间隙及深度范围内的每个方块。</td></tr><tr><td>AnchorPattern</td><td>Pattern 槽位</td><td>用于验证锚点的每个方块。</td></tr></tbody></table>
+
+---
+
+### Cuboid
+
+定义相对于模式原点的长方体区域。该区域由包含端点的 Min 和 Max 点界定，类似于创造模式选择工具的形状。SubPattern 会对长方体内部的每个位置进行测试。只有当所有内部位置都通过 SubPattern 验证时，Cuboid 模式才会通过验证。
+
+下方是该 3D Cuboid 模式的 2D 示意。
+
+![Example of Cuboid Pattern](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/cuboid-pattern.png)
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="116.31683349609375">名称</th>
+      <th width="116.3465576171875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Min</td>
+      <td>三维点</td>
+      <td>
+        长方体相对于模式原点的最小点（包含）。
+      </td>
+    </tr>
+    <tr>
+      <td>Max</td>
+      <td>三维点</td>
+      <td>
+        长方体相对于模式原点的最大点（包含）。
+      </td>
+    </tr>
+    <tr>
+      <td>SubPattern</td>
+      <td>Pattern 槽位</td>
+      <td>
+        Cuboid 使用该模式验证其内部的各个位置。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### And
+
+逻辑运算，仅当其列表中的所有模式都通过验证时才通过验证。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Patterns</td>
+      <td>Pattern 资源槽位列表</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Or
+
+逻辑运算，只要其列表中至少有一个模式通过验证就通过验证。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Patterns</td>
+      <td>Pattern 资源槽位列表</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Not
+
+逻辑运算，仅在其嵌套模式不通过验证的位置通过验证。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern 资源槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### FieldFunction
+
+仅当该位置上所提供的密度字段处于指定的分隔符范围内时，此模式才通过验证。与 And、Or 模式结合使用时，此模式可以对有效位置提供更精细的控制。
+
+重要：由于此模式会查询噪声字段，如果放在层级较高的位置，开销可能很大。我建议调整模式结构，使此模式成为最后才被测试的模式。下方图示给出了相关示例。
+
+![Example of FieldFunction Pattern usage](/assets/official-documentation/worldgen/technical-hytale-generator/patterns/fieldfunction-usage.png)
+
+在绿色框中，FieldFunction 模式只对存在地板的位置运行。在红色框中，FieldFunction 模式对每个位置都运行。两种情形之间的差异非常显著。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="218.3663330078125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FieldFunction</td>
+      <td>噪声函数 RootNode 的槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Delimiters</td>
+      <td>噪声值分隔符列表</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Min</td>
+      <td>小数</td>
+      <td>分隔符的下界（包含）。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Max</td>
+      <td>小数</td>
+      <td>分隔符的上界（不包含）。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Imported
+
+导入已导出的模式。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td>string</td>
+      <td>已导出的模式。</td>
+    </tr>
+  </tbody>
+</table>

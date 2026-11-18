@@ -1,0 +1,513 @@
+---
+title: "图系统"
+description: 关于如何使用图系统的说明
+authors:
+  - name: "RedEng Developer"
+    url: "https://x.com/RedstoneEngine0"
+---
+
+<Callout title="非官方文档" type="warning">
+  本文档由社区编写，出于可见性和易访问性的考虑被放在官方文档区。**本文档并非由
+  Hypixel Studios Canada Inc. 编写、提供、校对或批准。**
+</Callout>
+
+<Callout type="warning">
+  这是一项预发布功能，预计在 Update 6 发布之前会有所改动和改进。
+</Callout>
+
+## 什么是图？
+
+与使用图系统相对应的概念是位置单元噪声密度（Position Cell Noise Density，PCN），所以我建议先试着了解一下那种密度是如何工作的！不过，这套新的图系统比 PCN 提供了多得多的控制能力！这包括更好地修改点的位置、决定从这些点获得什么样的输出，以及最重要的一点：能够从点到点创建分支或「边」（Edges），或者在图系统中从「节点」（Node）到「节点」创建分支，从而在节点之间形成网状结构或路径！
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-2/3 border-r pr-4">
+
+    ![Biome Spheres Showcase](/assets/official-documentation/worldgen/graphs/examples/biomespheres-1.webp)
+
+  </div>
+  <div className="flex-1/3 pl-4">
+
+    **使用图的示例**
+
+    这是我的 [BiomeSpheres 示例](#biome-spheres)，每个节点一个「生物群系」，并用随机边把它们连接起来！密度、材质和物件全部通过图系统完成！
+
+    Hytale 还内置了几个[可供尝试的示例！](#hytale-examples)
+
+  </div>
+</div>
+
+## 术语表
+
+大多数术语会在下面的 **_步骤与定义_** 中更详细地说明。如果遇到了某个加粗的词，可以回到这里查看！
+
+<table>
+  <tbody>
+    <tr>
+      <td width="225">**图（Graphs）**</td>
+      <td>包含可在整个生物群系文件中使用的内容。</td>
+    </tr>
+    <tr>
+      <td>**内容（Content）**</td>
+      <td>
+        包含 Density、Material、PropDistributions 和/或 Position 信息。
+      </td>
+    </tr>
+    <tr>
+      <td>**节点（Nodes）**</td>
+      <td>图中的节点就是位置（Positions），类似于 PCN 中的点。</td>
+    </tr>
+    <tr>
+      <td>**边（Edges）**</td>
+      <td>节点之间的连接或分支。</td>
+    </tr>
+    <tr>
+      <td>**Graph Passes**</td>
+      <td>在图中为生成最终结果而执行的流程。</td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;**Positions GraphPass**</td>
+      <td>使用 Position Provider 向图中添加节点。</td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;**Node Actions**</td>
+      <td>
+        用于修改节点、创建边或定义内容的一系列操作。
+      </td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;&emsp;&emsp;**Proximity Connector**</td>
+      <td>控制在节点之间创建边的操作。</td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;&emsp;&emsp;**Node Content**</td>
+      <td>
+        定义每个节点的 Density、Material、PropDistributions 和/或 Position 信息。
+      </td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;**EdgeActions**</td>
+      <td>
+        用于修改边，或把边拆分为节点以定义内容的一系列操作。
+      </td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;&emsp;&emsp;**Splitter**</td>
+      <td>
+        把一条边按指定数量拆分为排成一列的一系列节点，以便沿途定义内容。这可以用来替代
+        DistanceFromGraphEdge 密度节点，后者可能开销较大。
+      </td>
+    </tr>
+    <tr>
+      <td>&emsp;&emsp;**Node/Edge Selectors**</td>
+      <td>
+        可以精确控制要对哪些节点或边执行操作。
+      </td>
+    </tr>
+    <tr>
+      <td>**图的「连接」（Connections）**</td>
+      <td>
+        这些节点是你如何在生物群系文件中使用图中定义的内容的方式。
+      </td>
+    </tr>
+    <tr>
+      <td>**Content Layer**</td>
+      <td>
+        这个值是在连接与图中已定义内容之间的桥梁。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## 步骤与定义
+
+### Graph Generator
+
+所有图都从 Graph Generator 开始。图通过 **Passes（通道）** 来创建，以定义最终输出，下面会解释每种通道类型。你还可以导出和导入图，从而不必不停地重新定义和重新计算数值。
+
+![Graph Generator](/assets/official-documentation/worldgen/graphs/graph-generator.webp)
+
+### 节点
+
+第一个通道始终是创建**节点**。它会接收一个标准的 Position Provider（与 PCN 或 PropDistributions 中使用的相同），把这些点转换为节点，图随后可以用这些节点进行进一步操作。
+
+![Position Nodes](/assets/official-documentation/worldgen/graphs/pass-nodes.webp)
+
+### 边
+
+最有用的通道之一是创建**边**。边通过「ProximityConnector NodeAction」创建。
+
+![ProximityConnector NodeAction](/assets/official-documentation/worldgen/graphs/pass-edges.webp)
+
+在这个示例中，「Range: 75」表示彼此相距 75 格以内的所有**节点**都会在相互之间创建**边**；「Cap: -1」表示创建的边数量没有上限；最后，**Node Selector** 被设为「All」，表示对哪些节点相互连接没有筛选。
+
+### Node Content
+
+现在我们已设置好节点和边，接下来让它们做点事情！为此我们会使用 **Content NodeAction**。它会为每个节点定义 Density、Material、PropDistribution 和/或 Position。对于每种内容类型（密度、材质等），务必分配一个 **Content Layer** 值！这在后面会很重要。
+
+![Node Content](/assets/official-documentation/worldgen/graphs/pass-content.webp)
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        这是一个尽可能把多种内容定义到节点中的示例：每个节点都有一个由密度定义的圆柱体，一层黄金材质覆盖该圆柱体，其下方放置一个
+        Dungeon Room 的物件分布，还有一个位置用于指向圆柱体顶部的一个箱子。
+      </td>
+    </tr>
+    <tr>
+      <td>
+        ![Content
+        Example](/assets/official-documentation/worldgen/graphs/content-example.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### 图的「连接」（Connections）
+
+图连接是你从图中提取刚刚定义的**内容**，以便在生物群系中使用的地方。正是在这里，**Content Layer** 值对于指向正确的信息很重要。这些节点右侧附加的将是起始的 **Graph Generator** 节点。（「Connections」是我个人对这些类型节点的称呼。）
+
+<table>
+  <tbody>
+    <tr>
+      <td>Density</td>
+      <td>Material Provider</td>
+    </tr>
+    <tr>
+      <td>
+        ![Density
+        Connection](/assets/official-documentation/worldgen/graphs/connection-density.webp)
+      </td>
+      <td>
+        ![Material
+        Connection](/assets/official-documentation/worldgen/graphs/connection-material.webp)
+      </td>
+    </tr>
+    <tr>
+      <td>Prop Distributions</td>
+      <td>Positions</td>
+    </tr>
+    <tr>
+      <td>
+        ![Prop Distributions
+        Connection](/assets/official-documentation/worldgen/graphs/connection-prop.webp)
+      </td>
+      <td>
+        ![Positions
+        Connection](/assets/official-documentation/worldgen/graphs/connection-positions.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        这个示例延续上一个示例。在这里，我们提取之前定义的位置内容，把箱子放在由密度定义的圆柱体顶部。
+      </td>
+    </tr>
+    <tr>
+      <td>
+        ![Connection
+        Example](/assets/official-documentation/worldgen/graphs/connection-example.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### 边上的内容
+
+虽然为每个节点定义特定内容很酷，但我们在这里要用**边**来织出一些网状结构、一些连接和一些道路！
+
+![Edges Example](/assets/official-documentation/worldgen/graphs/edges-example.webp)
+
+沿边定义内容有 2 种方式：
+
+#### **Splitter EdgeAction**
+
+第一种方式是使用 **Splitter EdgeAction**。它会在选中的边上创建节点，然后你可以为这些节点定义内容。每两个节点之间还会创建一条新的边。
+
+![Splitter EdgeAction](/assets/official-documentation/worldgen/graphs/pass-content-splitter.webp)
+
+在这个示例中，我为每条边创建了 5 个节点，并定义了在每个节点处放置一种更深的石头材质。如果你希望节点沿边过渡得更自然，我建议把「NodeCount」值调大！
+
+![Splitter EdgeAction Example](/assets/official-documentation/worldgen/graphs/pass-content-splitter-example.webp)
+
+#### **DistanceToGraphEdge Density**
+
+第二种方法使用新的 **DistanceToGraphEdge Density**。这种密度返回距离你所创建边的距离（以格为单位）。可以在一个较大的 ContentNode 范围内使用它，从而在整个图中应用这种密度。
+
+![DistanceToGraphEdge Example](/assets/official-documentation/worldgen/graphs/pass-content-distancetographedge.webp)
+
+### Node/Edge Selectors
+
+这些操作中很多非常酷的一点在于，你可以基于一整套 **Selector（选择器）** 操作来选择要对哪些节点或边执行这些操作。
+
+#### **All Selector**
+
+选择所有节点/边。如果你想把所有节点连接在一起，它对 ProximityConnector 很有用！
+
+![Selector All](/assets/official-documentation/worldgen/graphs/selector-all.webp)
+
+#### **Random Selector**
+
+根据 Seed 和 Chance 随机选择一部分节点/边。
+
+![Selector Random](/assets/official-documentation/worldgen/graphs/selector-random.webp)
+
+#### **Node: ConnectionCount**
+
+选择具有特定数量边的节点，例如在本示例中为边数多于 1 的节点。
+
+![Selector ConnectionCount](/assets/official-documentation/worldgen/graphs/selector-connectioncount.webp)
+
+#### **Node: Content**
+
+选择已经分配了预定义内容的节点，因此在这个示例中，我会删除所有由「IceCaveBiome」标签定义内容的节点。
+
+![Selector Content](/assets/official-documentation/worldgen/graphs/selector-content.webp)
+
+#### **Node: DensityDelimited**
+
+选择密度值处于某个范围内的节点，其工作方式与 FieldFunction PositionProvider 相同。在这个示例中，我把海洋下方的节点修改为具有「OceanCaves」内容。
+
+![Selector DensityDelimited](/assets/official-documentation/worldgen/graphs/selector-densitydelimited.webp)
+
+#### **Edge: Length / Angle**
+
+在这个示例中，我组合了 2 个 Selector！任何长度超过 50 格、或指向 y 轴向上/向下方向的边都会被选中，这对于沿 y 轴创建条带状洞穴可能很有用。
+
+![Selector LengthAndAngle](/assets/official-documentation/worldgen/graphs/selector-lengthandangle.webp)
+
+#### **Neighbor Checks**
+
+**Node->NeighborNodes**：检查所有通过边连接的节点各自的 **Selector** 条件。<br/>
+**Node->NeighborEdges**：检查所有相连的边各自的 **Selector** 条件。<br/>
+**Edge->Nodes**：检查构成该边的其中一个或两个节点是否满足各自的 **Selector** 条件。
+
+![Selector Neighbors](/assets/official-documentation/worldgen/graphs/selector-neighbors.webp)
+
+「SelectedNeighborsThreshold」表示需要多少个节点/边才能通过此条件。如果设为「-1」，则所有邻居都必须满足各自的 **Selector** 条件。这些 Neighbor Checks 对于根据相邻/相连节点的内容来创建过渡性的节点和边非常有用，例如移除与熔岩洞穴相连的冰洞，或创建朝向繁茂洞穴生物群系的繁茂隧道过渡。
+
+#### **And / Or / Not Selectors**
+
+最后，没有这些 Selector，逻辑就不完整！把它们组合使用，就能让选择精确到你需要的程度！
+
+![Selector Logic](/assets/official-documentation/worldgen/graphs/selector-logic.webp)
+
+### Node/Edge Actions
+
+操作并不限于创建新边、定义内容和拆分边。下面列出了一些其他有用的操作！
+
+#### **Node: Spawner**
+
+此操作会在中心节点周围的一个区域内创建新节点。这可以类比于 Cluster PositionProvider。你还可以设置新节点的内容，或设置「CreateEdges」以把这些新节点连接到中心节点。
+
+![Action Spawner](/assets/official-documentation/worldgen/graphs/action-spawner.webp)
+
+#### **Node: Connected Nodes/Edges**
+
+此操作会选择通过边相连的节点，或连接到此节点的边，并对它们执行各自的操作。Ratio 值决定要对其执行该操作的相连节点或边的数量。如果 Ratio 设在 0 和 1 之间，Seed 会随机决定选中哪些。
+
+![Action Connected](/assets/official-documentation/worldgen/graphs/action-connected.webp)
+
+#### **Node: ContentCopy**
+
+Content Copy 会把列出的内容传播到通过边相连的节点。如果出现平局，例如「IceCave」和「LavaCave」都连接到同一个节点，种子会随机决定哪一个胜出。
+
+![Action ContentCopy](/assets/official-documentation/worldgen/graphs/action-contentcopy.webp)
+
+基于目前为止的所有节点，有 3 种根据相连的边来「传播」内容的方式。
+
+<table>
+  <tbody>
+    <tr>
+      <td>NeighborNodes NodeSelector</td>
+      <td>
+        ![Connected
+        Example](/assets/official-documentation/worldgen/graphs/action-connected-example-alt.webp)
+      </td>
+    </tr>
+    <tr>
+      <td>ConnectedNodes NodeAction</td>
+      <td>
+        ![Connected Alt
+        Example](/assets/official-documentation/worldgen/graphs/action-connected-example.webp)
+      </td>
+    </tr>
+    <tr>
+      <td>ContentCopy NodeAction</td>
+      <td>
+        ![Connected Alt 2
+        Example](/assets/official-documentation/worldgen/graphs/action-contentcopy.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### **Edge: Proxy**
+
+Edge Proxy 是一种很好的方式，可以从已有节点创建偏移节点，例如在岛屿之间架桥。
+
+![Action Proxy](/assets/official-documentation/worldgen/graphs/action-proxy.webp)
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        之前 ![Action Proxy
+        Before](/assets/official-documentation/worldgen/graphs/action-proxy-example-before.webp)
+      </td>
+      <td>
+        之后 ![Action Proxy
+        After](/assets/official-documentation/worldgen/graphs/action-proxy-example-after.webp)
+      </td>
+    </tr>
+    <tr>
+      <td>图片由 Hypixel Studios 的 Ams 提供</td>
+    </tr>
+  </tbody>
+</table>
+
+#### **其他操作**
+
+快速过一遍，因为这些大多不言自明，尤其是如果你已经玩过其他世界生成功能的话！
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Move NodeAction**</td>
+      <td>基于向量提供器移动选中的节点</td>
+    </tr>
+    <tr>
+      <td>**Jitter2D/3D NodeAction**</td>
+      <td>
+        与 Jitter 位置提供器一样，抖动选中节点的位置
+      </td>
+    </tr>
+    <tr>
+      <td>**Weighted NodeAction**</td>
+      <td>基于 Seed 为每个节点随机选择一个要执行的操作</td>
+    </tr>
+    <tr>
+      <td>**Empty Node/EdgeAction**</td>
+      <td>
+        一个什么都不做的占位符。最常与 Weighted NodeAction 一起使用
+      </td>
+    </tr>
+    <tr>
+      <td>**Delete Node/EdgeAction**</td>
+      <td>从图中移除该节点/边</td>
+    </tr>
+  </tbody>
+</table>
+
+### 新的位置与向量提供器
+
+本节将介绍此预发布版本中同样包含的一些新的位置提供器和向量提供器，它们可能会在你创建图的旅途中派上用场！
+
+这个列表太长，无法在此全部列出，但我包含了一个使用它们设置位置 Y 值的示例。这对于把图中节点的位置，或物件的放置位置设为世界顶部很有用（无需 Scanner Prop，这对优化很有帮助！）
+
+![New Providers Example](/assets/official-documentation/worldgen/graphs/newproviders-example.webp)
+
+我们还有新的 **OpposedToGraphEdges** VectorProvider！这个提供器会给出与所有相连边的向量距离最远的向量，因此在这个三棱锥示例中，每个节点都会被推向更外侧，远离其他节点。
+
+![OpposedToGraphEdges VectorProvider](/assets/official-documentation/worldgen/graphs/newproviders-graphedges.webp)
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        之前 ![VectorProvider
+        Before](/assets/official-documentation/worldgen/graphs/newproviders-graphedges-example1-before.webp)
+      </td>
+      <td>
+        之后 ![VectorProvider
+        After](/assets/official-documentation/worldgen/graphs/newproviders-graphedges-example1-after.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+不过，在节点以直线相连的边缘情况下，对立向量可能有多种可能，此时结果会因朝向而不一致。
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        之前 ![VectorProvider EdgeCase
+        Before](/assets/official-documentation/worldgen/graphs/newproviders-graphedges-example2-before.webp)
+      </td>
+      <td>
+        之后 ![VectorProvider EdgeCase
+        After](/assets/official-documentation/worldgen/graphs/newproviders-graphedges-example2-after.webp)
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Hytale 示例
+
+### 河流水系
+
+此图包含一个示例，演示用迭代式选择方法来创建从海岸线分支出去的河流分支！
+
+你可以在 `HytaleGenerator/BiomeAsset/Examples/Example_Graph_River` 找到这个示例
+
+![Rivers Showcase](/assets/official-documentation/worldgen/graphs/examples/river-1.webp)
+![Rivers Nodes](/assets/official-documentation/worldgen/graphs/examples/river-2.webp)
+
+### 城市道路
+
+此图延续上一个示例，添加了在城市中心附近道路旁生成的建筑，并确保道路连接不会进入由 Bedrock 指示的区域！
+
+你可以在 `HytaleGenerator/BiomeAsset/Examples/Example_Graph_Road_Layout` 找到这个示例
+
+![Roads Showcase](/assets/official-documentation/worldgen/graphs/examples/roads-1.webp)
+
+### 山体侵蚀
+
+此图利用地形的密度梯度，只纳入沿着山坡走向的特定边，然后使用带单纯形噪声模式的 Move 操作，在边向下延伸时创建波浪状图案。
+
+你可以在 `HytaleGenerator/BiomeAsset/Examples/Example_Graph_Erosion` 找到这个示例
+
+![Erosion Showcase](/assets/official-documentation/worldgen/graphs/examples/erosion-1.webp)
+![Erosion Nodes1](/assets/official-documentation/worldgen/graphs/examples/erosion-2.webp)
+![Erosion Nodes2](/assets/official-documentation/worldgen/graphs/examples/erosion-3.webp)
+
+### 根系
+
+此图使用一种技巧：一开始只创建 1 个节点，然后通过从之前的节点反复使用 Spawner 操作来创建新节点。它还在中途把内容中定义的密度改小。
+
+你可以在 `HytaleGenerator/BiomeAsset/Examples/Example_Graph_Roots` 找到这个示例
+
+![Roots Showcase](/assets/official-documentation/worldgen/graphs/examples/roots-1.webp)
+![Roots Nodes1](/assets/official-documentation/worldgen/graphs/examples/roots-2.webp)
+![Roots Nodes2](/assets/official-documentation/worldgen/graphs/examples/roots-3.webp)
+
+## 社区示例
+
+### 生物群系球体（Biome Spheres）
+
+这是一个展示性示例：每个节点创建一个「生物群系」，并用随机边连接它们！密度、材质和物件全部通过图系统完成！
+
+[GitHub 仓库链接](https://github.com/RedstoneEngine/Hytale-WorldGen/blob/main/Examples/Graphs/BiomeSpheres.json) `- Credit to RedEng Developer`
+
+![Biome Spheres Showcase](/assets/official-documentation/worldgen/graphs/examples/biomespheres-1.webp)
+![Biome Spheres Nodes](/assets/official-documentation/worldgen/graphs/examples/biomespheres-2.webp)
+
+### 地牢
+
+这是一套用于生成动态地牢的图设置！此图包含多种技巧，让地牢生成它的路径和物件，这里暂时无法一一列出，但你可以随意替换成自己的预制件，或定义自己的寻路 GraphPasses！
+
+[GitHub 仓库链接](https://github.com/RedstoneEngine/Hytale-WorldGen/tree/main/Examples/Graphs/DungeonGenerator) `- Credit to RedEng Developer`
+
+![BigRoom Dungeon Showcase](/assets/official-documentation/worldgen/graphs/examples/dungeon-bigrooms-1.webp)
+![BigRoom Dungeon Rooms Showcase](/assets/official-documentation/worldgen/graphs/examples/dungeon-bigrooms-2.webp)
+
+---
+
+更多示例即将到来！欢迎在这里分享你最得意的作品，让其他人也能玩一玩、试一试！
+
+---

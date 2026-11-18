@@ -1,0 +1,557 @@
+---
+title: 位置提供器
+description: 确定一个无限的三维位置场。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+# 位置提供器
+
+### TriangularGrid2d
+
+生成一个二维无限三角网格的位置，相邻位置之间距离为 1 个方块。
+
+#### 参数：无
+
+---
+
+### SquareGrid2d
+
+生成一个二维无限方形网格的位置，相邻位置之间距离为 1 个方块。
+
+#### 参数：无
+
+---
+
+### SquareGrid3d
+
+生成一个三维无限方形网格的位置，相邻位置之间距离为 1 个方块。
+
+#### 参数：无
+
+---
+
+### Scaler
+
+缩放子位置。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要缩放的位置。</td>
+    </tr>
+    <tr>
+      <td>Scale</td>
+      <td>三维小数值向量</td>
+      <td>确定缩放比例。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Jitter2d
+
+沿 x/z 平面添加抖动。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要抖动的位置。</td>
+    </tr>
+    <tr>
+      <td>Magnitude</td>
+      <td>小数</td>
+      <td>
+        抖动时每个位置允许偏离其原始位置的最大距离。每个位置的实际移动距离是 0 到 Magnitude 之间的随机值。
+      </td>
+    </tr>
+    <tr>
+      <td>Seed</td>
+      <td>string</td>
+      <td>确定应用于每个位置的方向和距离。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Jitter3d
+
+在所有方向上添加抖动。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要抖动的位置。</td>
+    </tr>
+    <tr>
+      <td>Magnitude</td>
+      <td>小数</td>
+      <td>
+        抖动时每个位置允许偏离其原始位置的最大距离。每个位置的实际移动距离是 0 到 Magnitude 之间的随机值。
+      </td>
+    </tr>
+    <tr>
+      <td>Seed</td>
+      <td>string</td>
+      <td>确定应用于每个位置的方向和距离。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Clusters
+
+生成由 Distributor PositionProvider 锚定的位置簇。簇的大小由 ClusterBounds 决定，簇的内容由 Cluster PositionProvider 决定。
+
+Cluster PositionProvider 会接收簇的位置作为锚点。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="142.9307403564453">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cluster</td>
+      <td>PositionProvider 槽位</td>
+      <td>构成簇的位置。</td>
+    </tr>
+    <tr>
+      <td>Distributor</td>
+      <td>PositionProvider 槽位</td>
+      <td>每个簇都会锚定到这些位置中的某一个。</td>
+    </tr>
+    <tr>
+      <td>ClusterBounds</td>
+      <td>Bounds</td>
+      <td>簇围绕其锚点的最大尺寸。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### List
+
+允许你手动定义一组静态的世界坐标位置。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="172.22772216796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>三维位置列表</td>
+      <td>
+        每个条目包含 <code>X</code>、<code>Y</code> 和 <code>Z</code>。
+      </td>
+    </tr>
+    <tr>
+      <td>Positions[].X</td>
+      <td>integer</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Positions[].Y</td>
+      <td>integer</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Positions[].Z</td>
+      <td>integer</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Anchor
+
+如果存在上下文锚点（Anchor），则将子位置场的原点锚定到该上下文锚点。要使上下文锚点存在，此节点的某个父级必须产生一个锚点。
+
+你也可以在链条的后续环节反转这一效果，将原点移回世界原点，如下图所示。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="118.21783447265625">名称</th>
+      <th width="141.85150146484375">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>Positions 槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Reverse</td>
+      <td>boolean</td>
+      <td>
+        如果为 <code>true</code>，则将子级的原点反转回世界原点（或反转回上一个 Anchor 节点之前的原点）。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Bound
+
+将位置限制在一个有界区域内。
+
+<Callout>这可以限制无限网格，以便用作生成点。</Callout>
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="107.76239013671875">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bounds</td>
+      <td>三维小数边界</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### FieldFunction
+
+允许使用密度场来遮罩掉位置。分隔符决定密度场中保留位置的区域。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="160.9901123046875">名称</th>
+      <th width="216.0098876953125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FieldFunction</td>
+      <td>密度槽位</td>
+      <td>用于密度输入的槽位。</td>
+    </tr>
+    <tr>
+      <td>Delimiters</td>
+      <td>分隔符列表</td>
+      <td>密度值分隔符的列表。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Min</td>
+      <td>小数</td>
+      <td>分隔符的下界。</td>
+    </tr>
+    <tr>
+      <td>Delimiters[].Max</td>
+      <td>小数</td>
+      <td>分隔符的上界。</td>
+    </tr>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>应用遮罩的位置。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Occurrence
+
+根据密度场丢弃一定比例的输入位置。每个位置处密度场的值决定该位置被保留的几率。
+
+- 密度值小于或等于 0.0 的位置被保留的几率为 0%。
+- 密度值大于或等于 1.0 的位置被保留的几率为 100%。
+- 密度值介于 0.0 和 1.0 之间的位置，被保留的几率按比例计算。_示例：0.4 → 40%。_
+
+下图展示了一个简单的噪声场，用于创建橡树稀疏的区域和橡树密集的区域。
+
+![Example of Occurrence PositionsProvider](/assets/official-documentation/worldgen/technical-hytale-generator/positions-provider/occurrence-example-1.png)
+
+![Example of Occurrence PositionsProvider2](/assets/official-documentation/worldgen/technical-hytale-generator/positions-provider/occurrence-example-2.png)
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="141.02972412109375">名称</th>
+      <th width="205.0989990234375">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FieldFunction</td>
+      <td>密度槽位</td>
+      <td>确定保留这些位置的几率。</td>
+    </tr>
+    <tr>
+      <td>Seed</td>
+      <td>string</td>
+      <td>确定结果。</td>
+    </tr>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Offset
+
+按向量偏移位置。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Offset</td>
+      <td>三维小数值向量</td>
+      <td>偏移向量。</td>
+    </tr>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要偏移的位置。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### VectorOffset
+
+按各自对应的向量偏移每个位置。
+
+MovementBounds 限制每个位置可能的移动范围。如果向量指向其 MovementBounds 之外，则该位置不会移动。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要偏移的位置。</td>
+    </tr>
+    <tr>
+      <td>VectorProvider</td>
+      <td>VectorProvider 槽位</td>
+      <td>偏移向量。</td>
+    </tr>
+    <tr>
+      <td>MovementBounds</td>
+      <td>三维小数边界</td>
+      <td>
+        每个位置允许相对于其原点移动的边界。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### BaseHeight
+
+将所配置垂直区域内的 Positions 按所引用 DecimalConstant 确定的方块数进行垂直偏移。
+
+一个典型应用是获取 `Y: 0` 处的 Positions，并按 DecimalConstant 将其向上偏移，以更接近某个地形特征。之后可以使用 Offset PositionsProvider 节点做进一步调整。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th width="178.445556640625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BaseHeightName</td>
+      <td>string</td>
+      <td>要引用的 DecimalConstant 名称。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Union
+
+将所有位置合并为单个 Positions 场。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位列表</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SimpleHorizontal
+
+仅保留位于给定 Y 范围内的位置。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>RangeY</td>
+      <td>小数</td>
+      <td>要保留位置的 Y 范围。</td>
+    </tr>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Cache
+
+缓存 Positions 槽位提供的输出，以在特定情况下提升性能。当某个 Positions 资源开销较大且会被多次查询时，该资源有助于提升性能。
+
+该缓存的效果很大程度上取决于使用场景、所提供的子 Positions 资源以及查询顺序。你可以通过反复试验让该 Cache 资源获得最佳性能。一个良好的用例是将其放在 Positions2D/Positions3D 密度节点所使用的、开销较大的 Positions 树的根部。
+
+我建议不要在你的 Positions 树中到处使用该缓存，而是将其放在 Positions 资源树的根部（或靠近根部的位置）。不过，也欢迎你自行尝试。
+
+该缓存通过保存包含子槽位所生成 Positions（点）的三维空间区段来工作。这些区段是立方体，其大小由资源的 SectionSize 参数决定。缓存中允许保存的区段数量由资源的 CacheSize 参数决定。SectionSize 参数一个安全的起始值是 32，CacheSize 一个安全的起始值是 50。
+
+#### 参数：
+
+<table><thead><tr><th width="138.17822265625">名称</th><th width="187.089111328125">类型</th><th>描述</th></tr></thead><tbody><tr><td>SectionSize</td><td>integer (> 0)</td><td>确定每个区段立方体的边长，单位为方块。安全的起始值是 <code>32</code>。</td></tr><tr><td>CacheSize</td><td>integer (>= 0)</td><td>确定可在内存中保存多少个区段。安全的起始值是 <code>50</code>。如果设为 <code>0</code>，则忽略缓存，位置直接从子槽位获取。</td></tr><tr><td>Positions</td><td>PositionProvider 槽位</td><td>该 Positions 资源的输出会被缓存。</td></tr></tbody></table>
+
+---
+
+### Imported
+
+导入导出的 PositionsProvider。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td>string</td>
+      <td>导出的 PositionsProvider。</td>
+    </tr>
+  </tbody>
+</table>

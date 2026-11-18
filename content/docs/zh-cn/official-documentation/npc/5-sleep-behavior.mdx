@@ -1,0 +1,68 @@
+---
+title: "5 - NPC 睡眠行为"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+我们来添加一个新的顶层 **Sleep** 状态。为便于说明，Idle 状态已被截断。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Idle"
+	},
+	"Instructions": [ ... ],
+},
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Sleep"
+	},
+	"Instructions": [ ... ]
+}
+
+```
+
+现在我们向 **Random** 动作列表再添加一个动作，用于切换到 **Sleep** 状态。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": ".Default"
+  },
+  "Instructions": [
+    {
+      "Actions": [
+        {
+          "Type": "Random",
+          "Actions": [
+            {
+              "Weight": 80,
+              "Action": {
+                "Type": "State",
+                "State": ".Guard"
+              }
+            },
+            {
+              "Weight": 20,
+              "Action": {
+                "Type": "State",
+                "State": "Sleep"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+注意这里的权重——食人魔每次决定切换行为时，有 20% 的概率去睡觉，但有 80% 的概率只是继续站岗。
+
+我们仍然需要真正添加睡眠行为，但首先我们要在 **Sleep** 状态的开头添加一条带 **Timeout** 动作的指令，就像我们对 **.Guard** 所做的那样。由于我们只有一条指令，只需要去掉 **"Continue": true**。

@@ -1,0 +1,68 @@
+---
+title: 方块遮罩
+description: >-
+  确定在世界中放置内容时，哪些材质可以替换哪些其他材质。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+#### 源材质与目标材质说明
+
+如果你尝试在水中放置砖块，那么砖块就是源材质，水就是目标材质。
+
+- 源材质：我们尝试放置的材质。
+- 目标材质：我们希望放置源材质的位置上已有的材质。
+
+#### DontPlace
+
+如果某个源材质位于 DontPlace 方块集合中，它就不会被放置。
+
+#### DontReplace
+
+默认情况下，源材质无法替换此方块集合中的目标材质。该规则会被下面的 Advanced 规则覆盖。
+
+#### Advanced
+
+Advanced 规则会针对特定方块集合覆盖上面的规则。
+
+每条规则包含：
+
+- 一个 Source BlockSet，用于确定该规则适用于哪些源材质。
+- 一个 CanReplace BlockSet，用于确定这些源材质可以替换哪些目标材质。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="165.3564453125">名称</th>
+      <th width="178.84161376953125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DontPlace</td>
+      <td>BlockSet 槽位</td>
+      <td>此集合中的源材质不会被放置。</td>
+    </tr>
+    <tr>
+      <td>DontReplace</td>
+      <td>BlockSet 槽位</td>
+      <td>
+        默认情况下，源材质无法替换此集合中的目标材质。
+      </td>
+    </tr>
+    <tr>
+      <td>Advanced</td>
+      <td>规则列表</td>
+      <td>
+        按方块集合进行的覆盖。每条规则包含一个 Source BlockSet 和一个
+        CanReplace BlockSet。
+      </td>
+    </tr>
+  </tbody>
+</table>

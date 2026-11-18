@@ -1,0 +1,539 @@
+---
+title: 材质提供器
+description: 确定在何处使用哪种材质。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+# 材质提供器
+
+### Constant
+
+提供一个恒定材质。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Material",
+      type: "材质槽位",
+      description: "",
+    },
+  ]}
+/>
+
+---
+
+### Transparent
+
+完全没有材质。
+
+参数：无。
+
+---
+
+### Solidity
+
+将地形分为实心（Solid）方块和空（Empty）方块。为每种选择提供一个材质提供器槽位。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Solid",
+      type: "材质提供器槽位",
+      description: "地形密度值大于 0 的位置。",
+    },
+    {
+      name: "Empty",
+      type: "材质提供器槽位",
+      description:
+        "地形密度值小于或等于 0 的位置。",
+    },
+  ]}
+/>
+
+---
+
+### Queue
+
+按优先级从高到低遍历材质提供器槽位队列。如果队列中的某个材质提供器没有提供方块类型，则查询队列中的下一个。如果没有任何槽位提供方块，则 Queue 材质提供器不会提供方块。查询在第一个提供方块的槽位处停止。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Queue",
+      type: "材质提供器槽位列表",
+      description: "槽位从上到下依次查询。",
+    },
+  ]}
+/>
+
+---
+
+### SimpleHorizontal
+
+将子材质提供器应用于一个垂直范围。
+
+如果提供了 BaseHeight，则 TopY 和 BottomY 值相对于所引用的 DecimalConstant。否则，它们相对于世界的 Y 坐标。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "TopY",
+      type: "integer",
+      description:
+        "Y 坐标。定义该区域垂直方向的上限（<strong>不含</strong>该值）。",
+    },
+    {
+      name: "Top BaseHeight",
+      type: "string",
+      description: "DecimalConstant 名称。",
+    },
+    {
+      name: "BottomY",
+      type: "integer",
+      description:
+        "Y 坐标。定义该区域垂直方向的下限（<strong>含</strong>该值）。",
+    },
+    {
+      name: "Bottom BaseHeight",
+      type: "string",
+      description: "DecimalConstant 名称。",
+    },
+    {
+      name: "Material",
+      type: "材质提供器槽位",
+      description: "为所选区域查询的槽位。",
+    },
+  ]}
+/>
+
+---
+
+### Striped
+
+将材质提供器槽位应用于一组厚度和位置各异的水平方块条带。下面是石壁中玄武岩条带的示例。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/basalt-stripes-example.png)
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Stripes",
+      type: "条纹资源列表",
+      description:
+        "每个条带包含 <code>TopY</code> 和 <code>BottomY</code>。",
+    },
+    {
+      name: "Stripes[].TopY",
+      type: "integer",
+      description: "世界 Y 值。含该值。",
+    },
+    {
+      name: "Stripes[].BottomY",
+      type: "integer",
+      description: "世界 Y 值。含该值。",
+    },
+    {
+      name: "Material",
+      type: "材质提供器槽位",
+      description: "为所选区域查询的槽位。",
+    },
+  ]}
+/>
+
+---
+
+### Weighted
+
+从列表中挑选要查询的材质提供器槽位。每个槽位都有一个权重，决定其被选中的可能性。
+
+参数：
+
+<ParameterList
+  parameters={[
+    { name: "Seed", type: "string", description: "" },
+    {
+      name: "SkipChance",
+      type: "float (0.0–1.0)",
+      description:
+        "要跳过的方块百分比。被跳过时，该提供器不返回方块，也不会挑选槽位。",
+    },
+    {
+      name: "WeightedMaterials",
+      type: "带权重的材质提供器槽位列表",
+      description: "",
+    },
+    {
+      name: "WeightedMaterials[].Weight",
+      type: "number (> 0)",
+      description: "值越高，被选中的可能性越大。",
+    },
+    {
+      name: "WeightedMaterials[].Material",
+      type: "材质提供器槽位",
+      description: "",
+    },
+  ]}
+/>
+
+---
+
+### FieldFunction
+
+使用噪声函数和值分隔符选择一个三维区域。分隔符将材质提供器槽位与噪声函数中特定的值范围关联起来。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "FieldFunction",
+      type: "场函数资源",
+      description:
+        "定义每个方块的场值。与 DAOTerrain 密度使用的资源类型相同。",
+    },
+    {
+      name: "Delimiters",
+      type: "分隔符列表",
+      description: "位置越靠上的条目优先级越高。",
+    },
+    {
+      name: "Delimiters[].From",
+      type: "float",
+      description: "分隔符范围的下限。",
+    },
+    {
+      name: "Delimiters[].To",
+      type: "float",
+      description: "分隔符范围的上限。",
+    },
+    {
+      name: "Delimiters[].Material",
+      type: "材质提供器槽位",
+      description: "与此分隔符关联的槽位。",
+    },
+  ]}
+/>
+
+---
+
+### SpaceAndDepth
+
+允许在地形的底部或顶部表面放置方块层。材质层在表面（底部或顶部）内部像蛋糕一样层层堆叠。有多种 Layer 类型，每种都提供独特的厚度定义方式。下面是我们的地形底部包含两层的示例。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/depth-and-space-example.png)
+
+条件（Condition）未满足时，可以跳过该材质提供器。例如，某个 Condition 仅在表面上方至少有 5 个空方块时才放置草。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "LayerContext",
+      type: "string",
+      description:
+        "应用这些层的上下文。取值：<code>DEPTH_INTO_FLOOR</code>、<code>DEPTH_INTO_CEILING</code>。",
+    },
+    {
+      name: "MaxExpectedDepth",
+      type: "正整数",
+      description:
+        "优化提示。设为预期的层深总和最大值。太小可能会截断层，太大可能影响性能。",
+    },
+    {
+      name: "Condition",
+      type: "Condition 槽位",
+      description: "如果 Condition 失败，提供器不返回方块。",
+    },
+    {
+      name: "Layers",
+      type: "Layer 对象列表",
+      description: "随着向上下文内部深度增加，从上到下堆叠。",
+    },
+  ]}
+/>
+
+---
+
+### Condition
+
+Condition 对象会检查环境是否有效，以决定该材质提供器是否应对当前方块生效。如果某个方块的 Condition 失败，该材质提供器不返回方块。
+
+一个示例 Condition 可以检查底部上方是否至少有 5 个方块的空隙。如果你希望在狭窄空间中使用泥土而不是草，这会很有用。下面展示了一个示例。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/condition-example.png)
+
+{/* MIRO BOARD LINK */}
+
+Condition 的 `ContextToCheck` 参数选择该 Condition 查询哪个上下文值。在上面的示例中，我们检查的是 `SPACE_ABOVE_FLOOR` 上下文，即底部上方的方块数量。目前可用的上下文值有两种：
+
+- `SPACE_ABOVE_FLOOR`
+- `SPACE_BELOW_CEILING`
+
+有多种 Condition 类型，可让你由更简单的 Condition 组合出更复杂的 Condition。下面是不同的类型。
+
+**EqualsCondition**
+
+仅当上下文值等于该 Condition 配置的值时才通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "ContextToCheck",
+      type: "字符串（<code>SPACE_ABOVE_FLOOR</code> | <code>SPACE_BELOW_CEILING</code>）",
+      description: "该 Condition 查询哪个上下文值。",
+    },
+    {
+      name: "Value",
+      type: "integer",
+      description: "仅当上下文值等于此值时 Condition 才通过。",
+    },
+  ]}
+/>
+
+**GreaterThanCondition**
+
+仅当上下文值大于该 Condition 配置的阈值时才通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "ContextToCheck",
+      type: "字符串（<code>SPACE_ABOVE_FLOOR</code> | <code>SPACE_BELOW_CEILING</code>）",
+      description: "该 Condition 查询哪个上下文值。",
+    },
+    {
+      name: "Threshold",
+      type: "integer",
+      description:
+        "仅当上下文值大于此值时 Condition 才通过。",
+    },
+  ]}
+/>
+
+**SmallerThanCondition**
+
+仅当上下文值小于该 Condition 配置的阈值时才通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "ContextToCheck",
+      type: "字符串（<code>SPACE_ABOVE_FLOOR</code> | <code>SPACE_BELOW_CEILING</code>）",
+      description: "该 Condition 查询哪个上下文值。",
+    },
+    {
+      name: "Threshold",
+      type: "integer",
+      description:
+        "仅当上下文值小于此值时 Condition 才通过。",
+    },
+  ]}
+/>
+
+**AndCondition**
+
+逻辑 AND Condition。仅当所有子 Condition 都通过验证时才通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Conditions",
+      type: "Condition 槽位列表",
+      description: "仅当所有子 Condition 都通过时该 Condition 才通过。",
+    },
+  ]}
+/>
+
+**OrCondition**
+
+逻辑 OR Condition。只要有任一子 Condition 通过验证即通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Conditions",
+      type: "Condition 槽位列表",
+      description: "只要有任一子 Condition 通过，该 Condition 即通过。",
+    },
+  ]}
+/>
+
+**NotCondition**
+
+逻辑 NOT Condition。仅当其子 Condition 未通过验证时才通过验证。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Condition",
+      type: "Condition 槽位",
+      description:
+        "单个槽位（不是列表）。如果子 Condition 失败，该 Condition 即通过。",
+    },
+  ]}
+/>
+
+**AlwaysTrueCondition**
+
+该 Condition 类型始终通过验证。
+
+---
+
+### Layer
+
+在 SpaceAndDepth 材质提供器类型中，Layer 会沿着底部或顶部的深度方向堆叠。每个 Layer 都有厚度和一个材质提供器。
+
+下面是一些说明层如何工作的示例。
+
+示例 1：
+
+- Layer 1：厚度为 1 的草。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/grass-layer-example.png)
+
+示例 2：
+
+- Layer 1：厚度为 1 的草。
+- Layer 2：厚度为 2 到 3 的泥土。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/dirt-layer-example.png)
+
+示例 3：
+
+- Layer 1：由二维单纯形噪声函数定义的、厚度为 1 到 5 的泥。
+- Layer 2：厚度为 2 到 3 的泥土。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/mud-layer-example.png)
+
+示例 4：该示例展示了不仅可以在底部生效，还可以通过将 LayerContext 值改为 `DEPTH_INTO_CEILING` 在顶部生效。
+
+- Layer 1：厚度在 2 到 3 范围内的泥土。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/material-providers/ceiling-layer-example.png)
+
+示例结束。
+
+下面是受支持的 Layer 类型。
+
+**ConstantThickness**
+
+在任何位置厚度都相同。
+
+参数：
+
+<ParameterList
+  parameters={[
+    { name: "Material", type: "材质提供器槽位", description: "" },
+    {
+      name: "Thickness",
+      type: "integer (>= 0)",
+      description: "厚度，单位为方块。",
+    },
+  ]}
+/>
+
+**RangeThickness**
+
+厚度随 XZ 坐标变化，由一组可能值范围定义。
+
+参数：
+
+<ParameterList
+  parameters={[
+    { name: "Material", type: "材质提供器槽位", description: "" },
+    {
+      name: "RangeMin",
+      type: "integer (>= 0)",
+      description: "最小厚度，单位为方块。",
+    },
+    {
+      name: "RangeMax",
+      type: "integer (>= 0)",
+      description: "最大厚度，单位为方块（含该值）。",
+    },
+    { name: "Seed", type: "string", description: "" },
+  ]}
+/>
+
+**WeightedThickness**
+
+厚度随 XZ 坐标变化，从一组带权重的厚度值列表中挑选。
+
+参数：
+
+<ParameterList
+  parameters={[
+    { name: "Material", type: "材质提供器槽位", description: "" },
+    {
+      name: "PossibleThicknesses",
+      type: "带权重的厚度值列表",
+      description: "用于为每个 XZ 挑选厚度。",
+    },
+    {
+      name: "Seed",
+      type: "string",
+      description: "挑选厚度时使用的种子。",
+    },
+  ]}
+/>
+
+**NoiseThickness**
+
+厚度随 XZ 坐标变化，并由噪声函数树决定。厚度值来自函数输出。在下面的示例中，输出被归一化到 0 到 5。这使得最厚处的厚度约为 5 个方块。
+
+参数：
+
+<ParameterList
+  parameters={[
+    { name: "Material", type: "材质提供器槽位", description: "" },
+    {
+      name: "ThicknessFunctionXZ",
+      type: "噪声函数树",
+      description:
+        "在 XZ 平面上作为二维函数采样（Y 始终为 <code>0</code>）。",
+    },
+  ]}
+/>
+
+---
+
+### Imported
+
+导入导出的材质提供器。
+
+参数：
+
+<ParameterList
+  parameters={[
+    {
+      name: "Name",
+      type: "string",
+      description: "导出的材质提供器。",
+    },
+  ]}
+/>

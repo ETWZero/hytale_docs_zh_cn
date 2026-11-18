@@ -1,0 +1,476 @@
+---
+title: "11 - 近战"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+在本教程中，我们只关注近战攻击。我们先制作一个 **攻击序列**。我们的 NPC 可以通过名为战斗动作评估器（Combat Action Evaluator，CAE）的功能，使用智能决策来进行攻击，但在本教程中我们只用简单的序列。
+
+这也会让我们快速了解相邻的 Interactions 系统。首先，我们需要在 **HytaleAssets/Server/Item/RootInteractions** 中创建一个 **Root Interaction**，与其他 Root Interaction 放在一起。让我们创建一个 **Root_NPC_Goblin_Ogre_Attack** Interaction：
+
+```json
+{
+  "Interactions": [
+    {
+      "Type": "Chaining",
+      "ChainId": "Slashes",
+      "ChainingAllowance": 15,
+      "Next": [
+        "Goblin_Ogre_Swing_Left",
+        "Goblin_Ogre_Swing_Right",
+        "Goblin_Ogre_Swing_Down"
+      ]
+    }
+  ],
+  "Tags": {
+    "Attack": ["Melee"]
+  }
+}
+```
+
+这是一个简单的链式 Interaction：食人魔会执行 **Swing_Left**，并且只要下一次攻击在 15 秒内发生，他就会使用 **Swing_Right**。如果他随后能在 15 秒内第三次攻击我们，就会使用 **Swing_Down** 攻击。
+
+这些挥击 Interaction 需要在 **HytaleAssets/Server/Item/Interactions** 文件夹中创建。让我们创建 **Goblin_Ogre_Swing_Left** Interaction：
+
+```json
+{
+  "Type": "Simple",
+  "Effects": {
+    "ItemPlayerAnimationsId": "Goblin_Club",
+    "ItemAnimationId": "SwingLeft"
+  },
+  "$Comment": "Prepare Delay",
+  "RunTime": 0.2,
+  "Next": {
+    "Type": "Selector",
+    "$Comment": "Length of Combat",
+    "RunTime": 0.25,
+    "Selector": {
+      "Id": "Horizontal",
+      "Direction": "ToLeft",
+      "TestLineOfSight": true,
+      "ExtendTop": 0.5,
+      "ExtendBottom": 2,
+      "StartDistance": 0.1,
+      "EndDistance": 3.5,
+      "Length": 60,
+      "RollOffset": 0,
+      "YawStartOffset": -30
+    },
+    "HitEntity": {
+      "Interactions": [
+        {
+          "Parent": "DamageEntityParent",
+          "DamageCalculator": {
+            "BaseDamage": {
+              "Physical": 8
+            }
+          },
+          "DamageEffects": {
+            "Knockback": {
+              "Force": 0.5,
+              "RelativeX": -5,
+              "RelativeZ": -5,
+              "VelocityY": 5
+            },
+            "WorldSoundEventId": "SFX_Unarmed_Impact",
+            "WorldParticles": [
+              {
+                "SystemId": "Impact_Blade_01"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Next": {
+      "Type": "Simple",
+      "$Comment": "Pad the interaction length",
+      "RunTime": 0.1
+    }
+  }
+}
+```
+
+现在我们需要接近目标并使用我们精心设计的攻击序列。同样，有几个组件可以让其中大部分工作简单得多：
+
+- `Component_Instruction_Soft_Leash` 会与外部 **ReturnHome** 状态配合，在我们把食人魔带得太远时将其送回起点。
+- `Component_Instruction_Intelligent_Chase` 会根据目标最后已知位置智能地追击目标，并在必要时触发寻路。我们可能想为此额外添加一个 **Search** 状态。
+
+让我们创建所需的状态。首先是 Combat 本身，但由于我们要使用 `Component_Instruction_Intelligent_Chase`，该组件需要知道当目标丢失或 NPC 距离太远时应切换到何处。我们创建两个将在那里使用的状态：**Search** 和 **ReturnHome**。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Combat"
+	},
+	"Instructions": [],
+},
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "ReturnHome"
+	},
+	"Instructions": []
+},
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Search"
+	},
+	"Instructions": []
+}
+```
+
+我们先从追击目标开始。我们把该行为包装在子状态 **.Chase** 中，这样当目标脱离攻击范围、NPC 需要用某种智能方式追赶它时，就可以回退到该状态。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Combat"
+  },
+  "Instructions": [
+    {
+      "Sensor": {
+        "Type": "State",
+        "State": ".Chase"
+      },
+      "Instructions": [
+        {
+          "Sensor": {
+            "Type": "Target",
+            "Range": { "Compute": "AttackDistance" },
+            "Filters": [
+              {
+                "Type": "LineOfSight"
+              }
+            ]
+          },
+          "Actions": [
+            {
+              "Type": "State",
+              "State": ".Default"
+            }
+          ]
+        },
+        {
+          "Reference": "Component_Instruction_Soft_Leash",
+          "Modify": {
+            "_ExportStates": ["ReturnHome"],
+            "LeashDistance": { "Compute": "LeashDistance" },
+            "LeashMinPlayerDistance": { "Compute": "LeashMinPlayerDistance" },
+            "LeashTimer": { "Compute": "LeashTimer" },
+            "HardLeashDistance": { "Compute": "HardLeashDistance" }
+          }
+        },
+        {
+          "Reference": "Component_Instruction_Intelligent_Chase",
+          "Modify": {
+            "_ExportStates": ["Search", "Search", "ReturnHome"],
+            "ViewRange": { "Compute": "AlertedRange * 2" },
+            "HearingRange": { "Compute": "HearingRange * 2" },
+            "StopDistance": 0.1,
+            "RelativeSpeed": 0.5
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+- 首先，它检查目标是否在 AttackDistance 内。如果是，就切换到默认战斗状态。
+- 如果 NPC 离其牵引位置（通常是出生点）太远，我们使用 `Component_Instruction_Soft_Leash` 将它送回家。我们把这个传感器放在追击状态之前，这样如果牵引生效，我们就不会继续追击。该组件上有一个 **Leash Timer**，决定何时放弃。
+- 最后是追击组件本身，它对目标执行「智能」追击。
+
+当目标处于 **AttackDistance** 内时，我们执行攻击，否则切换到追击状态。我们先从目标处于近战范围内的情况开始。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Combat"
+	},
+	"Instructions": [
+		{
+			"Sensor": {
+				"Type": "State",
+				"State": ".Chase"
+			},
+			"Instructions": [ ... ]
+		},
+		{
+			"$Comment": "NPC melee attack",
+			"Sensor": {
+				"Type": "Target",
+				"Range": { "Compute": "AttackDistance" },
+				"Filters": [
+					{
+						"Type": "LineOfSight"
+					}
+				]
+			},
+			"ActionsBlocking": true,
+			"Actions": [
+				{
+					"Type": "Attack",
+					"Attack": { "Compute": "Attack" },
+					"AttackPauseRange": { "Compute": "AttackPauseRange" }
+				},
+				{
+					"Comment": "Brief delay to prevent the NPC potentially strafing/backing away and missing the shot.",
+					"Type": "Timeout",
+					"Delay": [0.2, 0.2]
+				}
+			],
+			"HeadMotion": {
+				"Type": "Aim",
+				"RelativeTurnSpeed": { "Compute": "CombatRelativeTurnSpeed" }
+			}
+		},
+		{
+			"Actions": [
+				{
+					"Type": "State",
+					"State": ".Chase"
+				}
+			]
+		}
+	]
+},
+```
+
+这里需要注意的重点是 **AttackDistance**、**AttackPauseRange** 和 **CombatRelativeTurnSpeed**。我们将通过模板本身来配置这两者。
+
+**AttackDistance** 指的是食人魔尝试执行近战攻击以命中目标的距离（不过攻击本身的实际范围定义在 **Attack** Interaction 中）。**CombatRelativeTurnSpeed** 允许我们定义食人魔在战斗中旋转的快慢。**AttackPauseRange** 定义攻击执行的频率，有点类似攻击冷却。
+
+让我们确保这些参数都已添加到列表中：
+
+```json
+"Attack": {
+    "Value": "Root_NPC_Goblin_Ogre_Attack",
+    "Description": "The attack to use."
+},
+"AttackDistance": {
+    "Value": 2,
+    "Description": "The distance at which an NPC will execute attacks"
+},
+"AttackPauseRange": {
+    "Value": [1.5, 2],
+    "Description": "the range for absolute minimum time before an NPC can execute a second attack (or block)."
+},
+"CombatRelativeTurnSpeed": {
+    "Value": 1.5,
+    "Description": "Modifier that decides turn speed difference in combat."
+},
+"LeashDistance": {
+    "Value": 20,
+    "Description": "The range after which an NPC will start to want to return to their spawn point."
+},
+"LeashMinPlayerDistance": {
+    "Value": 4,
+    "Description": "The minimum distance from the player before the NPC will be willing to give up on the chase."
+},
+"LeashTimer": {
+    "Value": [3, 5],
+    "Description": "How long the NPC must be more than the minimum distance form the player and too far from leash before giving up."
+},
+"HardLeashDistance": {
+    "Value": 60,
+    "Description": "An absolute maximum from the the leash position the NPC can go before turning back."
+},
+
+```
+
+现在 NPC 会攻击了，但我们还需要添加 **Search** 和 **ReturnHome** 逻辑。我们可以立刻完成，这样就有了一个功能完整的近战食人魔。
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "ReturnHome"
+	},
+	"Instructions": [
+		{
+			"Sensor": {
+				"Type": "And",
+				"Sensors": [
+					{
+						"Type": "Damage",
+						"Combat": true,
+						"TargetSlot": "LockedTarget"
+					},
+					{
+						"Enabled": { "Compute": "AbsoluteDetectionRange > 0" },
+						"Type": "Target",
+						"TargetSlot": "LockedTarget",
+						"Range": { "Compute": "AbsoluteDetectionRange" }
+					}
+				]
+			},
+			"Actions": [
+				{
+					"Type": "State",
+					"State": "Combat"
+				}
+			]
+		},
+		{
+			"Sensor": {
+				"Type": "Leash",
+				"Range": { "Compute": "LeashDistance * 0.3" }
+			},
+			"BodyMotion": {
+				"Type": "Seek",
+				"SlowDownDistance": { "Compute": "LeashDistance * 0.4" },
+				"StopDistance": { "Compute": "LeashDistance * 0.2" },
+				"RelativeSpeed": 0.8,
+				"UsePathfinder": true
+			}
+		},
+		{
+			"Actions": [
+				{
+					"Type": "SetStat",
+					"Stat": "Health",
+					"Value": 1000000
+				},
+				{
+					"Type": "State",
+					"State": "Idle"
+				}
+			]
+		}
+	]
+},
+```
+
+这个状态有 3 个部分：首先，它检查是否有来袭的战斗伤害，如果有就切换到 Combat。我们不希望 NPC 在跑回家的路上因为忽略所有攻击而变得可被利用。如果没有来袭伤害，它会使用 **BodyMotion: Seek** 找到回家的路。不过这里需要小心，因为 **"UsePathfinder": true** 会开启复杂的寻路，可能变得很昂贵。最后一个块只是把 NPC 治疗到满血，并在它重新找到自己的家之后将其切换到空闲状态。
+
+Search 状态使用了 `Component_Sensor_Lost_Target_Detection`。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Search"
+  },
+  "Instructions": [
+    {
+      "Sensor": {
+        "Type": "Damage",
+        "Combat": true,
+        "TargetSlot": "LockedTarget"
+      },
+      "Actions": [
+        {
+          "Type": "State",
+          "State": "Alerted"
+        }
+      ]
+    },
+    {
+      "Instructions": [
+        {
+          "Sensor": {
+            "Reference": "Component_Sensor_Lost_Target_Detection",
+            "Modify": {
+              "ViewRange": { "Compute": "ViewRange" },
+              "ViewSector": { "Compute": "ViewSector" },
+              "HearingRange": { "Compute": "HearingRange" },
+              "AbsoluteDetectionRange": { "Compute": "AbsoluteDetectionRange" },
+              "TargetSlot": "LockedTarget"
+            }
+          },
+          "Actions": [
+            {
+              "Type": "State",
+              "State": "Combat"
+            }
+          ]
+        },
+        {
+          "Sensor": {
+            "Reference": "Component_Sensor_Standard_Detection",
+            "Modify": {
+              "ViewRange": { "Compute": "ViewRange" },
+              "ViewSector": { "Compute": "ViewSector" },
+              "HearingRange": { "Compute": "HearingRange" },
+              "AbsoluteDetectionRange": { "Compute": "AbsoluteDetectionRange" },
+              "Attitudes": ["Hostile", "Neutral"]
+            }
+          },
+          "Actions": [
+            {
+              "Type": "State",
+              "State": "Alerted"
+            }
+          ]
+        },
+        {
+          "BodyMotion": {
+            "Type": "Sequence",
+            "Motions": [
+              {
+                "Type": "Timer",
+                "Time": [3, 6],
+                "Motion": {
+                  "Type": "Wander",
+                  "MaxHeadingChange": 1,
+                  "RelativeSpeed": 0.5
+                }
+              },
+              {
+                "Type": "Sequence",
+                "Looped": true,
+                "Motions": [
+                  {
+                    "Type": "Timer",
+                    "Time": [3, 6],
+                    "Motion": {
+                      "Type": "WanderInCircle",
+                      "Radius": 10,
+                      "MaxHeading Change": 60,
+                      "RelativeSpeed": 0.5
+                    }
+                  },
+                  {
+                    "Type": "Timer",
+                    "Time": [2, 3],
+                    "Motion": {
+                      "Type": "Nothing"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "ActionsBlocking": true,
+          "Actions": [
+            {
+              "Type": "Timeout",
+              "Delay": [4, 5]
+            },
+            {
+              "Type": "State",
+              "State": "Idle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Search 状态会先检查是否有来袭伤害，如果有就切换到 Alerted 状态。如果没有，它会使用已有的组件执行下一块指令：
+
+- 使用**丢失目标检测传感器**（Lost Target detection sensor）检查是否检测到丢失的目标。如果是，切换到战斗。
+- 通过**标准检测传感器**（Standard detection sensor）检查是否有任何其他可用目标。如果是，切换到 Alerted 状态。
+- 否则，NPC 会使用 **Wander** 运动四处移动，中间短暂停顿，直到它放弃并……
+- ……回到空闲状态。

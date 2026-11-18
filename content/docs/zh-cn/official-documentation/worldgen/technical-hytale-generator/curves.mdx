@@ -1,0 +1,567 @@
+---
+title: 曲线
+description: 曲线将小数值映射为其他小数值。它们实现了基本的 f(x) = y 数学表达式。这些节点可用于构建你在世界生成中所需的函数。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+---
+
+### Manual
+
+你可以绘制若干点，并用直线将它们连接起来以创建曲线。这些点之间以直线相连。在第一个点之前以及最后一个点之后，函数保持恒定。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/curves/manual.png)
+
+上面的示例展示了一个由 3 个点构成的函数。
+
+---
+
+### DistanceExponential
+
+DistanceExponential 曲线的形状随 Exponent 值变化，如下图所示。当该曲线的输入接近 Range 值时，输出 0.0。当输入为 0.0 时，该曲线输出 1.0。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/curves/distance-exponential.png)
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="114.02972412109375">名称</th>
+      <th width="148.21795654296875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Exponent</td>
+      <td>正小数</td>
+      <td>影响曲线的形状，如上图所示。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>正小数</td>
+      <td>超过该值后，曲线将恒定输出 0.0。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### DistanceS
+
+DistanceS 曲线结合两条 DistanceExponential 曲线，产生类似下图的形状。当该曲线的输入接近 Range 值时，输出 0.0。当输入为 0.0 时，该曲线输出 1.0。通过该资源的参数可以调整曲线的形状。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/curves/distance-s-graph.png)
+
+下面是一些使用该曲线的 Positions2D 地形的示例。
+
+![](/assets/official-documentation/worldgen/technical-hytale-generator/curves/positions2d.png)
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="162.5050048828125">名称</th>
+      <th width="274.6336669921875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ExponentA</td>
+      <td>大于 0.0 的小数值</td>
+      <td>影响曲线在范围前半段的形状。</td>
+    </tr>
+    <tr>
+      <td>ExponentB</td>
+      <td>大于 0.0 的小数值</td>
+      <td>影响曲线在范围后半段的形状。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于 0.0 的小数值</td>
+      <td>超过该值后，曲线将恒定输出 0.0。</td>
+    </tr>
+    <tr>
+      <td>Transition</td>
+      <td>介于 0.0 和 1.0 之间的小数值，可选，默认值为 1.0</td>
+      <td>
+        接近 0.0 的值会使曲线在 ExponentA 与 ExponentB 之间的过渡更快、更突然。值为 1.0 时，会在整条曲线上从 ExponentA 过渡到 ExponentB。
+      </td>
+    </tr>
+    <tr>
+      <td>TransitionSmooth</td>
+      <td>介于 0.0 和 1.0 之间的小数值，可选，默认值为 1.0</td>
+      <td>
+        影响过渡的形状。较低的值在某些情况下会使曲线更尖锐。在设计时尝试不同的值，以体会其效果。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Ceiling
+
+该曲线为子曲线资源的输出设置上限。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="121.6336669921875">名称</th>
+      <th width="228.40594482421875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ceiling</td>
+      <td>小数</td>
+      <td>该曲线将输出的最大值。</td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Floor
+
+该曲线为子曲线资源的输出设置下限。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="128.28717041015625">名称</th>
+      <th width="169.2772216796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Floor</td>
+      <td>小数</td>
+      <td>该曲线将输出的最小值。</td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SmoothCeiling
+
+该曲线为子曲线资源的输出设置上限。当曲线在给定范围内接近上限时，会进行平滑处理。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="114.980224609375">名称</th>
+      <th width="194.33660888671875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ceiling</td>
+      <td>小数</td>
+      <td>该曲线将输出的最大值。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="114.980224609375">名称</th>
+      <th width="194.33660888671875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ceiling</td>
+      <td>小数</td>
+      <td>该曲线将输出的最大值。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SmoothFloor
+
+该曲线为子曲线资源的输出设置下限。当曲线在给定范围内接近下限时，会进行平滑处理。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="112.1287841796875">名称</th>
+      <th width="192.48516845703125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Floor</td>
+      <td>小数</td>
+      <td>该曲线将输出的最小值。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="112.1287841796875">名称</th>
+      <th width="192.48516845703125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Floor</td>
+      <td>小数</td>
+      <td>该曲线将输出的最小值。</td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SmoothClamp
+
+该曲线将子曲线资源的范围限制在所提供的两个边界值之间。当曲线在给定范围内接近边界时，会进行平滑处理。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="114.980224609375">名称</th>
+      <th width="194.336669921875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>WallA</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>WallB</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="114.980224609375">名称</th>
+      <th width="194.336669921875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>WallA</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>WallB</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SmoothMax
+
+该曲线取所提供的两条曲线之间的最大值。当两条曲线的值在给定范围内接近时，它们的交点会进行平滑处理。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="125.435546875">名称</th>
+      <th width="177.93060302734375">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>CurveA</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>CurveB</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### SmoothMin
+
+该曲线取所提供的两条曲线之间的最小值。当两条曲线的值在给定范围内接近时，它们的交点会进行平滑处理。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="147.2969970703125">名称</th>
+      <th width="184.03961181640625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Range</td>
+      <td>大于或等于 0 的小数</td>
+      <td>
+        该范围决定施加多少平滑。一个不错的起始值是你子曲线已知范围的四分之一。
+      </td>
+    </tr>
+    <tr>
+      <td>CurveA</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>CurveB</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Clamp
+
+该曲线将曲线钳制在所提供的两个边界值之间。该曲线的输出永远不会超出这些边界。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="111.17822265625">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>WallA</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>WallB</td>
+      <td>小数</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Curve</td>
+      <td>曲线槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Inverter
+
+该曲线反转子曲线，使正值变为负值、负值变为正值。
+
+参数：
+
+| 名称  | 类型       | 描述 |
+| ----- | ---------- | ----------- |
+| Curve | 曲线槽位 |             |
+
+---
+
+### Max
+
+输出所有子曲线中的最大值。
+
+参数：
+
+| 名称   | 类型                | 描述 |
+| ------ | ------------------- | ----------- |
+| Curves | 曲线槽位列表 |             |
+
+---
+
+### Min
+
+输出所有子曲线中的最小值。
+
+参数：
+
+| 名称   | 类型                | 描述 |
+| ------ | ------------------- | ----------- |
+| Curves | 曲线槽位列表 |             |
+
+---
+
+### Multiplier
+
+将所有子曲线的输出相乘。
+
+参数：
+
+| 名称   | 类型                | 描述 |
+| ------ | ------------------- | ----------- |
+| Curves | 曲线槽位列表 |             |
+
+---
+
+### Not
+
+对子曲线应用逻辑 NOT 运算。当子曲线的输出为 1 时，输出 0；当子曲线的输出为 0 时，输出 1。介于两者之间的所有数值会按比例缩放。
+
+参数：
+
+| 名称  | 类型       | 描述 |
+| ----- | ---------- | ----------- |
+| Curve | 曲线槽位 |             |
+
+---
+
+### Sum
+
+将所有所提供曲线的值相加。
+
+参数：
+
+| 名称   | 类型                | 描述 |
+| ------ | ------------------- | ----------- |
+| Curves | 曲线槽位列表 |             |
+
+---
+
+### Imported
+
+导入导出的 Curve。
+
+参数：
+
+| 名称 | 类型   | 描述               |
+| ---- | ------ | ------------------------- |
+| Name | string | 导出的 Curve 资源。 |

@@ -1,0 +1,118 @@
+---
+title: "4 - 画出食人魔的其余部分"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+从某种意义上说，我们很幸运，食人魔最初的行为用现有组件就能轻松处理。
+
+现在真正的挑战开始了！从这时起，务必记住要测试、测试、再测试。**每当我们添加一个新行为时，都应该测试它，确保它按预期工作**。绝不要把它留到一切都实现之后再测——那样只会带来不必要的头疼。
+
+首先，我们得想清楚要如何随机化这些基础 Idle 行为。目前我们关心的是其中三个，因为它们不涉及与其他类型 NPC 的交互：
+
+- 站岗（我们已经做过了！）
+- 小睡一会儿。
+- 出去找些食物。
+
+有几种方式可以实现，但我们将使用 Random 动作来做初始选择，然后让各个行为控制自己的时长，之后再重置并挑选新的行为。
+
+这样一来，我们就能看出原先判断中的一个小错误——**Idle** 状态需要**四个**子状态，而不是三个：
+
+- **.Default**（现在它成为用于挑选要切换到哪个随机行为状态的入口状态）
+- **.Guard**（现在这是我们的守卫状态）
+- **.FindFood**（如果附近有食物，就去寻找一些）
+- **.EatRat**（谋杀附近一只无辜的老鼠——我们暂时忽略它，因为它依赖另一个 NPC）
+
+所以我们快速重构现有的 **Idle** 状态以反映这一变化，并添加一个 **Random Action**，它目前只会有一个选项。
+
+```json
+"Instructions": [
+    {
+        "Sensor": {
+            "Type": "State",
+            "State": ".Default"
+        },
+        "Instructions": [
+            {
+                "Actions": [
+                    {
+                        "Type": "Random",
+                        "Actions": [
+                            {
+                                "Weight": 100,
+                                "Action": {
+                                    "Type": "State",
+                                    "State": ".Guard"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "Sensor": {
+            "Type": "State",
+            "State": ".Guard"
+        },
+        "Instructions": [
+            {
+                "Reference": "Component_Instruction_Intelligent_Idle_Motion_Follow_Path"
+            }
+        ]
+    }
+]
+
+```
+
+看看修改后的 **Idle** 状态指令，我们现在有两个子状态：**.Default** 和 **.Guard**。
+
+如果我们把这个 NPC 生成在路径标记旁边，它的表现会和之前完全一样。不同之处在于，它现在会先在 **.Default** 子状态中执行 **Random** 动作，该动作会挑选唯一可用的状态动作并把食人魔送到 **.Guard**。我们暂时把 **Weight** 设为 100，但这并不重要，因为反正没有其他选择；之后我们会更好地平衡这些权重（甚至可能在初次实现后还调了好几个月！）
+
+现在我们有了不止一个子状态，要理解食人魔在做什么就稍微困难了一些，所以我们会在文件顶部添加一个 **Debug** 标志，用来告诉我们它当前处于哪个状态。
+
+```json
+"Debug": "DisplayState",
+```
+
+现在我们可以确定，我们（目前）友好的哥布林食人魔处于正确的状态。
+
+但是等等！没有任何东西会让食人魔回去尝试做点别的！
+
+其实这相当简单；我们只需在 **.Guard** 子状态中添加一条包含 **ActionsBlocking**、一个 **Timeout** 和 **Continue** 的指令，它会在随机时长之后把食人魔送回 **.Default**，以便做出新的选择。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": ".Guard"
+  },
+  "Instructions": [
+    {
+      "Continue": true,
+      "ActionsBlocking": true,
+      "Actions": [
+        {
+          "Type": "Timeout",
+          "Delay": [15, 30]
+        },
+        {
+          "Type": "State",
+          "State": ".Default"
+        }
+      ]
+    },
+    {
+      "Reference": "Component_Instruction_Intelligent_Idle_Motion_Follow_Path"
+    }
+  ]
+}
+```
+
+这里的 **ActionsBlocking** 很重要，因为它确保在第一个动作（**Timeout**）完成之前，我们不会执行状态之间的切换。所以现在我们会在路径标记附近待上**十五**到**三十**秒，然后再回去挑选其他要做的事情。
+
+……只不过目前还没有其他事情可做，那我们接下来就处理这个问题吧？

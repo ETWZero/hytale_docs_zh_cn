@@ -1,0 +1,74 @@
+---
+title: "2 - 模板入门"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+开始制作模板并没有一成不变的规则。我喜欢复制 **BlankTemplate** 并从那里开始，因为它已经提供了文件的基本结构。
+
+这样我就得到了下面这个模板（`Template_Goblin_Ogre.json`）：（**注意：在当前版本的游戏里，这个文件可能看起来有所不同**）
+
+```json
+{
+  "Type": "Abstract",
+  "Parameters": {
+    "Appearance": {
+      "Value": "Bear_Grizzly",
+      "Description": "Model to be used"
+    },
+    "DropList": {
+      "Value": "Empty",
+      "Description": "Drop Items"
+    },
+    "MaxHealth": {
+      "Value": 100,
+      "Description": "Max health for the NPC"
+    },
+    "NameTranslationKey": {
+      "Value": "server.npcRoles.Template.name",
+      "Description": "Translation key for NPC name display"
+    }
+  },
+  "Appearance": { "Compute": "Appearance" },
+  "DropList": { "Compute": "DropList" },
+  "MaxHealth": { "Compute": "MaxHealth" },
+  "MotionControllerList": [
+    {
+      "Type": "Walk",
+      "MaxWalkSpeed": 3,
+      "Gravity": 10,
+      "MaxFallSpeed": 8,
+      "Acceleration": 10
+    }
+  ],
+  "Instructions": [
+    {
+      "Sensor": {
+        "Type": "Any"
+      },
+      "BodyMotion": {
+        "Type": "Nothing"
+      }
+    }
+  ],
+  "NameTranslationKey": { "Compute": "NameTranslationKey" }
+}
+```
+
+以及在模板旁边的下面这个变体（`Goblin_Ogre.json`）。模板里有一个用于 NPC 名称本地化的翻译键，但我们暂时不用担心它，因为 NPC 要正常工作并不需要它。
+
+```json
+{
+  "Type": "Variant",
+  "Reference": "Template_Goblin_Ogre",
+  "Modify": {
+    "Appearance": "Goblin",
+    "MaxHealth": 124
+  }
+}
+```
+
+我们的美术师还没有完成 `Goblin_Ogre` 的动画，为了本教程的方便，我将使用外观 `Goblin`，因为它提供了我们所需的一整套更完整的动画。

@@ -1,0 +1,104 @@
+---
+title: "7 - 睡眠动画"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+在食人魔能够好好休息之前，我们还有几件事要做。在我们稍后处理 NPC 之间的行为之前，这部分大多纯粹是为了视觉效果，而且几乎完全局限于播放动画。
+
+最基础的部分是播放睡眠动画。我们可以用一个方便的组件来实现这一点。别忘了把 **"Continue":true** 放回去，因为现在我们要在超时计时的同时播放动画。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Sleep"
+  },
+  "Instructions": [
+    {
+      "Continue": true,
+      "ActionsBlocking": true,
+      "Actions": [
+        {
+          "Type": "Timeout",
+          "Delay": [5, 10]
+        },
+        {
+          "Type": "State",
+          "State": "Idle"
+        }
+      ]
+    },
+    {
+      "Reference": "Component_Instruction_Play_Animation",
+      "Modify": {
+        "Animation": "Sleep"
+      }
+    }
+  ]
+}
+```
+
+等等……就这样？
+
+差不多吧！现在我们的食人魔会乖乖去睡觉了，但看起来有点生硬。我们仍然需要处理状态之间的转换。为此，我们在资源中指令的上方添加一个全新的部分，叫做 **StateTransitions**。
+
+```json
+"StateTransitions": [
+    {
+        "States": [
+            {
+                "From": ["Idle"],
+                "To": ["Sleep"]
+            }
+        ],
+        "Actions": [
+            {
+                "Type": "PlayAnimation",
+                "Slot": "Status",
+                "Animation": "Laydown"
+            },
+            {
+                "Type": "Timeout",
+                "Delay": [1, 1]
+            }
+        ]
+    },
+    {
+        "States": [
+            {
+                "From": ["Sleep"],
+                "To": []
+            }
+        ],
+        "Actions": [
+            {
+                "Type": "PlayAnimation",
+                "Slot": "Status",
+                "Animation": "Wake"
+            },
+            {
+                "Type": "Timeout",
+                "Delay": [1, 1]
+            }
+        ]
+    }
+],
+"Instructions": [
+	...
+]
+
+```
+
+状态转换写起来有些冗长，但相对简单。每个转换代表一组动作，这些动作会在我们真正开始执行状态本身的逻辑之前按顺序执行。
+
+空数组代表所有已存在的状态。在这个例子中，我们的食人魔会在从 **Idle** 切换到 **Sleep** 时播放 **Laydown** 动画，并在从 **Sleep** 切换到任意其他状态时播放 **Wake** 动画。
+
+目前我们必须定义一个 **Timeout** 动作，把延迟设为动画的时长，以确保在动画播完之前不做其他事情。将来我们也许能自动获取动画的长度并按时长阻塞，但目前还做不到。
+
+不过 **Sleep** 状态暂时就到这里。这次是真的。
+
+![npc tutorial](/assets/official-documentation/npc/npc-tutorial-2.jpg)

@@ -1,0 +1,296 @@
+---
+title: 优化（开发中）
+description: 关于世界生成内容性能优化的持续更新文档。
+---
+
+# 性能优化
+
+世界生成器的设计目标是让用户拥有绝对控制权，从而可以自由创建他们想要的世界。然而，这也让用户可以自由地制作极其消耗资源的生物群系。这意味着用户必须了解哪些功能和做法开销更大，以及如何使用它们才能让世界生成内容获得最佳性能。
+
+在本文档中，我们介绍一些用于提升性能的高层技巧，并指出潜在的陷阱。有关此处讨论的节点的更详细信息，请参阅技术文档。我们建议用户在自己的内容中尝试不同的技巧，并使用性能报告来衡量改进效果。
+
+<Callout>
+  这是一份持续更新的文档，会随时间推移不断扩充和完善。
+</Callout>
+
+### 性能报告
+
+世界生成会按照几个可配置的采样大小间隔，将性能报告打印到日志中。一旦生成了特定数量的区块，它就会对所有这些区块的性能统计求平均，并打印一份报告。
+
+<Callout>
+  将精力集中在性能报告中耗时最长的部分会很有帮助。
+</Callout>
+
+要查看报告，你必须打开世界的日志：
+
+1. 在世界选择菜单中右键点击你的世界。
+2. 打开世界所在的文件夹。
+3. 进入 `logs` 目录并打开最新的日志文件。
+
+<details>
+
+<summary>指标说明</summary>
+
+在报告中，你会看到大量信息。我想重点说明哪些部分最能通过优化世界生成资源来掌控：
+
+```
+Sample Count: 500
+```
+
+本报告中生成并参与平均的区块数量。为了获得更好的准确性，我们建议使用 Sample Count 至少为 500 的报告。
+
+```
+Total: # ms
+```
+
+世界生成将一个区块的内容生成并传输到世界中所花费的总时间。
+
+```
+Content Generation: # ms
+```
+
+仅生成内容所花费的时间，不包括将生成的数据传输到游戏世界所花费的时间。这是你可以通过优化世界生成资源最大程度掌控的数值。
+
+```
+ExampleStage (Stage #): # ms
+```
+
+每个阶段完成所需的时间。各阶段按顺序依次运行。该指标受两个相互叠加的因素影响：
+
+- 该阶段的输出大小。
+  - 输出大小越大，开销就越高。
+  - 输出大小指标列在报告的「上下文依赖」（Context Dependency）部分中。
+  - 输出大小由所有编号大于该阶段的阶段决定。例如，阶段 2 的输出大小由阶段 3、4、5、6 等决定。
+- 内容本身的成本。换句话说，它尝试生成的内容有多昂贵？优化其资源会降低该指标。以下是影响每个阶段性能的内容资源：
+  - BiomeStage
+    - 世界结构的生物群系分布图密度（Biome map Density）。它以 2D 方式生成，因此相对便宜，但在输出大小较大时会变得显著。
+  - BiomeDistanceStage
+    - 世界结构的 DefaultTransitionDistance 和 MaxBiomeEdgeDistance 值。
+  - TerrainStage
+    - 世界结构的 DefaultTransitionDistance 和 MaxBiomeEdgeDistance 值，因为在生物群系之间的过渡区域，地形会被计算两次：每个生物群系各一次。
+    - 每个生物群系的地形密度。
+    - 每个生物群系的 Material Provider。
+  - PropStage #
+    - 每个生物群系内索引为 # 的 Prop Runtime。
+  - TintStage
+    - 每个生物群系的 Tint Provider。
+  - EnvironmentStage
+    - 每个生物群系的 Environment Provider。
+
+```
+ExampleStage (Stage #):
+    Output Size (Buffer Column): {x=24, z=18}
+    Output Size (Chunk Column): {x=6.0, z=4.5}
+```
+
+Output Size 指标告诉我们每个阶段每次调用必须生成多大的区域。在此示例中，Terrain Stage 输出的区域为 6 乘 4.5 个区块。世界生成会尽可能多地复用它，因此通常最终不必生成整个区域，但区域越大，性能开销仍然越高。降低 Output Size 指标将改善该阶段的性能指标。
+
+- 目前，Output Size 指标的主要贡献者是 Prop 阶段中各 Prop 的总大小。请参阅本文档的「物件」部分。
+- BiomeStage 的另一个影响因素是世界结构的 DefaultTransitionDistance 和 MaxBiomeEdgeDistance 值。
+
+解读报告时的重要提示：
+
+- 使用 Sample Count 至少为 500 的报告以保证准确性。
+- 世界中已探索位置的内容会影响统计数据。例如，如果你恰好只探索了包含低成本生物群系的区域，这些数值可能看起来比整个世界中的实际情况更好。为缓解这一点：
+  - 探索世界中的更多区域。
+  - 在不同的资源改动之间使用相同的种子和位置来衡量改进效果。
+- 计算机的 CPU 和内存规格以及散热情况会直接影响这些指标。在比较报告时必须考虑这些因素。
+- 传送或创建世界后的第一个区块会比平均耗时更长，因为它必须从零初始化上下文。后续区块的性能会更快。
+
+</details>
+
+### 地形
+
+**借助 Mix 聚焦高开销密度**
+
+<table>
+  <tbody>
+    <tr>
+      <td style={{ width: "66.67%", verticalAlign: "top" }}>
+        <p>
+          世界中的每个方块都会计算密度。你可以通过将密度配置中开销较大的部分限制在需要它的特定区域，来降低其成本。你可以将垂直和水平方向上的这种做法结合起来，把高开销的场隔离到尽可能小的区域。
+        </p>
+        <p>一些示例应用：</p>
+        <ul>
+          <li>
+            在你地形最高点之上。该区域完全是空的，不需要计算你地形的密度。
+          </li>
+          <li>在地下省略生成你的地表密度场。</li>
+          <li>
+            局部存在于某个区域的昂贵地形特征可以被遮罩掉。
+          </li>
+        </ul>
+      </td>
+      <td style={{ width: "33.33%", verticalAlign: "top" }}>
+        <img
+          src="/assets/official-documentation/worldgen/optimization/1.png"
+          alt="Density optimization example"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+**减少密度采样**
+
+<table>
+  <tbody>
+    <tr>
+      <td style={{ width: "66.67%", verticalAlign: "top" }}>
+        <p>
+          在不需要的情况下为每个坐标计算密度场可能是浪费的。我们建议使用 YSampled 来减少垂直方向的计算次数。
+        </p>
+        <p>
+          对于采样分辨率在视觉上不明显的高开销密度场，这种做法效果很好。不过，对于细节更丰富的场，可能需要减小采样距离。
+        </p>
+        <p>
+          你还可以使用混合方法：根据所需的细节程度，通过 Mix 在不同区域混合场的采样版本和非采样版本。一些示例应用：
+        </p>
+        <ul>
+          <li>
+            如果你需要在水位附近获得更高精度，可以在岸边附近使用非采样场，而在其他所有地方使用采样场。
+          </li>
+          <li>
+            如果你需要某个场在兴趣点（POI）附近保持精确，但在更远处可以不太精确，这可以通过 PositionsCellNoise 来控制 Mix 来实现。
+          </li>
+        </ul>
+      </td>
+      <td style={{ width: "33.33%", verticalAlign: "top" }}>
+        <img
+          src="/assets/official-documentation/worldgen/optimization/2.png"
+          alt="YSampled optimization example"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<Callout>
+  为了获得最大的性能提升，我们建议使用 8 的 SampleDistance；在需要更高细节程度的区域使用 2 的 SampleDistance。请自由尝试并测量不同的值，以找到最适合你内容的值。
+</Callout>
+
+**缓存**
+
+Cache Density 会记住有限数量的最近坐标及其密度值。该节点可减少连续请求同一坐标时的计算量。
+
+使用位置：
+
+- 它已自动包含在 SimplexNoise2d 和 CellNoise2d 节点中，无需再添加。
+- YOverride 节点的右侧。
+- 作为 CellValue 的 ReturnType 的 Density 子节点。根据 PositionsCellNoise 的配置，它可能受益于更大的缓存容量。
+- 位于 Density ReturnType 中 ChoiceDensity 的根部。根据 PositionsCellNoise 的配置，它可能受益于更大的缓存容量。
+
+### 材质
+
+与密度场一样，材质操作会针对世界中的每个坐标执行。在 Material Provider 节点中使用密度时，开销尤其大。为降低这些 Material Provider 的性能影响，我们可以限制它们所应用的区域。做法是将高开销节点尽可能放在节点树的右侧，并在节点树尽可能靠左的位置添加用于限制区域的节点。
+
+<table>
+  <tbody>
+    <tr>
+      <td style={{ width: "58.33%", verticalAlign: "top" }}>
+        <p>
+          Simple Horizontal Material Provider 会缩小其子节点的高度范围。
+        </p>
+      </td>
+      <td style={{ width: "41.67%", verticalAlign: "top" }}>
+        <img
+          src="/assets/official-documentation/worldgen/optimization/3.png"
+          alt="Simple Horizontal Material Provider"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td style={{ width: "58.33%", verticalAlign: "top" }}>
+        <p>
+          Space and Depth Material Provider 会缩小其子节点的深度范围。
+        </p>
+      </td>
+      <td style={{ width: "41.67%", verticalAlign: "top" }}>
+        <img
+          src="/assets/official-documentation/worldgen/optimization/4.png"
+          alt="Space and Depth Material Provider"
+        />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+- 你还可以将 FieldFunction Material Provider 与**低成本密度遮罩**结合使用，把高开销 Material Provider 的影响限制在世界中的特定区域。
+- 当你需要引用地形密度场来计算 Material Provider 中的梯度时，请使用 Terrain Density 节点。Terrain Density 节点会复用现有的地形密度缓冲区，因此比导入地形密度的根节点要便宜得多。
+
+### 物件
+
+Runtime 让各个物件可以彼此共享上下文。这会增加每个运行时的上下文依赖。第一个之后的每个 Runtime 都会增加对所有更低 Runtime 阶段以及非物件阶段的性能影响。一个 Runtime 中最大物件的水平尺寸在很大程度上决定了该 Runtime 的性能。一个物件的总大小是其 Scanner、Pattern 和 Content 之和。减小这三者中任何一个的水平尺寸都会减小总大小。
+
+一些提升性能的技巧：
+
+- 让每个 Runtime 的水平尺寸尽可能小，以减轻这种影响。
+- 具有较大水平模式的物件应放在尽可能低的 runtime 上。
+- 尽量将生物群系中尽可能多的物件放进一个 Runtime。只有在物件需要其他物件的上下文时才应使用 Runtime，而不是用它来排序物件放置优先级。物件放置优先级由每个 runtime 内的顺序决定。
+- 确保世界结构中的所有生物群系使用相同的 Runtime 索引，否则世界最终会使用比实际需要多得多的 Runtime。
+- 在可能的情况下，将大型物件拆分为更小的模块化部件并在 Prop Distribution 层级组装，以减小物件的水平尺寸。
+- 通过在重要物件附近预处理地形，减少对大型复杂 Pattern 和 Scanner 配置的需求。
+
+<img
+  src="/assets/official-documentation/worldgen/optimization/5.png"
+  alt="Props optimization example"
+/>
+
+<Callout>
+  目前，Runtime 内物件的优先级机制存在缺陷，这意味着物件在每个 Runtime 内会以非确定性顺序放置。这将在未来的更新中修复。
+</Callout>
+
+## 有用的优化步骤
+
+一些可帮助你优化世界生成资源的步骤，大致按从简单到复杂排序：
+
+- 尽可能使用 2D。仅在必要时使用 3D。
+- 在所有 YOverride 节点的右侧放置 Cache 节点。
+- 在你的 WorldStructure 资源中，确保你没有使用超过必要值的 `DefaultTransitionDistance` 和 `MaxBiomeEdgeDistance`。
+- 3D 域扭曲密度节点往往会使来自其所有子节点的 2D 缓存失效，这可能对性能产生显著影响。
+  - 尽可能使用 2D 扭曲代替 3D。
+- 在生物群系的根部使用 Mix，将地形最高点之上的区域替换为常量密度 -1。在地下也做同样的处理，但使用常量密度 1。
+
+<table>
+  <tbody>
+    <tr>
+      <td style={{ width: "33.33%", verticalAlign: "top" }}>
+        <img
+          src="/assets/official-documentation/worldgen/optimization/6.png"
+          alt="Mixer node optimization"
+        />
+      </td>
+      <td style={{ width: "66.67%", verticalAlign: "top" }}>
+        <p>
+          为减少地形上方和下方的复杂计算次数，我们建议使用 Mixer 节点；在此例中，它会将某个密度场混合掉并替换为常量值。Mixer 通常有三个输入：索引 0、索引 1 和控制器。
+        </p>
+        <p>
+          控制器使用 0 到 1 之间的密度值来匹配索引，从而决定每个索引输入出现的位置。
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+- 在你生物群系内，当你需要在不同的密度效果之间过渡时，尽可能使用 Mix（而不是 Sum、Min、Max 等）。Mix 会禁用那些不需要计算的场，而其他做法不会。
+- 尽可能使用 YSampled。
+  - 作为一个简单的第一步，可以尝试将其放在你生物群系 Density 的根部。
+  - 如果上述做法与你的设置配合不佳（出现不希望的伪影等），你可以尝试更精确地将 YSampled 添加到 Density 的不同部分。
+  - 你还可以尝试使用 Mix，在需要精度的区域保留全分辨率 Density，而在其他所有地方回退到 YSampled 版本。这是两全其美的做法，但会增加额外的复杂度。
+- 尽量减少世界结构中所有生物群系之间不同 Runtime 索引的数量。
+  - 确保所有生物群系彼此使用相同的 Runtime 索引。
+  - 合理地组织生物群系，使你能在创建新 Runtime 之前在同一个 Runtime 内放入尽可能多的物件。
+- 减小每个 Runtime 索引中水平尺寸最大的物件的尺寸。一个 Runtime 的尺寸等于分配给该 Runtime 索引的最大物件的大小。
+- 尽量将水平总尺寸最大的物件放在尽可能低的 Runtime 索引上。
+  - 每个 runtime 都会影响其下方的所有 runtime。将大型物件下移可减少它影响的阶段数量。
+- 想办法将水平尺寸很大的物件拆分为更小的模块化部件，并在 Prop Distribution 层级组装它们。
+- 找出地形中开销较大的部分，并想办法用低成本的密度场将它们遮罩起来。将该遮罩与 Mix 配合使用，在那些高开销场的作用区域之外用更便宜的场替换它们。
+- 密度梯度可能非常昂贵，因为它会为每个位置解析子 Density 4 次。
+  - 确保你确实需要使用梯度，并且无法在不使用它的情况下达到类似效果。
+  - 尽可能多地遮罩掉它，以减少使用量。
+  - 在 Material Provider 节点内部使用 Terrain Density 节点来计算地形梯度。Terrain Density 节点比导入地形的根 Density 快得多，而且它还会输出生物群系之间的插值场，这是导入节点所没有的。

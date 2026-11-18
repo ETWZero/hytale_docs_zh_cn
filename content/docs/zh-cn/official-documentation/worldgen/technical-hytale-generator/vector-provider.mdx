@@ -1,0 +1,324 @@
+---
+title: 向量提供器
+description: 定义一个 3D 小数向量 {x, y, z}。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 向量提供器
+
+### Constant
+
+生成所提供的向量。
+
+参数：
+
+| 名称   | 类型              | 描述 |
+| ------ | ----------------- | ----------- |
+| Vector | 三维小数值向量 |             |
+
+---
+
+### SetX
+
+设置向量 X 分量的值。
+
+参数：
+
+| 名称           | 类型                | 描述 |
+| -------------- | ------------------- | ----------- |
+| VectorProvider | VectorProvider 槽位 |             |
+| Value          | 密度槽位        |             |
+
+---
+
+### SetY
+
+设置向量 Y 分量的值。
+
+参数：
+
+| 名称           | 类型                | 描述 |
+| -------------- | ------------------- | ----------- |
+| VectorProvider | VectorProvider 槽位 |             |
+| Value          | 密度槽位        |             |
+
+---
+
+### SetZ
+
+设置向量 Z 分量的值。
+
+参数：
+
+| 名称           | 类型                | 描述 |
+| -------------- | ------------------- | ----------- |
+| VectorProvider | VectorProvider 槽位 |             |
+| Value          | 密度槽位        |             |
+
+---
+
+### Adder
+
+将所有输入向量相加。
+
+这是逐分量相加。如果输入为 $$v_1, v_2, \dots, v_n$$，结果为 $$\sum_i v_i$$，因此每个输出分量都是对应输入分量之和：$$x=\sum_i x_i$$，$$y=\sum_i y_i$$，$$z=\sum_i z_i$$。
+
+参数：
+
+| 名称   | 类型                 | 描述 |
+| ------ | -------------------- | ----------- |
+| Inputs | VectorProvider 槽位 |             |
+
+---
+
+### Subtracter
+
+从向量 A 中减去向量 B。
+
+这是逐分量相减。如果 $$A=(a_x,a_y,a_z)$$、$$B=(b_x,b_y,b_z)$$，则结果为 $$A-B=(a_x-b_x,\ a_y-b_y,\ a_z-b_z)$$，可以理解为从 **B** 指向 **A** 的向量。
+
+参数：
+
+| 名称            | 类型                | 描述 |
+| --------------- | ------------------- | ----------- |
+| VectorProviderA | VectorProvider 槽位 |             |
+| VectorProviderB | VectorProvider 槽位 |             |
+
+---
+
+### Random
+
+生成一个随机方向的单位向量。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="97.87127685546875">名称</th>
+      <th width="116.841552734375">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Seed</td>
+      <td>String</td>
+      <td>决定伪随机结果。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Normalizer
+
+将向量的长度设置为所提供的模长。向量保持其方向。
+
+对于任意非零向量 $$v$$，此操作计算 $$m \cdot \frac{v}{\|v\|}$$，其中 $$\|v\|=\sqrt{x^2+y^2+z^2}$$，$$m$$ 是目标模长。换句话说，它保持方向不变，并将长度重新缩放到与提供的值完全一致。
+
+参数：
+
+| 名称           | 类型                | 描述                          |
+| -------------- | ------------------- | ------------------------------------ |
+| VectorProvider | VectorProvider 槽位 |                                      |
+| Magnitude      | 密度槽位        | 决定向量的长度。                     |
+
+---
+
+### ScalarMultiplier
+
+将向量乘以一个标量。
+
+如果输入向量为 $$v=(x,y,z)$$，标量为 $$k$$，结果为 $$kv=(kx,ky,kz)$$。这会将长度缩放 $$|k|$$ 倍，而负标量还会翻转方向。
+
+参数：
+
+| 名称           | 类型                | 描述 |
+| -------------- | ------------------- | ----------- |
+| VectorProvider | VectorProvider 槽位 |             |
+| Density        | 密度槽位        | 标量。      |
+
+---
+
+### Multiplier
+
+将所有提供的向量相乘。
+
+这是逐分量相乘，而不是点积或叉积。对于向量 $$A=(a_x,a_y,a_z)$$ 和 $$B=(b_x,b_y,b_z)$$，结果为 $$(a_xb_x,\ a_yb_y,\ a_zb_z)$$，同一规则可推广到任意数量的输入。
+
+参数：
+
+| 名称   | 类型                 | 描述          |
+| ------ | -------------------- | -------------------- |
+| Inputs | VectorProvider 槽位 | 要相乘的向量。       |
+
+---
+
+### Cross
+
+计算所提供向量的叉积：A 叉乘 B。
+
+叉积得到的向量垂直于两个输入。其模长为 $$\|A\|\|B\|\sin(\theta)$$，其中 $$\theta$$ 是两者之间的夹角，因此对于垂直向量其值最大，对于平行向量则为零。
+
+参数：
+
+| 名称            | 类型                | 描述 |
+| --------------- | ------------------- | ----------- |
+| VectorProviderA | VectorProvider 槽位 |             |
+| VectorProviderB | VectorProvider 槽位 |             |
+
+---
+
+### PlaneProjector
+
+将向量投影到由向量 PlaneA 和 PlaneB 定义的平面上。
+
+该操作只保留向量中位于 **PlaneA** 和 **PlaneB** 所张成平面内的部分。如果 $$n$$ 是平面法线，通常由 $$n = \frac{A \times B}{\|A \times B\|}$$ 得到，那么投影为 $$v - (v \cdot n)n$$，它会去掉与平面正交的分量。
+
+参数：
+
+| 名称           | 类型                | 描述            |
+| -------------- | ------------------- | ---------------------- |
+| VectorProvider | VectorProvider 槽位 | 要投影的向量。         |
+| PlaneA         | VectorProvider 槽位 | 定义该平面。           |
+| PlaneB         | VectorProvider 槽位 | 定义该平面。           |
+
+---
+
+### VectorProjector
+
+将向量投影到另一个向量上。
+
+该操作只保留 **Source** 中沿 **Target** 方向的分量。对于非零的目标向量 $$t$$ 和源向量 $$s$$，投影为 $$\mathrm{proj}_t(s)=\frac{s \cdot t}{t \cdot t}t$$。
+
+参数：
+
+| 名称   | 类型                | 描述 |
+| ------ | ------------------- | ----------- |
+| Source | VectorProvider 槽位 |             |
+| Target | VectorProvider 槽位 |             |
+
+---
+
+### DensityGradient
+
+生成所提供密度场的梯度。得到的梯度向量表示密度场在哪个方向上增大以及变化有多快。
+
+有关梯度向量的更多信息，参见：[https://en.wikipedia.org/wiki/Gradient](https://en.wikipedia.org/wiki/Gradient)
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="163.4554443359375">名称</th>
+      <th width="202.65338134765625">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SampleDistance</td>
+      <td>正小数值</td>
+      <td>
+        采样密度场值时的间隔距离。性能上的最优值为 1.0。更大的值可能有助于为特定应用平滑结果。
+      </td>
+    </tr>
+    <tr>
+      <td>Density</td>
+      <td>密度槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Cache
+
+为每个位置缓存输入向量。
+
+仅当下游（子级）VectorProvider 开销较大且同一坐标会被多次查询时才使用。
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="153.95050048828125">名称</th>
+      <th width="198.14862060546875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SampleDistance</td>
+      <td>正小数值</td>
+      <td>
+        采样密度场值时的间隔距离。性能上的最优值为 1.0。更大的值可能有助于为特定应用平滑结果。
+      </td>
+    </tr>
+    <tr>
+      <td>Density</td>
+      <td>密度槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Exported
+
+允许将 VectorProvider 导出为单个实例。在此节点上启用 `SingleInstance` 可确保所有导入方共享同一套逻辑。
+
+默认情况下，每个 Imported 节点都会创建一个完全不同的实例。当多个 Imported 节点导入同一个导出键时，会为每个 Imported 节点创建该已导出 VectorProvider 树的新实例。`SingleInstance` 确保所有导入方共享节点树的同一个底层实例。
+
+当导出的 VectorProvider 在同一上下文中被多次导入且包含缓存时，可以使用此节点来优化缓存。这些缓存将在不同的导入实例之间共享。
+
+_重要：这仍是一项实验性功能，如果误用可能导致意外行为。_
+
+预期输入：1
+
+参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="151.09893798828125">名称</th>
+      <th width="185.84161376953125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SingleInstance</td>
+      <td>boolean</td>
+      <td>
+        启用此项可在所有引用该键的 Imported 节点之间共享该导出。
+      </td>
+    </tr>
+    <tr>
+      <td>VectorProvider</td>
+      <td>VectorProvider 槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Imported
+
+导入已导出的 VectorProvider。
+
+参数：
+
+| 名称 | 类型   | 描述                  |
+| ---- | ------ | ---------------------------- |
+| Name | string | 已导出的 VectorProvider。    |

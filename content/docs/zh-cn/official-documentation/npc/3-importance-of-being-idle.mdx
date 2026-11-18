@@ -1,0 +1,95 @@
+---
+title: "3 - 闲着的重要性"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+处理状态的顺序也没有特别的规则，但我喜欢从 **Idle** 状态开始。
+
+首先我们需要把这个状态加到模板里。分两步完成。
+
+1. 在指令中设置 **Idle** 状态：
+
+```json
+"Instructions": [
+    {
+        "Sensor": {
+            "Type": "State",
+            "State": "Idle"
+        },
+        "BodyMotion": {
+            "Type": "Nothing"
+        }
+    }
+]
+
+```
+
+这里我们添加了状态传感器以及对应的指令，它们将容纳并定义 **Idle** 状态的内容。
+
+2. 设置 NPC 的默认起始状态：
+
+```json
+"Appearance": { "Compute": "Appearance" },
+"DropList": { "Compute": "DropList" },
+"MaxHealth": { "Compute": "MaxHealth" },
+"StartState": "Idle",
+
+```
+
+这很简单，就是在其他头部字段旁加上 **StartState** 这一行，并把它设为 **Idle** 状态。
+
+现在我们在这个状态里添加第一个子状态，我们之前已经决定它就只是一个普通的 **.Default** 子状态。
+
+```json
+"Instructions": [
+    {
+        "Sensor": {
+            "Type": "State",
+            "State": "Idle"
+        },
+        "Instructions": [
+            {
+                "Sensor": {
+                    "Type": "State",
+                    "State": ".Default"
+                },
+                "Instructions": []
+            }
+        ]
+    }
+]
+
+```
+
+它的工作方式与父级 **Idle** 状态相同，但我们不需要在任何地方把它指定为起始状态，因为它使用的是默认名称。
+
+我们在这里添加的第一个行为是“保护哥布林兴趣点入口”的行为。我们已经找到了一个可用于此的现有组件，所以立刻把它加进去。
+
+```json
+"Instructions": [
+    {
+        "Sensor": {
+            "Type": "State",
+            "State": ".Default"
+        },
+        "Instructions": [
+            {
+                "Reference": "Component_Instruction_Intelligent_Idle_Motion_Follow_Path"
+            }
+        ]
+    }
+]
+
+```
+
+如果需要，我们可以使用 **Modify** 块来设置沿这条路径跟随的范围，或指定某种特定的跟随方式；但既然我们只希望它站岗，并预期它会在目标标记附近生成，那么这两者暂时都可以忽略。
+
+我们可以马上进入游戏，用 **/npc spawn Goblin_Ogre** 生成我们的食人魔。如果我们用 **/path new Test** 添加一个路径标记，它就会乖乖走过去站在那里守卫，不做其他任何事。
+
+![npc-tutorial](/assets/official-documentation/npc/npc-tutorial-1.jpg)
+
+这样就成了！第一个 Idle 行为现在完成了！

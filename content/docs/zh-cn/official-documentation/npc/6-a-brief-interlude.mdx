@@ -1,0 +1,70 @@
+---
+title: "6 - 一段简短的插曲"
+description: "或者：我如何学会不再担忧并爱上构建 NPC 组件"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+我们已经有了构建这个组件的逻辑——它就包含在我们之前创建的 **.Guard** 状态中。我们只需要确定要把其中哪些部分暴露给将来可能想使用这个组件的人。
+
+这也相当简单——有两个：
+
+- 切换状态之前的延迟时长。
+- 要切换到的状态。
+
+于是我们组装出了新组件（`Component_Instruction_State_Timeout`）。
+
+```json
+{
+  "Type": "Component",
+  "Class": "Instruction",
+  "Parameters": {
+    "_ImportStates": ["Main"],
+    "Delay": {
+      "Value": [3, 5],
+      "Description": "The amount of time to wait before transitioning"
+    }
+  },
+  "Content": {
+    "Continue": true,
+    "ActionsBlocking": true,
+    "Actions": [
+      {
+        "Type": "Timeout",
+        "Delay": { "Compute": "Delay" }
+      },
+      {
+        "Type": "ParentState",
+        "State": "Main"
+      }
+    ]
+  }
+}
+```
+
+这里的逻辑应该很熟悉——唯一的区别是我们在 **Parameters** 块中添加并描述了参数，并且现在使用 **ParentState** 动作来表示这将使用模板本身的 **\_ImportedStates** 之一。
+
+如果我们更新模板并用它替换 Timeout 块，例如在 **Sleep** 状态中，看起来就会是这样。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "Sleep"
+  },
+  "Instructions": [
+    {
+      "Reference": "Component_Instruction_State_Timeout",
+      "Modify": {
+        "_ExportStates": ["Idle.Default"],
+        "Delay": [30, 45]
+      }
+    }
+  ]
+}
+```
+
+我们暂时不会在教程中把它到处替换，但我们会利用这些知识，用组件替换更多的代码。

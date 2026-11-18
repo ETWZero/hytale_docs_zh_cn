@@ -1,0 +1,495 @@
+---
+title: 物件
+description: 可读取并写入世界的局部化内容。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+### Cuboid
+
+放置一个由所提供材质构成的长方体。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bounds</td>
+      <td>Bounds</td>
+      <td>长方体的大小。</td>
+    </tr>
+    <tr>
+      <td>Material</td>
+      <td>MaterialProvider 槽位</td>
+      <td>构成该长方体的材质。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Manual
+
+放置手动配置的方块。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Blocks</td>
+      <td>带位置的方块</td>
+      <td>相对于该物件锚点的方块。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Locator
+
+使用模式和扫描器定位有效位置。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>要在有效位置放置的物件。</td>
+    </tr>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern 槽位</td>
+      <td>定义有效位置的形态。</td>
+    </tr>
+    <tr>
+      <td>Scanner</td>
+      <td>Scanner 槽位</td>
+      <td>相对于锚点扫描有效位置。</td>
+    </tr>
+    <tr>
+      <td>PlacementCap</td>
+      <td>Integer ≥ 0</td>
+      <td>
+        限制生成子物件的有效位置数量。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Orienter
+
+定位有效位置，并相应地调整子物件的朝向。
+
+自动在不同旋转下检查模式，并相应地旋转子物件。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202">名称</th>
+      <th width="242">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>要在有效位置放置的物件。</td>
+    </tr>
+    <tr>
+      <td>Rotations</td>
+      <td>旋转列表</td>
+      <td>可能的旋转。</td>
+    </tr>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern 槽位</td>
+      <td>定义有效位置的形态。</td>
+    </tr>
+    <tr>
+      <td>Scanner</td>
+      <td>Scanner 槽位</td>
+      <td>相对于锚点扫描有效位置。</td>
+    </tr>
+    <tr>
+      <td>SelectionMode</td>
+      <td>字符串（<code>FirstValid</code> | <code>AllValid</code> |{" "} <code>RandomValid</code>）</td>
+      <td>
+        决定生成哪个有效旋转：
+        <br />- <code>FirstValid</code>：Rotations 列表中的第一个有效旋转。
+        <br />- <code>AllValid</code>：Rotations 列表中的所有有效旋转。
+        <br />- <code>RandomValid</code>：从有效旋转中随机挑选一个。
+      </td>
+    </tr>
+    <tr>
+      <td>Seed</td>
+      <td>String</td>
+      <td>
+        决定在 <code>RandomValid</code> 时挑选哪个位置。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Queue
+
+放置列表中第一个生成的物件，并跳过其余物件。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Props</td>
+      <td>物件槽位列表</td>
+      <td>构成队列的有序列表。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Mask
+
+对子项放置的方块进行遮罩。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>要遮罩的物件。</td>
+    </tr>
+    <tr>
+      <td>Mask</td>
+      <td>BlockMask</td>
+      <td>决定允许放置哪些材质。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### StaticRotator
+
+按固定旋转旋转子物件。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>要旋转的物件。</td>
+    </tr>
+    <tr>
+      <td>Rotation</td>
+      <td>Rotation</td>
+      <td>子物件相对于此物件方向的旋转。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### RandomRotator
+
+按随机旋转旋转子物件。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>要旋转的物件。</td>
+    </tr>
+    <tr>
+      <td>Rotations</td>
+      <td>旋转列表</td>
+      <td>可供挑选的旋转。</td>
+    </tr>
+    <tr>
+      <td>HorizontalRotations</td>
+      <td>Boolean</td>
+      <td>
+        自动添加所有 X/Z 旋转，从而无需额外定义四个节点。启用此项后请勿使用
+        Rotations 引脚。
+      </td>
+    </tr>
+    <tr>
+      <td>Seed</td>
+      <td>String</td>
+      <td>决定挑选哪个旋转。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### DensitySelector
+
+根据密度字段选择子物件。
+
+范围包含物件所在位置密度值的第一个分隔符，决定使用哪个子物件。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="202.42584228515625">名称</th>
+      <th width="242.53466796875">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Delimiters</td>
+      <td>分隔符列表</td>
+      <td>
+        决定密度字段的哪些区域选择哪个物件。
+      </td>
+    </tr>
+    <tr>
+      <td>Density</td>
+      <td>密度槽位</td>
+      <td>密度字段。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Density
+
+根据密度字段和 MaterialProvider 资源生成物件。
+
+下方示例展示了地形：大型石头巨砾上方覆盖着较小的泥土巨砾。
+
+![Example of Density Prop](/assets/official-documentation/worldgen/technical-hytale-generator/props/density-prop-example.png)
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="154.90106201171875">名称</th>
+      <th width="218.05938720703125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bounds</td>
+      <td>Bounds</td>
+      <td>最大延伸范围。</td>
+    </tr>
+    <tr>
+      <td>Density</td>
+      <td>密度资源槽位</td>
+      <td>赋予物件形状。</td>
+    </tr>
+    <tr>
+      <td>Material</td>
+      <td>MaterialProvider 资源槽位</td>
+      <td>决定要使用的方块类型。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Prefab
+
+从加权路径中放置预制件。
+
+##### 参数
+
+<table><thead><tr><th width="202.42584228515625">名称</th><th width="242.53466796875">类型</th><th>描述</th></tr></thead><tbody><tr><td>WeightedPrefabPaths</td><td>带权重的预制件文件或文件夹路径列表</td><td>每个路径条目包含以下键。</td></tr><tr><td>WeightedPrefabPaths[].Path</td><td>string</td><td>要从中加载的文件夹或文件路径。</td></tr><tr><td>WeightedPrefabPaths[].Weight</td><td>number (> 0)</td><td>从该路径放置预制件的权重。如果路径指向文件夹，则该权重作用于文件夹的挑选。一旦选中，文件夹内的所有预制件机会均等。</td></tr></tbody></table>
+
+---
+
+### Union
+
+将所提供列表中的所有物件依次放置在同一位置。
+
+##### 参数
+
+| 名称  | 类型               | 描述        |
+| ----- | ------------------ | ------------------ |
+| Props | 物件槽位列表 | 要一起放置的物件。 |
+
+---
+
+### Offset
+
+偏移子物件的位置。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="127.33660888671875">名称</th>
+      <th width="165.52471923828125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Offset</td>
+      <td>三维整数值向量</td>
+      <td>偏移子物件位置的方向。</td>
+    </tr>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Weighted
+
+根据种子和权重挑选要放置的物件。
+
+##### 参数
+
+<table><thead><tr><th width="166.306884765625">名称</th><th width="159.7821044921875">类型</th><th>描述</th></tr></thead><tbody><tr><td>Entries</td><td>带权重的物件条目列表</td><td>每个条目包含 <code>Weight</code> 和 <code>Prop</code>。</td></tr><tr><td>Entries[].Weight</td><td>number (> 0.0)</td><td></td></tr><tr><td>Entries[].Prop</td><td>物件槽位</td><td></td></tr><tr><td>Seed</td><td>string</td><td>决定挑选哪个物件的种子。该种子还会改变传递给子项的种子。</td></tr></tbody></table>
+
+---
+
+### PondFiller
+
+使用所提供的 MaterialProvider 填充地形中的洼地。
+
+下方截图展示了用此物件生成的几个池塘示例。
+
+![Example of PondFiller Prop1](/assets/official-documentation/worldgen/technical-hytale-generator/props/pondfiller-example-1.png)
+
+![Example of PondFiller Prop2](/assets/official-documentation/worldgen/technical-hytale-generator/props/pondfiller-example-2.png)
+
+你可以配置包围盒，它会在该包围盒内识别并填充现有的地形洼地。包围盒的大小和形状决定生成池塘的最大尺寸。
+
+下方图示展示了包围盒如何决定结果。
+
+![Example of PondFiller bounding box](/assets/official-documentation/worldgen/technical-hytale-generator/props/pondfiller-bounding-box.png)
+
+能够容纳在该包围盒内的池塘会被 MaterialProvider 填充。
+
+BarrierBlockSet 定义洼地壁由什么构成。
+
+重要：根据包围盒的大小，此物件的性能开销可能相对较高。因此，我建议针对每种使用场景优化其包围盒的大小。
+
+##### 参数
+
+<table>
+  <thead>
+    <tr>
+      <th width="151.09912109375">名称</th>
+      <th width="202.95050048828125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bounds</td>
+      <td>Bounds</td>
+      <td>物件的延伸范围。</td>
+    </tr>
+    <tr>
+      <td>BarrierBlockSet</td>
+      <td>BlockSet 资源槽位</td>
+      <td>
+        定义可构成固态地形的方块类型，池塘材质无法透过这些方块渗漏。
+      </td>
+    </tr>
+    <tr>
+      <td>FillMaterial</td>
+      <td>MaterialProvider 资源槽位</td>
+      <td>
+        决定填充池塘时使用的方块类型（例如水）。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Imported
+
+导入已导出的物件。
+
+##### 参数
+
+| 名称 | 类型   | 描述        |
+| ---- | ------ | ------------------ |
+| Name | string | 已导出的物件名称。 |

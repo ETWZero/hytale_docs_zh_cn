@@ -1,0 +1,104 @@
+---
+title: "密度生成概念"
+description: 探讨 Hytale 背景下的世界生成基本概念。
+---
+
+### 生成式**噪声**
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="my-auto flex-3/4 border-r pr-4">
+    Hytale 的地形生成建立在密度场（Density field）这一概念之上，本质上它们是
+    用于定义地形形状的小数值映射。密度场可以由程序化噪声（例如
+    [Simplex](https://en.wikipedia.org/wiki/Simplex_noise) 和 Cellular）、
+    上下文数据以及处理节点构建而成。
+  </div>
+  <div className="flex-1/4 pl-4">
+    ![Noise
+    visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/noise.png)
+  </div>
+</div>
+
+### **基于噪声的地形**
+
+通过将一组高度与噪声场组合，可以创建基本的地形形状，这个公式生成了 Hytale 中的大部分地形。这是一个需要理解的重要概念，因为它是制作地形的基础。
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-1/3 border-r pr-4">
+    **Terrain**
+
+    三维地形输出。
+
+  </div>
+  <div className="flex-1/3 border-r pr-4">
+    **Simplex 2D**
+
+    生成式二维噪声场。
+
+  </div>
+  <div className="flex-1/3 pl-4">
+    **Y-Curve**
+
+    在高度差之间绘制的二维曲线。
+
+  </div>
+</div>
+
+![Terrain generation visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/noise-based-terrain.png)
+
+#### Solidity
+
+密度会生成一系列值，通常在 1 和 -1 之间。其中一些值会成为我们的地形，另一些则成为地形周围的负空间，也就是空气。
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-1/2 border-r pr-4">
+    **密度**
+
+    密度值会在每个坐标处计算，你可以把它想象成一团云
+
+  </div>
+  <div className="flex-1/2 pl-4">
+    **实心度**
+
+    通常，我们将正值解释为实心地形，将负值解释为空隙
+
+  </div>
+</div>
+
+<div className="flex flex-row rounded-lg border p-4">
+  <div className="flex-1/2 border-r pr-4">
+    ![Density
+    visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/density.png)
+  </div>
+  <div className="flex-1/2 pl-4">
+    ![Solidity
+    visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/solidity.png)
+  </div>
+</div>
+
+#### 函数节点
+
+我们所有的密度场都可以使用节点编辑器中提供的一系列函数节点来操作。这些节点具备多种功能，可用于制作有趣的地形形状——它们的列表可以在下面找到。
+
+<Callout>
+  密度由求和计算得出，可以把它想象成一个传统的数学等式 `f(x) = z + y`
+</Callout>
+
+下面我们介绍一些基本示例，在你制作最初的地形时，理解这些示例很重要。
+
+**Absolute**
+
+在此示例中，Absolute 会将所有负值变为正值。这会在单纯形噪声场上形成一种脊状形状。
+
+![Absolute function visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/absolute.png)
+
+**Normalization**
+
+理解如何将噪声场操作到新的取值范围很重要。这是因为某些函数会影响你的场的范围。
+
+在此示例中，我们对上一个示例进行归一化，使场的一半为空、一半实心。做法是将我们的 0 值移到 -1，从而将场拉伸到新的取值范围。
+
+![Normalization visualization](/assets/official-documentation/worldgen/worldgen-tutorial/world-generation-concepts/normalization.png)
+
+<Callout>
+  目前 Hytale Node Editor 不支持噪声可视化。&#x20;
+</Callout>

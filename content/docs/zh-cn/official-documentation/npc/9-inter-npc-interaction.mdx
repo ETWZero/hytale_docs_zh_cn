@@ -1,0 +1,479 @@
+---
+title: "9 - NPC 之间的交互"
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+现在我们需要开始考虑如何让食人魔对世界中的其他 NPC 做出反应。我们暂时还不考虑战斗或应对玩家，但设计规格中还描述了另外几种 NPC 之间的行为：
+
+- 在睡觉时拍打烦人的哥布林拾荒者。
+- 抓住并吃掉靠得太近的老鼠。
+
+我们先从第一个开始，因为处理第二个时会遇到不少问题。
+
+拍打哥布林发生在 **Sleep** 状态期间，所以我们的修改都在那里进行。我们其实不需要为它添加任何检测，因为我们打算相信哥布林拾荒者会_告诉_我们它们在烦人。这正是使用信标在 NPC 之间通信的一个巧妙之处。
+
+当其中一个 NPC 发送消息时，可以触发另一个 NPC 中的行为。基本上，这意味着 **哥布林拾荒者**将承担这一行为的大部分工作。当它们进入烦人模式时，会靠近食人魔。距离足够近时，它们会发送一条消息，告诉食人魔它们正在烦人，然后食人魔会在睡梦中随机拍打它们。
+
+它们实际上是在用自己的消息真的烦他！
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Sleep"
+	},
+	"Instructions": [
+		...
+		{
+			"Sensor": {
+				"Type": "Beacon",
+				"Message": "Annoy_Ogre",
+				"Range": 5
+			},
+			"Actions": []
+		}
+	]
+}
+```
+
+这个传感器会监听 **Annoy_Ogre** 消息，并在收到消息时执行其动作，前提是消息来自附近的 NPC。这样做的好处是，它可以对任何决定来烦它的 NPC 做出反应！
+
+接下来我们给它加一个攻击。确保这个攻击与睡眠动画自然衔接是动画师的责任，我们还会把攻击名称作为参数暴露在参数块中。
+
+```json
+"Parameters": {
+	...
+    "SleepingAttack": {
+        "Value": "Root_NPC_Attack_Melee",
+        "Description": "Attack to use on NPCs that annoy it while sleeping"
+    },
+    "DropList": {
+        "Value": "Empty",
+        "Description": "Drop Items"
+    }
+}
+```
+
+我们使用一个占位攻击，因为目前还没有真正的攻击。
+
+```json
+{
+  "Sensor": {
+    "Type": "Beacon",
+    "Message": "Annoy_Ogre",
+    "Range": 5
+  },
+  "Actions": [
+    {
+      "Type": "Attack",
+      "Attack": { "Compute": "SleepingAttack" },
+      "AttackPauseRange": [1, 2]
+    }
+  ]
+}
+```
+
+测试这个不需要另一个 NPC——我们可以在看着食人魔的时候用 **/npc message Annoy_Ogre** 来触发这个行为。
+
+![npc-tutorial](/assets/official-documentation/npc/npc-tutorial-4.jpg)
+
+现在我们的食人魔能拍打那些烦人的拾荒者了，是时候谈谈房间里那只老鼠了：抓住其他 NPC 是**很难**的。总的来说就是如此。我们的技术目前不具备这种能力，也无法保证将来一定会有。
+
+和设计师简单聊了聊，得出了下面的规格：
+
+- 在某个位置生成一只老鼠。
+- 让它从哥布林旁边跑过。
+- 让它播放抓取老鼠并吃掉它的动画。
+
+这让事情更清楚了，但并没有解决问题。要做到这一点，我们得有点创造力。
+
+首先我们需要真正在食人魔附近的某个地方生成老鼠，并让它跑过去被抓住吃掉。我们可以通过使用一种**手动生成信标**来实现——这是一种必须放置在世界中的实体类型，可以由附近的其他 NPC 按需触发。我们还需要为老鼠本身构建一个小模板，让它朝食人魔移动。
+
+这看起来是一个相当可复用的行为，所以我们会把这个模板做得尽可能简单通用，以便它能与各种专门抓小生物来吃的 NPC 配合使用。
+
+我们把它叫做 `Template_Edible_Critter`。
+
+```json
+{
+  "Type": "Abstract",
+  "KnockbackScale": 0.5,
+  "Parameters": {
+    "Appearance": {
+      "Value": "Rat",
+      "Description": "Model to be used"
+    },
+    "WalkSpeed": {
+      "Value": 3,
+      "Description": "How fast this critter moves"
+    },
+    "SeekRange": {
+      "Value": 40,
+      "Description": "How far this NPC is allowed to be from the target that will eat"
+    },
+    "MaxHealth": {
+      "Value": 100,
+      "Description": "Max health for the NPC"
+    },
+    "NameTranslationKey": {
+      "Value": "server.npcRoles.Template.name",
+      "Description": "Translation key for NPC name display"
+    }
+  },
+  "Appearance": { "Compute": "Appearance" },
+  "StartState": "Idle",
+  "MotionControllerList": [
+    {
+      "Type": "Walk",
+      "MaxWalkSpeed": { "Compute": "WalkSpeed" },
+      "Gravity": 10,
+      "MaxFallSpeed": 8,
+      "Acceleration": 10
+    }
+  ],
+  "MaxHealth": { "Compute": "MaxHealth" },
+  "Instructions": [
+    {
+      "Instructions": [
+        {
+          "Sensor": {
+            "Type": "State",
+            "State": "Idle"
+          },
+          "Instructions": [
+            {
+              "Sensor": {
+                "Type": "Beacon",
+                "Message": "Approach_Target",
+                "TargetSlot": "LockedTarget"
+              },
+              "Actions": [
+                {
+                  "Type": "State",
+                  "State": "Seek"
+                }
+              ]
+            },
+            {
+              "ActionsBlocking": true,
+              "Actions": [
+                {
+                  "Type": "Timeout",
+                  "Delay": [1, 1]
+                },
+                {
+                  "Type": "Despawn"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Sensor": {
+            "Type": "State",
+            "State": "Seek"
+          },
+          "Instructions": [
+            {
+              "Sensor": {
+                "Type": "Target",
+                "TargetSlot": "LockedTarget",
+                "Range": { "Compute": "SeekRange" }
+              },
+              "BodyMotion": {
+                "Type": "Seek",
+                "SlowDownDistance": 0.1,
+                "StopDistance": 0.1
+              }
+            },
+            {
+              "ActionsBlocking": true,
+              "Actions": [
+                {
+                  "Type": "Timeout",
+                  "Delay": [1, 1]
+                },
+                {
+                  "Type": "State",
+                  "State": "Idle"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "NameTranslationKey": { "Compute": "NameTranslationKey" }
+}
+```
+
+这是一个非常简单的 NPC。它允许设置 **Appearance**、**WalkSpeed** 和 **SeekRange**，从而涵盖各种不同的小生物类型。如果空闲太久，它会自动消失；否则它会尝试朝打算吃掉它的 NPC 靠近，这可能是通过信标发出信号，也可能是在生成时就已处于该特定状态并预先定义了特定目标。
+
+在这个例子中，我们想采用后一种方式，所以定义一个**变体**（**Edible_Rat**）。
+
+```json
+{
+  "Type": "Variant",
+  "Reference": "Template_Edible_Critter",
+  "Modify": {
+    "Appearance": "Rat",
+    "WalkSpeed": 5,
+    "MaxHealth": 100,
+    "NameTranslationKey": { "Compute": "NameTranslationKey" }
+  },
+  "Parameters": {
+    "NameTranslationKey": {
+      "Value": "server.npcRoles.Rat.name",
+      "Description": "Translation key for NPC name display"
+    }
+  }
+}
+```
+
+……还有一个能为我们创建它的**生成信标**（同样名为 **Edible_Rat**）。
+
+```json
+{
+  "Environments": [],
+  "NPCs": [
+    {
+      "Weight": 1,
+      "Id": "Edible Rat"
+    }
+  ],
+  "SpawnAfterGameTimeRange": ["PT5M", "PT10M"],
+  "NPCSpawnState": "Seek",
+  "TargetSlot": "LockedTarget"
+}
+```
+
+这个简单的配置只会生成我们定义的老鼠 NPC，并把它设置为正确的状态。**SpawnAfterGameTimeRange** 参数是让该配置能在其他上下文中使用所必需的，但在这里对我们其实没有用处。
+
+现在，如果我们使用 **/spawning beacons add Edible_Rat --manual**，就可以创建这个生成信标，供我们的食人魔使用！想要使用这一行为的关卡设计师需要把这个信标添加到预制件中的某个位置，以便能生成老鼠，但多只食人魔可以为此共用同一个信标。我们可以用 **/spawning beacons trigger** 来确认它能正常工作！
+
+现在我们只需要设置食人魔，让它真正生成老鼠，并伪造它们之间的交互。
+
+和往常一样，我们先添加状态（**CallRat**——我们实际上会把它做成主状态，而不是使用最初计划的 **.EatRat** 子状态，以便像前面讨论的那样利用一些现有状态和状态转换）……
+
+```json
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "Eat"
+	},
+	...
+},
+{
+	"Sensor": {
+		"Type": "State",
+		"State": "CallRat"
+	},
+	"Instructions": [ ]
+}
+```
+
+……并在随机列表中添加一个动作。
+
+```json
+{
+	"Type": "Random",
+	"Actions": [
+		{
+			"Weight": 60,
+			"Action": {
+				"Type": "State",
+				"State": ".Guard"
+			}
+		},
+		...
+		{
+			"Weight": 10,
+			"Action": {
+				"Type": "State",
+				"State": "CallRat"
+			}
+		}
+	]
+}
+```
+
+我们的 **CallRat** 状态只负责触发信标，然后等待一小段时间，看看老鼠是否成功到达。如果没有，我们就重置并回去挑选另一个空闲状态。
+
+至于伪造捡起并吃掉老鼠的过程，我们会在老鼠足够靠近时把它**移除**，然后给食人魔一个**手持物品**，就像我们在之前的进食状态转换中所做的那样。
+
+这里唯一的区别是被吃掉的物品（以及由此决定的那个特定转换本身），所以我们其实可以直接利用之前的 **Eat** 状态来处理这一侧的逻辑！
+
+不过在继续之前，我们需要定义一个包含可食用老鼠的 **NPC 组**（还是叫 **Edible_Rat**），并把它设为食人魔的一个参数，这样它才能找到它！
+
+```json
+{
+  "IncludeRoles": ["Edible_Rat"]
+}
+```
+
+现在我们把它变成食人魔模板上暴露的参数。顺便再添加一个参数，包含我们要触发的手动生成信标的名称。
+
+```json
+"Parameters": {
+	...
+    "FoodNPCGroups": {
+        "Value": ["Edible_Rat"],
+        "Description": "The groups of edible NPCs that will come from triggering the beacon"
+    },
+    "FoodNPCBeacon": {
+        "Value": "Edible_Rat",
+        "Description": "The spawn beacon to trigger to create an edible NPC"
+    },
+	...
+}
+
+```
+
+完成这些后，我们就可以实现 **CallRat** 状态逻辑并测试它是否有效。
+
+```json
+{
+  "Sensor": {
+    "Type": "State",
+    "State": "CallRat"
+  },
+  "Instructions": [
+    {
+      "Continue": true,
+      "Sensor": {
+        "Type": "Any",
+        "Once": true
+      },
+      "Actions": [
+        {
+          "Type": "TriggerSpawnBeacon",
+          "BeaconSpawn": { "Compute": "FoodNPCBeacon" },
+          "Range": 15
+        }
+      ]
+    },
+    {
+      "Sensor": {
+        "Type": "Mob",
+        "Range": 2.5,
+        "Filters": [
+          {
+            "Type": "NPCGroup",
+            "IncludeGroups": { "Compute": "FoodNPCGroups" }
+          },
+          {
+            "Type": "LineOfSight"
+          }
+        ]
+      },
+      "HeadMotion": {
+        "Type": "Watch"
+      },
+      "ActionsBlocking": true,
+      "Actions": [
+        {
+          "Type": "PlayAnimation",
+          "Slot": "Status",
+          "Animation": "Swipe"
+        },
+        {
+          "Type": "Timeout",
+          "Delay": [0.1, 0.1],
+          "Action": {
+            "Type": "Sequence",
+            "Actions": [
+              {
+                "Type": "Remove"
+              },
+              {
+                "Type": "State",
+                "State": "Eat"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "Continue": true,
+      "Sensor": {
+        "Type": "Mob",
+        "Range": 5,
+        "Filters": [
+          {
+            "Type": "NPCGroup",
+            "IncludeGroups": { "Compute": "FoodNPCGroups" }
+          },
+          {
+            "Type": "LineOfSight"
+          }
+        ]
+      },
+      "HeadMotion": {
+        "Type": "Watch"
+      }
+    },
+    {
+      "Reference": "Component_Step_State_Timeout",
+      "Modify": {
+        "_ExportStates": ["Idle"],
+        "Delay": [10, 15]
+      }
+    }
+  ]
+}
+```
+
+这里的逻辑相当直接——我们首先触发参数中定义的信标，仅触发一次，然后继续执行（由 **Continue** 和 **Once** 标志决定）。接着我们等待与参数中提供的组列表（在此例中只包含我们的可食用老鼠）匹配的可食用 NPC 靠近到足以抓取的程度，然后播放一段动画，短暂延迟后将其移除并进入 **Eat** 状态。我们会注视它一小会儿，直到它靠得足够近，这样看起来不会太糟。注意最后那对动作（包含在一个**序列**中）并没有标记为阻塞——两者会在同一 tick 内执行。
+
+如果老鼠一直没来，我们会等大约 10-15 秒，然后放弃并返回 **Idle**。
+
+现在它能工作了，让我们实现状态转换，让这个哥布林真正“抓住”老鼠并开始进食。我们还没有“老鼠”物品，所以暂时用另一个物品作为占位。
+
+我们还需要在参数中定义它。
+
+```json
+"Parameters": {
+	...
+    "FoodNPCItem": {
+        "Value": "Food_Cheese",
+        "Description": "The edible NPC in item form"
+    },
+	...
+}
+
+```
+
+然后定义一个从 **CallRat** 到 **Eat** 的单一状态转换。
+
+```json
+{
+  "States": [
+    {
+      "From": ["CallRat"],
+      "To": ["Eat"]
+    }
+  ],
+  "Actions": [
+    {
+      "Type": "Inventory",
+      "Operation": "SetHotbar",
+      "Item": { "Compute": "FoodNPCItem" },
+      "Slot": 2,
+      "UseTarget": false
+    },
+    {
+      "Type": "Inventory",
+      "Operation": "EquipHotbar",
+      "Slot": 2,
+      "UseTarget": false
+    }
+  ]
+}
+```
+
+这并不完美，但暂时够用了，我们随时可以回来再调整。至此，空闲行为和 NPC 之间的行为都完成了。接下来我们进入战斗以及应对玩家的部分！

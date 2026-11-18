@@ -1,0 +1,179 @@
+---
+title: 物件分布
+description: 确定一个由已定位物件组成的字段。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 物件分布
+
+### Constant
+
+将物件与每个位置配对。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>要与物件配对的位置。</td>
+    </tr>
+    <tr>
+      <td>Prop</td>
+      <td>物件槽位</td>
+      <td>该物件。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Positions
+
+创建空位置。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="124.871337890625">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positions</td>
+      <td>PositionProvider 槽位</td>
+      <td>这些位置。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Assigned
+
+使用 Assignments 为来自子 PropDistribution 的所有空位置分配物件。所有非空位置保持不变。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="158.138671875">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PropDistribution</td>
+      <td>PropDistribution 槽位</td>
+      <td>要从中取空位置进行分配的子 PropDistribution。</td>
+    </tr>
+    <tr>
+      <td>Assignments</td>
+      <td>Assignments 槽位</td>
+      <td>将物件分配给空位置。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Union
+
+合并所有子项，保留它们所有已定位的物件。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="158.138671875">名称</th>
+      <th width="194.089111328125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PropDistributions</td>
+      <td>PropDistribution 槽位列表</td>
+      <td>要合并的子项。</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Anchor
+
+将子 PropDistribution 字段的原点锚定到上下文中的 Anchor（如果存在）。若要存在上下文 Anchor，此节点的某个父级必须产出 Anchor。
+
+你也可以在链路中稍后反转该效果，将原点移回世界原点，如下方截图所示。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="155.2872314453125">名称</th>
+      <th width="189.37628173828125">类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PropDistribution</td>
+      <td>PropDistribution 槽位</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Reverse</td>
+      <td>boolean</td>
+      <td>
+        如果为 <code>true</code>，则将子项的原点反转回世界原点（或前一个 Anchor
+        节点之前的原点）。
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+### Imported
+
+导入已导出的 PropDistribution。
+
+#### 参数：
+
+<table>
+  <thead>
+    <tr>
+      <th width="180">名称</th>
+      <th>类型</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td>string</td>
+      <td>已导出的 PropDistribution 名称。</td>
+    </tr>
+  </tbody>
+</table>

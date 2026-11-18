@@ -1,0 +1,99 @@
+---
+title: 资源包
+description: 介绍如何创建和安装资源包
+icon: Bookmark
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+# 如何修改 Hytale？
+
+## 什么是资源包？
+
+Hytale 的游戏玩法由游戏中的资源驱动，创作者可以修改这些资源。资源包是我们的解决方案，让你用自己的作品覆盖原版游戏或为其添加功能。它们可以是 zip 文件或文件夹的形式，其中包含一组自定义资源。这不是创作者修改 Hytale 的唯一方式，但这是最易上手的形式。;
+
+### 我如何制作资源包？
+
+<video controls className="my-6 aspect-video w-full rounded-lg border">
+  <source
+    src="https://cdn.internal.hytalemodding.dev/guides/official/How-To-Asset-Pack.mp4"
+    type="video/mp4"
+  />
+</video>
+{/* {% include "../.gitbook/includes/requirements.md" %} */}
+
+资源包通常是一个 zip 文件或文件夹，其中包含一个 `manifest.json`。你可以使用我们的游戏内资源编辑器创建它，也可以在文件浏览器中创建。所有资源包都需要一个清单文件，且资源必须放在正确的文件夹中。因此我们建议使用资源编辑器。
+
+```json title="manifest.json"
+{
+  "Group": "My Group",
+  "Name": "Pack Example",
+  "Version": "1.0.0",
+  "Description": "An Example Asset Pack",
+  "Authors": [
+    {
+      "Name": "Me",
+      "Email": "",
+      "Url": ""
+    }
+  ],
+  "Website": "",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "SubPlugins": []
+}
+```
+
+### 它们存储在哪里？
+
+资源包与其他模组一起存储在 Mods 文件夹中。
+
+```
+C:\Users\<user>\AppData\Roaming\Hytale\UserData\Mods
+```
+
+模组和资源包也会按世界分别存储，使用资源编辑器创建的资源包就会放在这里。;
+
+```
+C:\Users\<user>\AppData\Roaming\Hytale\UserData\Saves\New World 5\mods
+```
+
+<Callout type="warning">
+  使用资源编辑器在游戏内创建资源包时，它们目前会存储在该世界中。这意味着要在其他世界中访问该资源包，你需要将资源包复制到你的 Mods 文件夹中。
+</Callout>
+
+---
+
+<video controls className="my-6 aspect-video w-full rounded-lg border">
+  <source
+    src="https://cdn.internal.hytalemodding.dev/guides/official/How-to-Install.mp4"
+    type="video/mp4"
+  />
+</video>
+
+安装资源包或模组后，它们会显示在「新建世界」菜单中的「选项」菜单下。;
+
+### 我如何修改现有资源？
+
+<video controls className="my-6 aspect-video w-full rounded-lg border">
+  <source
+    src="https://cdn.internal.hytalemodding.dev/guides/official/How-to-Asset.mp4"
+    type="video/mp4"
+  />
+</video>
+
+<Callout type="warning">你必须创建一个资源包</Callout>
+
+所有创作者都可以自由修改我们现有的资源，为此你必须创建一个资源包。资源包中存在的资源会覆盖原版游戏中的对应资源。你也可以用同样的方式添加新资源。;
+
+### 备注
+
+- 可以从 CurseForge 等托管网站下载。
+- 完全存在于服务器上。
+  - 只有服务器或世界主机需要下载资源包和模组。;

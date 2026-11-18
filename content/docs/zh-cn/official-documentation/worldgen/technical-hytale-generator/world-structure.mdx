@@ -1,0 +1,102 @@
+---
+title: 世界结构
+description: 定义一个世界的全部内容。
+authors:
+  - name: "Hypixel Studios Canada Inc."
+    url: "https://hytale.com"
+---
+
+<OfficialDocumentationNotice />
+
+世界结构（World Structure）资源定义了世界的各个方面是如何生成的。以下是该资源的全部条目。
+
+### DefaultBiome
+
+- 类型：String
+- 安全值：`"Basic"`
+
+该生物群系用于分隔符之外的所有地方。
+
+### Density
+
+- 类型：密度槽位
+- 安全值：
+
+  ```json
+  "Type": "Constant",
+  "Value": 1
+  ```
+
+决定世界中的生物群系分布。这些值由 `Biomes` 分隔符列表解释。
+
+### Biomes
+
+- 类型：生物群系分隔符列表
+- 安全值：`[]`
+
+每个分隔符为世界中密度处于其边界内的位置分配一个生物群系。
+
+### DefaultTransitionDistance
+
+- 类型：integer
+- 安全值：`32`
+
+一个生物群系过渡到另一个生物群系所需的距离（以方块为单位）。该区域的地形会在两个生物群系之间进行插值。更大的距离会影响性能。
+
+### MaxBiomeEdgeDistance
+
+- 类型：integer
+- 安全值：`0`
+
+世界生成所追踪的距任意生物群系边缘的最大距离。这会影响使用 DistanceFromBiomeEdge 密度节点的生物群系。大于此值的距离会被读取为 `-1`。
+
+### SpawnPositions
+
+- 类型：PositionProvider 槽位
+- 安全值：
+
+  ```json
+  "Type": "List",
+  "Positions": [{"X": 0, "Y": 140, "Z": 0}]
+  ```
+
+世界的出生位置。
+
+### Framework
+
+- 类型：Framework 模块列表
+- 安全值：`[]`
+
+框架（Framework）有助于定义世界的高层结构。它确保多个生物群系之间的一致性。为此，世界结构中的生物群系必须正确解释框架条目。
+
+```json
+// Example of a DecimalConstants Framework entry.
+"Framework": [
+  {
+    "Type": "DecimalConstants",
+    "Entries": [
+      {
+        "Name": "Base",
+        "Value": 100
+      }
+    ]
+  }
+]
+```
+
+下面是框架条目的类型。
+
+#### Positions
+
+世界中具名 Positions 字段的列表。
+
+- Entries: 条目列表
+  - Name: 字符串。在生物群系内部引用此条目时使用的名称。
+  - Positions: PositionProvider slot。
+
+#### DecimalConstants
+
+具名小数常量的列表。
+
+- Name: 字符串。常量的名称。
+- Value: 小数。
