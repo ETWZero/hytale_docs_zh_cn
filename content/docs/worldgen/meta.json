@@ -1,0 +1,5 @@
+{
+  "title": "世界生成",
+  "icon": "Earth",
+  "pages": ["pack-tutorial", "worldgen-tutorial", "technical-hytale-generator"]
+}

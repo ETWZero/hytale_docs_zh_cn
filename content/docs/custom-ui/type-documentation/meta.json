@@ -1,0 +1,5 @@
+{
+  "title": "类型文档",
+  "icon": "List",
+  "pages": ["index", "elements", "enums", "property-types"]
+}

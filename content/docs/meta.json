@@ -1,0 +1,5 @@
+{
+  "title": "Hytale 官方文档",
+  "icon": "Book",
+  "pages": ["index", "npc-doc", "custom-ui", "npc", "worldgen"]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "世界生成教程",
+  "icon": "Earth",
+  "pages": [
+    "index",
+    "density-generation-concepts",
+    "materials-generation-concepts",
+    "prop-generation-concepts",
+    "graphs-system",
+    "optimization-wip"
+  ]
+}
