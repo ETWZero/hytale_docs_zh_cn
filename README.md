@@ -1,5 +1,9 @@
 # hytale_docs_zh_cn
 
+本站点分叉自 HytaleModding 的 Official-documentation 部分。
+
+本站文档站与Hypixel Studios Canada, Inc.、HytaleModding没有任何关系，如果存在侵权，请联系Discord: etw_zero进行删除。
+
 This is a Next.js application generated with
 [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
 
