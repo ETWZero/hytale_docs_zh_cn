@@ -2,7 +2,7 @@ import { createMDX } from 'fumadocs-mdx/next';
 
 const withMDX = createMDX();
 
-const repo = 'hytale-docs-zh-cn';
+const repo = 'hytale_docs_zh_cn';
 
 /** @type {import('next').NextConfig} */
 const config = {
