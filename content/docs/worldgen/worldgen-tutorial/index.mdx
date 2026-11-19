@@ -1,11 +1,11 @@
 ---
 title: 如何编辑和创建生物群系
-description: 探讨在哪里可以找到世界生成资源，以及如何编辑它们。
+description: 探讨在哪里可以找到世界生成资产，以及如何编辑它们。
 ---
 
-### 资源在哪里
+### 资产在哪里
 
-世界生成资源保存在资源中的 HytaleGenerator 目录内。
+世界生成资产保存在资产中的 HytaleGenerator 目录内。
 
 ```
 /Server/HytaleGenerator/
@@ -17,7 +17,7 @@ description: 探讨在哪里可以找到世界生成资源，以及如何编辑�
     /Biomes
     ```
 
-    生物群系资源，包含内容配置。
+    生物群系资产，包含内容配置。
 
   </div>
   <div className="flex-1/2 pl-4">
@@ -36,7 +36,7 @@ description: 探讨在哪里可以找到世界生成资源，以及如何编辑�
     /Density
     ```
 
-    可被任何其他资源引用的密度资源。
+    可被任何其他资产引用的密度资产。
 
   </div>
   <div className="flex-1/2 pl-4">
@@ -44,19 +44,19 @@ description: 探讨在哪里可以找到世界生成资源，以及如何编辑�
     /Assignments
     ```
 
-    可被任何生物群系资源引用的物件资源。
+    可被任何生物群系资产引用的物件资产。
 
   </div>
 </div>
 
 ---
 
-这种结构的一个示例可以在下面找到，它被打包进了一个带有实例配置的资源包中。
+这种结构的一个示例可以在下面找到，它被打包进了一个带有实例配置的资产包中。
 
 https://drive.google.com/file/d/1W3llGUxdi5yuVV4Xjxg0nYEXksEKamwQ/view?usp=sharing
 
 <Callout>
-  请确保将你的资源包放在正确的目录中，即 Mods 之下。
+  请确保将你的资产包放在正确的目录中，即 Mods 之下。
 </Callout>
 
 ### 如何访问我们的世界
@@ -70,13 +70,13 @@ https://drive.google.com/file/d/1GMJao4t_G92MGZewPErLILZWGK0G1Wd6/view?usp=shari
 - 你必须处于**创造模式**。
   - 按 `O` 键，O 代表 Orange。&#x20;
 
-生成资源定义了一组生成器，但仅凭它们你无法访问这些内容。目前你需要一个带有生成器的实例，才能访问你的作品。
+生成资产定义了一组生成器，但仅凭它们你无法访问这些内容。目前你需要一个带有生成器的实例，才能访问你的作品。
 
 ```
 /Server/Instances/
 ```
 
-实例是独立的世界，玩家可以使用 `/instances` 命令加入。每个实例都有一个 `Instance.bson` 配置资源，用于指定要使用哪个生成器，以及其他与世界相关的设置。
+实例是独立的世界，玩家可以使用 `/instances` 命令加入。每个实例都有一个 `Instance.bson` 配置资产，用于指定要使用哪个生成器，以及其他与世界相关的设置。
 
 ```json
 {
@@ -108,17 +108,17 @@ https://drive.google.com/file/d/1GMJao4t_G92MGZewPErLILZWGK0G1Wd6/view?usp=shari
   ></source>
 </video>
 
-我们目前在编辑世界生成资源时使用 Hytale Node Editor。你可以在游戏内按 B 打开「内容创作」菜单来访问它。节点编辑器位于左上角的资源编辑器下拉菜单中。&#x20;
+我们目前在编辑世界生成资产时使用 Hytale Node Editor。你可以在游戏内按 B 打开「内容创作」菜单来访问它。节点编辑器位于左上角的资产编辑器下拉菜单中。&#x20;
 
 ![Node Editor 1](/assets/official-documentation/worldgen/worldgen-tutorial/biomes/node-editor-1.png)
 
-打开 Hytale Node Editor 后，你可以通过文件菜单打开生物群系：导航到 Biomes 目录，然后从你的资源包中选择一个。&#x20;
+打开 Hytale Node Editor 后，你可以通过文件菜单打开生物群系：导航到 Biomes 目录，然后从你的资产包中选择一个。&#x20;
 
 ```
 /Server/HytaleGenerator/Biomes/
 ```
 
-### 生物群系资源结构
+### 生物群系资产结构
 
 每个生物群系都有一个根 Biome 节点，该节点分为 5 个结构。这里只做简要介绍，每个字段的更多信息可以在「世界生成概念」页面中找到。
 
@@ -142,7 +142,7 @@ https://drive.google.com/file/d/1GMJao4t_G92MGZewPErLILZWGK0G1Wd6/view?usp=shari
 </Tab>
 
 <Tab value="环境">
-  决定生物群系内给定坐标处环境资源的逻辑节点。该资源决定天气、NPC 生成和声音等内容。
+  决定生物群系内给定坐标处环境资产的逻辑节点。该资产决定天气、NPC 生成和声音等内容。
 </Tab>
 
 <Tab value="色调">

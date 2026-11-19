@@ -68,4 +68,4 @@ TabNavigation #MyTabNavigation {
 
 [Tab](../property-types/tab) 的样式方法应为 `TabStyleState`，而不是 `TabStateStyle`。因此目前开发者只应将 `@TopTabsStyle` 和 `@HeaderTabsStyle` 作为参考。
 
-此外，默认纹理资源缺失，需要从 Hytale 安装目录复制到你的项目中。例如：`TabOverlay@2x.png` 和 `TabSelectedOverlay@2x.png`。
+此外，默认纹理资产缺失，需要从 Hytale 安装目录复制到你的项目中。例如：`TabOverlay@2x.png` 和 `TabSelectedOverlay@2x.png`。

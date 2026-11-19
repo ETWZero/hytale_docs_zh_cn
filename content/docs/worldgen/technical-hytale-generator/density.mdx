@@ -135,7 +135,7 @@ authors:
 
 ### PositionsCellNoise
 
-生成一个 2D/3D 密度场，其中的值由每个坐标到一组 Positions 所构成场的距离决定。你可以使用此资源生成高级的单元噪声（Cell noise），并通过 Positions 资源控制单元的确切放置位置。你还可以配置如何解释该距离以生成输出。你可以使用传统的单元噪声 ReturnType，也可以创建自己的曲线。你还可以从另一个 Density 字段资源中采样单元值。
+生成一个 2D/3D 密度场，其中的值由每个坐标到一组 Positions 所构成场的距离决定。你可以使用此资产生成高级的单元噪声（Cell noise），并通过 Positions 资产控制单元的确切放置位置。你还可以配置如何解释该距离以生成输出。你可以使用传统的单元噪声 ReturnType，也可以创建自己的曲线。你还可以从另一个 Density 字段资产中采样单元值。
 
 ![Example of PositionsCellNoise setup](/assets/official-documentation/worldgen/technical-hytale-generator/density/positions-cell-noise.png) ![Example of PositionsCellNoise setup 2](/assets/official-documentation/worldgen/technical-hytale-generator/density/positions-cell-noise-2.png) ![Example of PositionsCellNoise setup 3](/assets/official-documentation/worldgen/technical-hytale-generator/density/positions-cell-noise-3.png)
 
@@ -189,7 +189,7 @@ authors:
     {
       name: "Density",
       description:
-        "Density 资源槽位。每个单元的密度值在该单元核心的 Position 点处从此字段采样。",
+        "Density 资产槽位。每个单元的密度值在该单元核心的 Position 点处从此字段采样。",
     },
     {
       name: "DefaultValue",
@@ -216,7 +216,7 @@ authors:
     {
       name: "ChoiceDensity",
       description:
-        "Density 资源槽位。<em>能从 Cache Density 中受益。</em>为某个单元挑选要使用的分隔符。此字段在每个单元的原点处采样。",
+        "Density 资产槽位。<em>能从 Cache Density 中受益。</em>为某个单元挑选要使用的分隔符。此字段在每个单元的原点处采样。",
     },
     {
       name: "Delimiters",
@@ -233,7 +233,7 @@ authors:
 
 **Curve**
 
-Curve 返回类型允许你使用 Curve 资源，根据到 Positions 的距离来定义密度场的值。
+Curve 返回类型允许你使用 Curve 资产，根据到 Positions 的距离来定义密度场的值。
 
 {/* I did double check this one and the link did point to the same image we used above. Maybe accidental? */}
 ![Example of Curve ReturnType](/assets/official-documentation/worldgen/technical-hytale-generator/density/positions-cell-noise.png)
@@ -245,7 +245,7 @@ Curve 返回类型允许你使用 Curve 资源，根据到 Positions 的距离�
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。每个单元的密度值由该曲线定义。曲线的输入是到最近 Position 的距离（以方块为单位），而曲线的输出会成为该字段的值。",
+        "Curve 资产槽位。每个单元的密度值由该曲线定义。曲线的输入是到最近 Position 的距离（以方块为单位），而曲线的输出会成为该字段的值。",
     },
   ]}
 />
@@ -308,7 +308,7 @@ Distance2Div 返回类型的工作方式与传统的 CellNoise “Distance2Div�
 
 ### Distance
 
-Distance 输出的值取决于到该场原点 {0, 0, 0} 的距离。所提供的 Curve 资源会将距离映射为输出的密度值。
+Distance 输出的值取决于到该场原点 {0, 0, 0} 的距离。所提供的 Curve 资产会将距离映射为输出的密度值。
 
 预期输入：0
 
@@ -319,7 +319,7 @@ Distance 输出的值取决于到该场原点 {0, 0, 0} 的距离。所提供的
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。将到原点的距离映射为密度值。",
+        "Curve 资产槽位。将到原点的距离映射为密度值。",
     },
   ]}
 />
@@ -336,7 +336,7 @@ Ellipsoid 是一个变形的球体（Sphere）。你可以使用 Scale 向量在
 2. 将其 Y 轴对齐到所提供的轴。
 3. 围绕新的 Y 轴旋转它。
 
-下面是一个示例 Ellipsoid 及其资源。
+下面是一个示例 Ellipsoid 及其资产。
 
 ![Example of Ellipsoid](/assets/official-documentation/worldgen/technical-hytale-generator/density/ellipsoid.png)
 
@@ -351,17 +351,17 @@ Ellipsoid 是一个变形的球体（Sphere）。你可以使用 Scale 向量在
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。将到原点的距离映射为密度值。",
+        "Curve 资产槽位。将到原点的距离映射为密度值。",
     },
     {
       name: "Scale",
       description:
-        "3D 向量资源槽位。决定在每个方向上把该球体拉伸多少。",
+        "3D 向量资产槽位。决定在每个方向上把该球体拉伸多少。",
     },
     {
       name: "NewYAxis",
       description:
-        "3D 向量资源槽位。让你围绕该场的原点旋转它。",
+        "3D 向量资产槽位。让你围绕该场的原点旋转它。",
     },
     {
       name: "Spin",
@@ -375,7 +375,7 @@ Ellipsoid 是一个变形的球体（Sphere）。你可以使用 Scale 向量在
 
 ### Cube
 
-Cube 输出的密度值取决于到该场原点轴的距离。所提供的 Curve 资源会将距离映射为输出的密度值。
+Cube 输出的密度值取决于到该场原点轴的距离。所提供的 Curve 资产会将距离映射为输出的密度值。
 
 预期输入：0
 
@@ -386,7 +386,7 @@ Cube 输出的密度值取决于到该场原点轴的距离。所提供的 Curve
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。将到原点的距离映射为密度值。",
+        "Curve 资产槽位。将到原点的距离映射为密度值。",
     },
   ]}
 />
@@ -403,7 +403,7 @@ Cuboid 是一个变形的立方体（Cube）。你可以使用 Scale 向量在�
 5. 将其 Y 轴对齐到所提供的轴。
 6. 围绕新的 Y 轴旋转它。
 
-下面是一个示例长方体（cuboid）及其资源。
+下面是一个示例长方体（cuboid）及其资产。
 
 ![Example of Cuboid](/assets/official-documentation/worldgen/technical-hytale-generator/density/cuboid.png)
 
@@ -418,12 +418,12 @@ Cuboid 是一个变形的立方体（Cube）。你可以使用 Scale 向量在�
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。将到原点的距离映射为密度值。",
+        "Curve 资产槽位。将到原点的距离映射为密度值。",
     },
     {
       name: "Scale",
       description:
-        "3D 向量资源槽位。决定在每个方向上把该立方体拉伸多少。",
+        "3D 向量资产槽位。决定在每个方向上把该立方体拉伸多少。",
     },
     {
       name: "Spin",
@@ -433,7 +433,7 @@ Cuboid 是一个变形的立方体（Cube）。你可以使用 Scale 向量在�
     {
       name: "NewYAxis",
       description:
-        "Point3D 资源槽位。让你围绕该场的原点旋转它。",
+        "Point3D 资产槽位。让你围绕该场的原点旋转它。",
     },
   ]}
 />
@@ -448,7 +448,7 @@ AxialCurve 决定沿其 Y 轴（不是世界的 Y 轴）的密度值。AxialCurv
 
 RadialCurve 决定取决于到 Y 轴距离的密度值。这基本上可以决定 Cylinder 有多粗。
 
-下面是一个示例长方体（cuboid）及其资源。
+下面是一个示例长方体（cuboid）及其资产。
 
 ![Example of Cylinder](/assets/official-documentation/worldgen/technical-hytale-generator/density/cylinder.png)
 
@@ -463,12 +463,12 @@ RadialCurve 决定取决于到 Y 轴距离的密度值。这基本上可以决�
     {
       name: "AxialCurve",
       description:
-        "Curve 资源槽位。将到 Cylinder 的 XZ 平面的距离映射为密度值。",
+        "Curve 资产槽位。将到 Cylinder 的 XZ 平面的距离映射为密度值。",
     },
     {
       name: "RadialCurve",
       description:
-        "Curve 资源槽位。将到 Cylinder 的 Y 轴的距离映射为密度值。",
+        "Curve 资产槽位。将到 Cylinder 的 Y 轴的距离映射为密度值。",
     },
     {
       name: "Spin",
@@ -478,7 +478,7 @@ RadialCurve 决定取决于到 Y 轴距离的密度值。这基本上可以决�
     {
       name: "NewYAxis",
       description:
-        "Point3D 资源槽位。与旋转配合使用时，可通过将其原始 Y 轴对齐到所提供的轴，让你围绕 Cylinder 的原点旋转它。",
+        "Point3D 资产槽位。与旋转配合使用时，可通过将其原始 Y 轴对齐到所提供的轴，让你围绕 Cylinder 的原点旋转它。",
     },
   ]}
 />
@@ -487,7 +487,7 @@ RadialCurve 决定取决于到 Y 轴距离的密度值。这基本上可以决�
 
 ### Axis
 
-Axis 输出的密度值取决于到一条所提供 Axis 线的距离，该线穿过该场的原点 {0, 0, 0}；如果 IsAnchored 标志为 true，则穿过锚点。所提供的 Curve 资源会将距离映射为输出的密度值。
+Axis 输出的密度值取决于到一条所提供 Axis 线的距离，该线穿过该场的原点 {0, 0, 0}；如果 IsAnchored 标志为 true，则穿过锚点。所提供的 Curve 资产会将距离映射为输出的密度值。
 
 预期输入：0
 
@@ -498,12 +498,12 @@ Axis 输出的密度值取决于到一条所提供 Axis 线的距离，该线穿
     {
       name: "Axis",
       description:
-        "3D 向量资源槽位。决定使用从哪条轴起算的距离。",
+        "3D 向量资产槽位。决定使用从哪条轴起算的距离。",
     },
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。决定到该轴任意距离处的密度值。",
+        "Curve 资产槽位。决定到该轴任意距离处的密度值。",
     },
     {
       name: "IsAnchored",
@@ -517,7 +517,7 @@ Axis 输出的密度值取决于到一条所提供 Axis 线的距离，该线穿
 
 ### Plane
 
-Plane Density 节点允许你根据到用户定义的平面的距离来定义密度场，该平面穿过该场的原点 {0, 0, 0}；如果启用了 `IsAnchored` 标志，则穿过锚点。你可以使用 Curve 资源精细地定义密度值。PlaneNormal 向量决定该平面朝向的方向。
+Plane Density 节点允许你根据到用户定义的平面的距离来定义密度场，该平面穿过该场的原点 {0, 0, 0}；如果启用了 `IsAnchored` 标志，则穿过锚点。你可以使用 Curve 资产精细地定义密度值。PlaneNormal 向量决定该平面朝向的方向。
 
 ![Example of Plane](/assets/official-documentation/worldgen/technical-hytale-generator/density/plane.png)
 
@@ -530,12 +530,12 @@ Plane Density 节点允许你根据到用户定义的平面的距离来定义密
     {
       name: "PlaneNormal",
       description:
-        "3D 向量资源槽位。决定该平面朝向的方向。",
+        "3D 向量资产槽位。决定该平面朝向的方向。",
     },
     {
       name: "Curve",
       description:
-        "Curve 资源槽位。决定到该平面任意距离处的密度值。",
+        "Curve 资产槽位。决定到该平面任意距离处的密度值。",
     },
   ]}
 />
@@ -544,7 +544,7 @@ Plane Density 节点允许你根据到用户定义的平面的距离来定义密
 
 ### Shell
 
-Shell Density 节点允许你根据方向和到原点的距离，定义该场原点 {0, 0, 0} 周围壳层（shell）的区域。壳层的角度、厚度和密度值都可以通过 Curve 资源完全配置。
+Shell Density 节点允许你根据方向和到原点的距离，定义该场原点 {0, 0, 0} 周围壳层（shell）的区域。壳层的角度、厚度和密度值都可以通过 Curve 资产完全配置。
 
 下图展示了 Shell 节点的结构，以及它的 AngleCurve 和 DistanceCurve 如何相乘得到截图中的结果。
 
@@ -559,7 +559,7 @@ Shell Density 节点允许你根据方向和到原点的距离，定义该场原
     {
       name: "Axis",
       description:
-        "3D 向量资源槽位。决定用于计算角度的轴。",
+        "3D 向量资产槽位。决定用于计算角度的轴。",
     },
     {
       name: "Mirror",
@@ -569,12 +569,12 @@ Shell Density 节点允许你根据方向和到原点的距离，定义该场原
     {
       name: "AngleCurve",
       description:
-        "Curve 资源槽位。决定到该轴任意给定角度处的密度值。",
+        "Curve 资产槽位。决定到该轴任意给定角度处的密度值。",
     },
     {
       name: "DistanceCurve",
       description:
-        "Curve 资源槽位。决定到原点任意距离处的密度值。",
+        "Curve 资产槽位。决定到原点任意距离处的密度值。",
     },
   ]}
 />
@@ -1036,7 +1036,7 @@ Shell Density 节点允许你根据方向和到原点的距离，定义该场原
     {
       name: "NewYAxis",
       description:
-        "3D 向量资源。旋转后字段的 Y 轴，相对于父级的 Y 轴。",
+        "3D 向量资产。旋转后字段的 Y 轴，相对于父级的 Y 轴。",
     },
     {
       name: "SpinAngle",
@@ -1097,12 +1097,12 @@ PositionsMinY 和 PositionsMaxY 参数限制从 Positions 字段查询的垂直�
     {
       name: "Positions",
       description:
-        "Positions 资源槽位。Positions 就是在其周围收拢和扩张密度场的锚点。",
+        "Positions 资产槽位。Positions 就是在其周围收拢和扩张密度场的锚点。",
     },
     {
       name: "PinchCurve",
       description:
-        "Curve 资源槽位。该曲线根据距离某个位置的远近，决定密度场如何被收拢或扩张。",
+        "Curve 资产槽位。该曲线根据距离某个位置的远近，决定密度场如何被收拢或扩张。",
     },
     {
       name: "MaxDistance",
@@ -1163,17 +1163,17 @@ PositionsMinY 和 PositionsMaxY 参数限制从 Positions 字段查询的垂直�
     {
       name: "Positions",
       description:
-        "Positions 资源槽位。Positions 就是在其周围收拢和扩张密度场的锚点。",
+        "Positions 资产槽位。Positions 就是在其周围收拢和扩张密度场的锚点。",
     },
     {
       name: "TwistCurve",
       description:
-        "Curve 资源槽位。该曲线根据距离某个位置的远近，决定密度场如何被扭曲。",
+        "Curve 资产槽位。该曲线根据距离某个位置的远近，决定密度场如何被扭曲。",
     },
     {
       name: "TwistAxis",
       description:
-        "向量资源槽位。发生扭曲所围绕的轴。",
+        "向量资产槽位。发生扭曲所围绕的轴。",
     },
     {
       name: "MaxDistance",
@@ -1450,7 +1450,7 @@ _示例：假设你有一个在其原点 {0, 0, 0} 周围创建球体的密度�
 
 ### Imported
 
-导入一份已导出的 Density 资源。
+导入一份已导出的 Density 资产。
 
 #### 参数：
 
